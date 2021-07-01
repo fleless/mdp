@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/message.dart';
@@ -89,9 +90,24 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
             children: [
               Text(
                 message.from,
-                style: AppStyles.subTitleBlack,
+                style: AppStyles.header2DarkBlue,
               ),
-              Text(message.date, style: AppStyles.smallGray),
+              RichText(
+                textAlign: TextAlign.left,
+                maxLines: 10,
+                overflow: TextOverflow.clip,
+                text: TextSpan(
+                  children: [
+                    WidgetSpan(
+                      child: FaIcon(FontAwesomeIcons.calendar,
+                          size: 16, color: AppColors.md_text_light),
+                    ),
+                    TextSpan(
+                        text: "  "+message.date,
+                        style: AppStyles.smallGray),
+                  ],
+                ),
+              ),
             ],
           ),
           SizedBox(height: 12),
@@ -124,7 +140,7 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
     return Container(
       width: double.infinity,
       color: AppColors.white,
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: ElevatedButton(
         child: Ink(
           decoration: BoxDecoration(
@@ -138,7 +154,7 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
             width: double.infinity,
             height: 55,
             child: Text(
-              "J'ENVOIE UN MESSAGE À MES DÉPANNEURS",
+              "ENVOYER UN MESSAGE À MES DÉPANNEURS",
               style: AppStyles.smallTitleWhite,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -176,34 +192,51 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
   _buildContact() {
     return Container(
       width: double.infinity,
-      color: AppColors.white,
-      padding: EdgeInsets.all(20),
+      color: AppColors.md_gray,
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Besoin d'assistance ? \nContactez le Service Client de MesDépanneurs.fr",
-            textAlign: TextAlign.center,
-            maxLines: 5,
-            overflow: TextOverflow.ellipsis,
-            style: AppStyles.smallMdDark,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                Icons.question_answer_outlined,
+                size: 22,
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Besoin d'assistance ? \nContactez le Service Client de MesDépanneurs.fr",
+                      textAlign: TextAlign.start,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.bodyBold,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Tél : 01 39 48 74 36",
+                      textAlign: TextAlign.start,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.largeTextBoldDarkBlue,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      "Tous les jours 8h30 - 19h30",
+                      textAlign: TextAlign.start,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.body,
+                    ),
+                  ],
+                )
+              ),
+            ],
           ),
-          SizedBox(height: 3),
-          Text(
-            "Tél : 01 39 48 74 36",
-            textAlign: TextAlign.center,
-            maxLines: 5,
-            overflow: TextOverflow.ellipsis,
-            style: AppStyles.smallMdDarkBold,
-          ),
-          SizedBox(height: 3),
-          Text(
-            "Tous les jours 8h30 - 19h30",
-            textAlign: TextAlign.center,
-            maxLines: 5,
-            overflow: TextOverflow.ellipsis,
-            style: AppStyles.smallMdDark,
-          )
         ],
       ),
     );

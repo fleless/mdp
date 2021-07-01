@@ -6,7 +6,10 @@ import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/client/client_widget.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_widget.dart';
+import 'package:mdp/ui/interventions/interventions_screen.dart';
+import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
 class DetailCommandeScreen extends StatefulWidget {
   @override
@@ -22,9 +25,9 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.md_light_gray,
       body: SafeArea(
         child: Container(
+          decoration: BoxDecoration(gradient: MdGradientLightt()),
           height: double.infinity,
           child: _buildContent(),
         ),
@@ -45,18 +48,25 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
 
   Widget _buildTitle() {
     return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: AppConstants.default_padding,
-          vertical: AppConstants.default_padding),
+      padding: EdgeInsets.only(
+          left: AppConstants.default_padding,
+          right: AppConstants.default_padding,
+          bottom: AppConstants.default_padding,
+          top: AppConstants.default_padding * 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "Intervention n° FR-6DH3",
-            style: AppStyles.header1,
+          RichText(
             textAlign: TextAlign.left,
+            maxLines: 10,
             overflow: TextOverflow.clip,
-            maxLines: 2,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                    text: "Intervention n° ", style: AppStyles.header1White),
+                TextSpan(text: "FR-6DH3", style: AppStyles.header1WhiteBold),
+              ],
+            ),
           ),
           InkWell(
             onTap: () {
@@ -65,7 +75,7 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
             child: Icon(
               Icons.close_outlined,
               size: 25,
-              color: AppColors.closeDialogColor,
+              color: AppColors.white,
             ),
           ),
         ],
@@ -75,17 +85,18 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
 
   Widget _buildTab() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      color: AppColors.md_light_gray,
+      padding: const EdgeInsets.only(top: 8.0),
+      color: Colors.transparent,
       width: double.infinity,
       height: double.infinity,
       child: ContainedTabBarView(
           tabBarProperties: TabBarProperties(
               padding: EdgeInsets.only(left: 10, right: 10, bottom: 0.5),
-              indicatorWeight: 2.0,
-              indicatorColor: AppColors.md_primary,
+              indicatorWeight: 3.0,
+              indicatorColor: AppColors.white,
               background: Container(
                 decoration: BoxDecoration(
+                  color: Colors.transparent,
                   border:
                       Border(bottom: BorderSide(color: AppColors.placeHolder)),
                 ),
@@ -93,20 +104,20 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
           tabs: [
             Text('Client',
                 style: indexTab == 0
-                    ? AppStyles.subTitleBlack
-                    : AppStyles.subheadingBlack),
+                    ? AppStyles.subheadingWhiteBold
+                    : AppStyles.subheadingWhite),
             Text('Intervention',
                 style: indexTab == 1
-                    ? AppStyles.subTitleBlack
-                    : AppStyles.subheadingBlack),
+                    ? AppStyles.subheadingWhiteBold
+                    : AppStyles.subheadingWhite),
             Text('Messagerie',
                 style: indexTab == 2
-                    ? AppStyles.subTitleBlack
-                    : AppStyles.subheadingBlack),
+                    ? AppStyles.subheadingWhiteBold
+                    : AppStyles.subheadingWhite),
           ],
           views: [
             ClientWidget(),
-            Container(color: Colors.green),
+            InterventionWidget(),
             MessagerieWidget(),
           ],
           callOnChangeWhileIndexIsChanging: true,

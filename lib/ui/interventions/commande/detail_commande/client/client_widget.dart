@@ -33,9 +33,11 @@ class _ClientWidgetState extends State<ClientWidget> {
   _getUserLocation() async {
     Position _position;
     _position = await userLocation.getUserCoordiantes();
-    setState(() {
-      _userPosition = _position;
-    });
+    if (mounted) {
+      setState(() {
+        _userPosition = _position;
+      });
+    }
   }
 
   @override
@@ -59,9 +61,9 @@ class _ClientWidgetState extends State<ClientWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildAdresseIntervention(),
           _buildCoordonnees(),
           _buildAdresseFacturation(),
-          _buildAdresseIntervention(),
           _buildCommentaires()
         ],
       ),
@@ -72,7 +74,7 @@ class _ClientWidgetState extends State<ClientWidget> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-      color: AppColors.white,
+      color: AppColors.md_gray,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -106,7 +108,7 @@ class _ClientWidgetState extends State<ClientWidget> {
             child: Ink(
               decoration: BoxDecoration(
                 color: AppColors.white,
-                border: Border.all(color: AppColors.md_secondary),
+                border: Border.all(color: AppColors.md_dark_blue),
                 borderRadius: BorderRadius.all(
                   Radius.circular(12),
                 ),
@@ -116,8 +118,8 @@ class _ClientWidgetState extends State<ClientWidget> {
                 width: double.infinity,
                 height: 50,
                 child: Text(
-                  "JE MODIFIE LES COORDONNÉES",
-                  style: AppStyles.secondaryNormalText,
+                  "MODIFIER LES COORDONNÉES",
+                  style: AppStyles.buttonTextDarkBlue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -143,7 +145,7 @@ class _ClientWidgetState extends State<ClientWidget> {
                 elevation: 5,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
-                onPrimary: AppColors.md_secondary.withOpacity(0.1),
+                onPrimary: AppColors.md_dark_blue.withOpacity(0.1),
                 primary: Colors.transparent,
                 padding: EdgeInsets.zero,
                 textStyle:
@@ -158,7 +160,7 @@ class _ClientWidgetState extends State<ClientWidget> {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-      color: AppColors.md_gray,
+      color: AppColors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -192,7 +194,7 @@ class _ClientWidgetState extends State<ClientWidget> {
             child: Ink(
               decoration: BoxDecoration(
                 color: AppColors.white,
-                border: Border.all(color: AppColors.md_secondary),
+                border: Border.all(color: AppColors.md_dark_blue),
                 borderRadius: BorderRadius.all(
                   Radius.circular(12),
                 ),
@@ -202,8 +204,8 @@ class _ClientWidgetState extends State<ClientWidget> {
                 width: double.infinity,
                 height: 50,
                 child: Text(
-                  "JE MODIFIE L’ADRESSE DE FACTURATION",
-                  style: AppStyles.secondaryNormalText,
+                  "MODIFIER L’ADRESSE DE FACTURATION",
+                  style: AppStyles.buttonTextDarkBlue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -229,7 +231,7 @@ class _ClientWidgetState extends State<ClientWidget> {
                 elevation: 5,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
-                onPrimary: AppColors.md_secondary.withOpacity(0.1),
+                onPrimary: AppColors.md_dark_blue.withOpacity(0.1),
                 primary: Colors.transparent,
                 padding: EdgeInsets.zero,
                 textStyle:
@@ -398,7 +400,7 @@ class _ClientWidgetState extends State<ClientWidget> {
                       ),
                       Center(
                         child: Text(
-                          "J’APPELLE LE CLIENT",
+                          "APPELER LE CLIENT",
                           style: AppStyles.smallTitleWhite,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -425,7 +427,7 @@ class _ClientWidgetState extends State<ClientWidget> {
             child: Ink(
               decoration: BoxDecoration(
                 color: AppColors.white,
-                border: Border.all(color: AppColors.md_secondary),
+                border: Border.all(color: AppColors.md_dark_blue),
                 borderRadius: BorderRadius.all(
                   Radius.circular(12),
                 ),
@@ -435,21 +437,21 @@ class _ClientWidgetState extends State<ClientWidget> {
                 width: double.infinity,
                 height: 50,
                 child: Text(
-                  "J’ENVOIE UN SMS",
-                  style: AppStyles.secondaryNormalText,
+                  "ENVOYER UN SMS",
+                  style: AppStyles.buttonTextDarkBlue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),
             onPressed: () {
-              _sendMail("fahmi.barguellil@esprit.tn");
+              _sendSMS("0648635422");
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
-                onPrimary: AppColors.md_secondary.withOpacity(0.1),
+                onPrimary: AppColors.md_dark_blue.withOpacity(0.1),
                 primary: Colors.transparent,
                 padding: EdgeInsets.zero,
                 textStyle:
@@ -462,6 +464,10 @@ class _ClientWidgetState extends State<ClientWidget> {
 
   void _callPhone(String numero) async => await canLaunch("tel:" + numero)
       ? await launch("tel:" + numero)
+      : throw 'Could not launch';
+
+  void _sendSMS(String numero) async => await canLaunch("sms:" + numero)
+      ? await launch("sms:" + numero)
       : throw 'Could not launch';
 
   void _sendMail(String email) async => await canLaunch("mailto:" + email)

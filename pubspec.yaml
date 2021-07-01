@@ -92,6 +92,12 @@ dependencies:
   # package for emailValidation.
   email_validator: ^2.0.1
 
+  # package for svg.
+  flutter_svg: ^0.22.0
+
+  # package for rating stars.
+  flutter_rating_bar: ^4.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

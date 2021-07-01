@@ -254,7 +254,7 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
           width: double.infinity,
           height: 55,
           child: Text(
-            "JE VALIDE LES MODIFICATIONS",
+            "VALIDER LES MODIFICATIONS",
             style: AppStyles.smallTitleWhite,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

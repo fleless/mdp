@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:mdp/ui/interventions/commande/nouvelle_commande/motif_refus.dart';
-import 'package:mdp/widgets/gradients/md_gradient.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:map_launcher/map_launcher.dart';
 
@@ -18,6 +20,28 @@ class PropositionCommandeWidget extends StatefulWidget {
 }
 
 class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
+  bool loading = true;
+  ShowInterventionResponse _showInterventionResponse =
+      ShowInterventionResponse();
+  final bloc = Modular.get<InterventionsBloc>();
+
+  @override
+  Future<void> initState() {
+    _loadIntervention();
+    super.initState();
+  }
+
+  _loadIntervention() async {
+    setState(() {
+      loading = true;
+    });
+    _showInterventionResponse =
+        await bloc.showIntervention("aefba5bc-d735-11eb-8bb3-06a455080f39");
+    setState(() {
+      loading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -30,7 +54,21 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
           color: AppColors.white,
           child: Container(
             width: double.infinity,
-            child: _buildContent(),
+            child: Column(
+              children: [
+                _buildTitle(),
+                loading
+                    ? Container(
+                        height: 500,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.md_dark_blue,
+                          ),
+                        ),
+                      )
+                    : _buildContent(),
+              ],
+            ),
           ),
         ),
       ),
@@ -40,7 +78,6 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
   Widget _buildContent() {
     return Column(
       children: [
-        _buildTitle(),
         _buildBloc(),
         SizedBox(height: 15),
         _buildDateSouhait(),
@@ -104,6 +141,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             "Partenaire",
@@ -127,7 +165,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 width: double.infinity,
                 child: Text(
-                  "MesDépanneurs.fr",
+                  _showInterventionResponse.intervention.partner.name,
                   style: AppStyles.boldText,
                 ),
               ),
@@ -156,46 +194,15 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 width: double.infinity,
                 child: Text(
-                  "FR - 6DH3",
+                  _showInterventionResponse.intervention.code,
                   style: AppStyles.boldText,
                 ),
               ),
             ),
           ),
           SizedBox(height: 30),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15),
-                topLeft: Radius.circular(15),
-              ),
-              color: AppColors.closeDialogColor,
-            ),
-            child: Text(
-                "SERR37 - Fourniture et pose d’une serrure 3-points standard",
-                style: AppStyles.smallTitleWhite,
-                textAlign: TextAlign.center,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis),
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-              ),
-              color: AppColors.md_gray,
-            ),
-            child: Text("Franchise de 100€ à appliquer.",
-                style: AppStyles.textNormal,
-                textAlign: TextAlign.left,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis),
-          ),
+          for (var i in _showInterventionResponse.intervention.details)
+            Padding(padding: EdgeInsets.only(top: 10), child: _orderCase(i)),
           SizedBox(height: 30),
           Text(
             "Fourchette tarifaire :",
@@ -221,11 +228,22 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                   ),
                 ),
               ),
-              title: Text("Min : 600 € - Max : 1200 €",
+              title: Text(
+                  "Min : " +
+                      _showInterventionResponse.intervention.totalMinPrice
+                          .toString() +
+                      " € - Max : " +
+                      _showInterventionResponse.intervention.totalMaxPrice
+                          .toString() +
+                      " €",
                   style: AppStyles.bodyWhite,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
-              subtitle: Text("Montant pré-bloqué 1 200 €",
+              subtitle: Text(
+                  "Montant pré-bloqué " +
+                      _showInterventionResponse.intervention.amountToBlock
+                          .toString() +
+                      " €",
                   style: AppStyles.smallBodyWhite,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
@@ -247,8 +265,13 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                   availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
 
               await availableMaps.first.showMarker(
-                coords: Coords(37.759392, -122.5107336),
-                title: "Ocean Beach",
+                coords: Coords(
+                    double.parse(_showInterventionResponse
+                        .intervention.interventionAddress.city.latitude),
+                    double.parse(_showInterventionResponse
+                        .intervention.interventionAddress.city.longitude)),
+                title: _showInterventionResponse
+                    .intervention.interventionAddress.city.name,
               );
             },
             child: Container(
@@ -267,11 +290,18 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                     ),
                   ),
                 ),
-                title: Text("Rue André Chemin",
+                title: Text(
+                    _showInterventionResponse
+                        .intervention.interventionAddress.streetName,
                     style: AppStyles.bodyWhite,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
-                subtitle: Text("78000 Versailles",
+                subtitle: Text(
+                    _showInterventionResponse
+                            .intervention.interventionAddress.city.postcode +
+                        " " +
+                        _showInterventionResponse.intervention
+                            .interventionAddress.city.department.name,
                     style: AppStyles.bodyWhite,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis),
@@ -287,42 +317,49 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
   Widget _buildDateSouhait() {
     return Padding(
       padding: EdgeInsets.all(AppConstants.default_padding),
-      child: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15),
-                topLeft: Radius.circular(15),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.md_dark_blue),
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(15),
+                  topLeft: Radius.circular(15),
+                ),
+                color: AppColors.md_dark_blue,
               ),
-              color: AppColors.closeDialogColor,
+              child: Text("Date souhaitée du rendez-vous",
+                  style: AppStyles.smallTitleWhite,
+                  textAlign: TextAlign.center,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis),
             ),
-            child: Text("Date souhaitée du rendez-vous",
-                style: AppStyles.smallTitleWhite,
-                textAlign: TextAlign.center,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis),
-          ),
-          Container(
-            width: double.infinity,
-            alignment: Alignment.center,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
+            Container(
+              width: double.infinity,
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+                color: AppColors.white,
               ),
-              color: AppColors.md_gray,
+              child: Text(_getPreferredDate(),
+                  style: AppStyles.textNormalBold,
+                  textAlign: TextAlign.left,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis),
             ),
-            child: Text("Mardi 30 mars - 17h00",
-                style: AppStyles.textNormalBold,
-                textAlign: TextAlign.left,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -340,9 +377,12 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                 overflow: TextOverflow.ellipsis),
             SizedBox(height: 10),
             Text(
-                "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.",
+                _showInterventionResponse.intervention.description == ""
+                    ? "Aucun commentaire"
+                    : _showInterventionResponse.intervention.description,
                 style: AppStyles.textNormal,
-                maxLines: 100),
+                maxLines: 100,
+                overflow: TextOverflow.clip),
           ],
         ),
       ),
@@ -362,14 +402,15 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             height: 250,
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 5,
+                itemCount:
+                    _showInterventionResponse.intervention.clientPhotos.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () => {
                       Modular.to.pushNamed(Routes.photoView, arguments: {
-                        'image':
-                            "https://www.travaux.com/images/cms/medium/5d09d48b-2e3d-4106-8b80-11c2cc260bec.jpg"
+                        'image': _showInterventionResponse
+                            .intervention.clientPhotos[index]
                       })
                     },
                     child: Card(
@@ -377,13 +418,14 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      elevation: 0,
+                      elevation: 4,
                       child: Container(
                         width: 180,
                         child: Hero(
                           tag: AppConstants.IMAGE_VIEWER_TAG,
                           child: Image.network(
-                              "https://www.travaux.com/images/cms/medium/5d09d48b-2e3d-4106-8b80-11c2cc260bec.jpg",
+                              _showInterventionResponse
+                                  .intervention.clientPhotos[index],
                               fit: BoxFit.fill),
                         ),
                       ),
@@ -412,7 +454,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             width: double.infinity,
             height: 55,
             child: Text(
-              "J'ACCEPTE L'INTERVENTION",
+              "AJOUTER L'INTERVENTION",
               style: AppStyles.smallTitleWhite,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -451,7 +493,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             width: double.infinity,
             height: 55,
             child: Text(
-              "JE REFUSE L'INTERVENTION",
+              "REFUSER L'INTERVENTION",
               style: AppStyles.alertNormalText,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -484,5 +526,120 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
       ),
     );
+  }
+
+  Widget _orderCase(Details detail) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15),
+              topLeft: Radius.circular(15),
+            ),
+            color: AppColors.closeDialogColor,
+          ),
+          child: Text(
+              detail.ordercase.code.toString() + " - " + detail.ordercase.name,
+              style: AppStyles.smallTitleWhite,
+              textAlign: TextAlign.center,
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis),
+        ),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+            ),
+            color: AppColors.md_gray,
+          ),
+          child: Text(
+              _showInterventionResponse.intervention.indication == ""
+                  ? "Aucun commentaire."
+                  : _showInterventionResponse.intervention.indication,
+              style: AppStyles.textNormal,
+              textAlign: TextAlign.left,
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis),
+        ),
+      ],
+    );
+  }
+
+  _getPreferredDate() {
+    DateTime dateTime = DateTime.parse(
+        _showInterventionResponse.intervention.preferredVisitDate.date);
+    String day = DateFormat('EEEE').format(dateTime);
+    switch (day) {
+      case "Saturday":
+        day = "Samedi";
+        break;
+      case "Monday":
+        day = "Lundi";
+        break;
+      case "Thursday":
+        day = "Mardi";
+        break;
+      case "Wednesday":
+        day = "mercredi";
+        break;
+      case "Tuesday":
+        day = "Jeudi";
+        break;
+      case "Friday":
+        day = "Vendredi";
+        break;
+    }
+    day += " ";
+    day += dateTime.day.toString();
+    day += " ";
+    String month = "";
+    switch (dateTime.month) {
+      case 1:
+        month = "Janvier";
+        break;
+      case 2:
+        month = "Février";
+        break;
+      case 3:
+        month = "Mars";
+        break;
+      case 4:
+        month = "Avril";
+        break;
+      case 5:
+        month = "Mai";
+        break;
+      case 6:
+        month = "Juin";
+        break;
+      case 7:
+        month = "Juillet";
+        break;
+      case 8:
+        month = "Août";
+        break;
+      case 9:
+        month = "Septembre";
+        break;
+      case 10:
+        month = "Octobre";
+        break;
+      case 11:
+        month = "Novembre";
+        break;
+      case 12:
+        month = "Décembre";
+        break;
+    }
+    day += month;
+    day += " - ";
+    day += (DateFormat('HH:mm').format(dateTime)).replaceAll(":", "h");
+    return day;
   }
 }

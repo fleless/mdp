@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/routes.dart';
+import 'package:mdp/constants/styles/app_styles.dart';
 
 class BottomNavbar extends StatefulWidget {
   final String route;
@@ -15,6 +16,8 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
+  final double iconSize = 18;
+
   void _navigateTo(String route, [Object args]) {
     if (ModalRoute.of(context).settings.name != route) {
       Modular.to.pushReplacementNamed(route, arguments: args);
@@ -26,12 +29,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
     return BottomAppBar(
       color: Colors.transparent,
       child: Container(
-        height: 60,
+        height: 75,
         padding: const EdgeInsets.only(bottom: 10),
         decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25), topRight: Radius.circular(25)),
+          color: AppColors.md_dark_blue,
           boxShadow: [
             BoxShadow(
               blurRadius: 15.0,
@@ -40,64 +41,115 @@ class _BottomNavbarState extends State<BottomNavbar> {
           ],
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            _buildHomeIcon(widget.route == Routes.home),
-            _buildStartedIcon(widget.route == Routes.mesInterventions),
-            _buildMyAuctionsIcon(widget.route == Routes.home),
-            _buildWinnersIcon(widget.route == Routes.home),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildDashboardIcon(widget.route == Routes.home),
+                Text(
+                  'Dashboard',
+                  style: widget.route == Routes.home
+                      ? AppStyles.navBarTitle
+                      : AppStyles.navBarTitle,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildCommandeIcon(widget.route == Routes.mesInterventions),
+                Text(
+                  'Commande',
+                  style: widget.route == Routes.mesInterventions
+                      ? AppStyles.navBarTitle
+                      : AppStyles.navBarTitle,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildCalendarIcon(widget.route == Routes.home),
+                Text(
+                  'Calendrier',
+                  style: widget.route == Routes.home
+                      ? AppStyles.navBarTitle
+                      : AppStyles.navBarTitle,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _buildNotificationsIcon(widget.route == Routes.home),
+                Text(
+                  'Notifications',
+                  style: widget.route == Routes.home
+                      ? AppStyles.navBarTitle
+                      : AppStyles.navBarTitle,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildHomeIcon(bool selected) => IconButton(
-        iconSize: 20,
+  Widget _buildDashboardIcon(bool selected) => IconButton(
         icon: ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 50.0),
-          child: FaIcon(
-            FontAwesomeIcons.home,
-            color: selected? AppColors.default_black : AppColors.default_black,
-          ), //AppIcons.home(color: selected ? AppColors.green : AppColors.iconDefault),
+          child: Icon(
+            Icons.dashboard,
+            color: AppColors.md_text_white,
+            size: iconSize,
+          ),
         ),
         onPressed: () => _navigateTo(Routes.home),
       );
 
-  Widget _buildStartedIcon(bool selected) => IconButton(
-    iconSize: 20,
-    icon: ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 50.0),
-      child: FaIcon(
-        FontAwesomeIcons.broadcastTower,
-        color: selected? AppColors.default_black : AppColors.default_black,
-      ), //AppIcons.home(color: selected ? AppColors.green : AppColors.iconDefault),
-    ),
-    onPressed: () => _navigateTo(Routes.mesInterventions),
-  );
+  Widget _buildCommandeIcon(bool selected) => IconButton(
+        icon: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 50.0),
+          child: FaIcon(
+            FontAwesomeIcons.handsHelping,
+            color: AppColors.md_text_white,
+            size: iconSize,
+          ),
+        ),
+        onPressed: () => _navigateTo(Routes.mesInterventions),
+      );
 
-  Widget _buildMyAuctionsIcon(bool selected) => IconButton(
-    iconSize: 20,
-    icon: ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 50.0),
-      child: FaIcon(
-        FontAwesomeIcons.gavel,
-        color: selected? AppColors.default_black : AppColors.default_black,
-      ), //AppIcons.home(color: selected ? AppColors.green : AppColors.iconDefault),
-    ),
-    onPressed: () => _navigateTo(Routes.home),
-  );
+  Widget _buildCalendarIcon(bool selected) => IconButton(
+        icon: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 50.0),
+          child: Icon(
+            Icons.today,
+            color: AppColors.md_text_white,
+            size: iconSize,
+          ),
+        ),
+        onPressed: () => _navigateTo(Routes.home),
+      );
 
-  Widget _buildWinnersIcon(bool selected) => IconButton(
-    iconSize: 20,
-    icon: ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 50.0),
-      child: FaIcon(
-        FontAwesomeIcons.trophy,
-        color: selected? AppColors.default_black : AppColors.default_black,
-      ), //AppIcons.home(color: selected ? AppColors.green : AppColors.iconDefault),
-    ),
-    onPressed: () => _navigateTo(Routes.home),
-  );
-
+  Widget _buildNotificationsIcon(bool selected) => IconButton(
+        icon: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 50.0),
+          child: Icon(
+            Icons.notifications,
+            color: AppColors.md_text_white,
+            size: iconSize,
+          ), //AppIcons.home(color: selected ? AppColors.green : AppColors.iconDefault),
+        ),
+        onPressed: () => _navigateTo(Routes.home),
+      );
 }

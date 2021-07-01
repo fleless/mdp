@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/ui/home/home_screen.dart';
+import 'package:mdp/ui/login/login_screen.dart';
 import 'package:splashscreen/splashscreen.dart';
 
 class SplashScreenWidget extends StatefulWidget {
@@ -15,7 +16,7 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
   Widget build(BuildContext context) {
     return SplashScreen(
         seconds: 2,
-        navigateAfterSeconds: HomeScreen(),
+        navigateAfterSeconds: LoginScreenWidget(),
         title: new Text('Welcome In SplashScreen',
           style: new TextStyle(
               fontWeight: FontWeight.bold,

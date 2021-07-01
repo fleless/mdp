@@ -12,3 +12,15 @@ LinearGradient MdGradientLight() {
       stops: [0.4, 1.0],
       tileMode: TileMode.clamp);
 }
+
+LinearGradient MdGradientLightt() {
+  return LinearGradient(
+      colors: [
+        AppColors.mdGradientLightFirst,
+        AppColors.mdGradientLightSecond,
+      ],
+      begin: const FractionalOffset(0.3, 0.6),
+      end: const FractionalOffset(0.8, 0.2),
+      stops: [0.4, 1.0],
+      tileMode: TileMode.clamp);
+}
