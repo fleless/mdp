@@ -13,6 +13,7 @@ import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_screen.dart';
 import 'package:mdp/ui/login/login_bloc.dart';
 import 'package:mdp/ui/login/login_screen.dart';
+import 'package:mdp/ui/notifications/notifications_screen.dart';
 import 'package:mdp/ui/profil/profil_screen.dart';
 import 'package:mdp/ui/splash/splash_screen.dart';
 import 'package:mdp/utils/user_location.dart';
@@ -61,8 +62,9 @@ class AppModule extends MainModule {
                 child: (_, args) => DetailCommandeScreen()),
             ModularRouter(Routes.calendrierPriseRDV,
                 child: (_, args) => CalendrierPriseRdvWidget()),
-            ModularRouter(Routes.profil,
-                child: (_, args) => ProfilScreen()),
+            ModularRouter(Routes.profil, child: (_, args) => ProfilScreen()),
+            ModularRouter(Routes.notifications,
+                child: (_, args) => NotificationsScreen()),
           ],
         ),
       ];

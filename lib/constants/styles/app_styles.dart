@@ -129,6 +129,13 @@ class AppStyles {
     fontSize: 16,
   );
 
+  static const alertNotification = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.mdAlert,
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+  );
+
   static const largeTextBoldDarkBlue = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.md_dark_blue,
@@ -213,6 +220,13 @@ class AppStyles {
   static const bodyWhite = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.md_text_white,
+    fontWeight: FontWeight.w400,
+    fontSize: 15,
+  );
+
+  static const bodyHint = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.hint,
     fontWeight: FontWeight.w400,
     fontSize: 15,
   );
@@ -313,6 +327,13 @@ class AppStyles {
     color: AppColors.md_secondary,
     fontWeight: FontWeight.w700,
     fontSize: 14,
+  );
+
+  static const bigSecondaryText = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.md_secondary,
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
   );
 
   static const smallMdDark = TextStyle(

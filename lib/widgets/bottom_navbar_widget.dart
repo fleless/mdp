@@ -63,7 +63,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
               children: [
                 _buildCommandeIcon(widget.route == Routes.mesInterventions),
                 Text(
-                  'Commande',
+                  'Interventions',
                   style: widget.route == Routes.mesInterventions
                       ? AppStyles.navBarTitle
                       : AppStyles.navBarTitle,
@@ -89,10 +89,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildNotificationsIcon(widget.route == Routes.home),
+                _buildNotificationsIcon(widget.route == Routes.notifications),
                 Text(
                   'Notifications',
-                  style: widget.route == Routes.home
+                  style: widget.route == Routes.notifications
                       ? AppStyles.navBarTitle
                       : AppStyles.navBarTitle,
                   textAlign: TextAlign.center,
@@ -150,6 +150,6 @@ class _BottomNavbarState extends State<BottomNavbar> {
             size: iconSize,
           ), //AppIcons.home(color: selected ? AppColors.green : AppColors.iconDefault),
         ),
-        onPressed: () => _navigateTo(Routes.home),
+        onPressed: () => _navigateTo(Routes.notifications),
       );
 }

@@ -26,6 +26,10 @@ class AppColors {
   static const Color md_gray = Color(0xFFEEEEEE);
   static const Color md_text_white = Color(0xFFF7F9FA);
   static const Color mdAlert = Color(0xFFF50029);
+  static const Color travaux = Color(0xFFFFA01A);
+  static const Color amenagement = Color(0xFFAD2864);
+  static const Color plomberie = Color(0xFF619EFF);
+
   static Color mdGradientLightFirst = Color(0xFF00AAFF).withOpacity(0.9);
   static Color mdGradientLightSecond = Color(0xFF005FAA).withOpacity(0.8);
   static Color mdGradientFirst = Color(0xFF1AB2FF);
@@ -49,5 +53,8 @@ class AppColors {
     700: const Color.fromRGBO(0, 51, 153, .8),
     800: const Color.fromRGBO(0, 51, 153, .9),
     900: const Color.fromRGBO(0, 51, 153, 1),
-  };// Opacity 20%
+  }; // Opacity 20%
+
+  static MaterialColor defaultColorMaterial =
+      MaterialColor(0xFF005FAA, colorCodes);
 }
