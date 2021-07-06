@@ -397,6 +397,7 @@ class _HomeScreenState extends State<HomeScreen> {
             initialRating: 3.3,
             direction: Axis.horizontal,
             allowHalfRating: true,
+            ignoreGestures: true,
             itemCount: 5,
             itemSize: 22,
             wrapAlignment: WrapAlignment.center,
@@ -425,6 +426,7 @@ class _HomeScreenState extends State<HomeScreen> {
             direction: Axis.horizontal,
             allowHalfRating: true,
             itemCount: 5,
+            ignoreGestures: true,
             itemSize: 22,
             wrapAlignment: WrapAlignment.center,
             ratingWidget: RatingWidget(
@@ -453,6 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
             allowHalfRating: true,
             itemCount: 5,
             itemSize: 22,
+            ignoreGestures: true,
             wrapAlignment: WrapAlignment.center,
             ratingWidget: RatingWidget(
               full: Icon(
@@ -480,6 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
             allowHalfRating: true,
             itemCount: 5,
             itemSize: 22,
+            ignoreGestures: true,
             wrapAlignment: WrapAlignment.center,
             ratingWidget: RatingWidget(
               full: Icon(
@@ -507,6 +511,7 @@ class _HomeScreenState extends State<HomeScreen> {
             allowHalfRating: true,
             itemCount: 5,
             itemSize: 22,
+            ignoreGestures: true,
             wrapAlignment: WrapAlignment.center,
             ratingWidget: RatingWidget(
               full: Icon(

@@ -8,6 +8,7 @@ import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/client/client_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_widget.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_screen.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
@@ -19,6 +20,25 @@ class DetailCommandeScreen extends StatefulWidget {
 class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   int indexTab = 0;
+  final bloc = Modular.get<InterventionsBloc>();
+  bool _loading = false;
+
+  @override
+  Future<void> initState() {
+    _getDetails();
+    super.initState();
+  }
+
+  _getDetails() async {
+    setState(() {
+      _loading = true;
+    });
+    //TODO: change intervention id
+    await bloc.getInterventionDetail("aefba5bc-d735-11eb-8bb3-06a455080f39");
+    setState(() {
+      _loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +60,13 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
       children: [
         _buildTitle(),
         Expanded(
-          child: _buildTab(),
+          child: _loading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.md_dark_blue,
+                  ),
+                )
+              : _buildTab(),
         ),
       ],
     );
@@ -64,7 +90,7 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
               children: [
                 TextSpan(
                     text: "Intervention n° ", style: AppStyles.header1White),
-                TextSpan(text: "FR-6DH3", style: AppStyles.header1WhiteBold),
+                TextSpan(text: _loading?"":bloc.interventionDetail.interventionDetail.code, style: AppStyles.header1WhiteBold),
               ],
             ),
           ),

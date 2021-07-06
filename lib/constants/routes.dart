@@ -16,6 +16,7 @@ class Routes {
   static const String detailCommande = '/detailCommande';
   static const String calendrierPriseRDV = '/calendrierPriseRDV';
   static const String ajouterRDV = '/ajouterRDV';
+  static const String redactionDevis = '/redactionDevis';
   static const String profil = '/profil';
   static const String notifications = '/notifications';
 

@@ -13,6 +13,8 @@ import 'package:mdp/utils/user_location.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../interventions_bloc.dart';
+
 class ClientWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ClientWidgetState();
@@ -23,6 +25,7 @@ class _ClientWidgetState extends State<ClientWidget> {
   int indexTab = 0;
   final userLocation = Modular.get<UserLocation>();
   Position _userPosition;
+  final bloc = Modular.get<InterventionsBloc>();
 
   @override
   void initState() {
@@ -85,47 +88,38 @@ class _ClientWidgetState extends State<ClientWidget> {
           SizedBox(height: 15),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 5),
-            child: Text("Marc DUPUIS",
+            child: Text(
+                bloc.interventionDetail.interventionDetail.clients.firstname +
+                    " " +
+                    bloc.interventionDetail.interventionDetail.clients.lastname,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 5),
-            child: Text("06 56 54 35 56",
+            child: Text(
+                bloc.interventionDetail.interventionDetail.clients.commchannels
+                    .firstWhere((element) =>
+                        (element.preferred) && (element.type.name == "Mobile"))
+                    .name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 25),
-            child: Text("m.dupuis@gmail.com",
+            child: Text(
+                bloc.interventionDetail.interventionDetail.clients.commchannels
+                    .firstWhere((element) =>
+                        (element.preferred) && (element.type.name == "Email"))
+                    .name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
-          ElevatedButton(
-            child: Ink(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: Border.all(color: AppColors.md_dark_blue),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(12),
-                ),
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 50,
-                child: Text(
-                  "MODIFIER LES COORDONNÉES",
-                  style: AppStyles.buttonTextDarkBlue,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               showDialog(
                   context: context,
                   builder: (context) {
@@ -141,15 +135,12 @@ class _ClientWidgetState extends State<ClientWidget> {
                     });
                   });
             },
-            style: ElevatedButton.styleFrom(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                onPrimary: AppColors.md_dark_blue.withOpacity(0.1),
-                primary: Colors.transparent,
-                padding: EdgeInsets.zero,
-                textStyle:
-                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            child: Center(
+              child: Text(
+                "MODIFIER LES COORDONNÉES",
+                style: AppStyles.underlinedTertiaryButtonText,
+              ),
+            ),
           ),
         ],
       ),
@@ -171,47 +162,56 @@ class _ClientWidgetState extends State<ClientWidget> {
           SizedBox(height: 15),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 5),
-            child: Text("Marc DUPUIS",
+            child: Text(
+                bloc.interventionDetail.interventionDetail.clients.firstname +
+                    " " +
+                    bloc.interventionDetail.interventionDetail.clients.lastname,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 5),
-            child: Text("53 rue André Chemin, Bat B",
+            child: Text(
+                bloc.interventionDetail.interventionDetail.invoicingAddress
+                            .streetNumber ==
+                        null
+                    ? ""
+                    : bloc.interventionDetail.interventionDetail
+                                    .invoicingAddress.streetNumber +
+                                " " +
+                                bloc.interventionDetail.interventionDetail
+                                    .invoicingAddress.streetName ==
+                            null
+                        ? ""
+                        : bloc.interventionDetail.interventionDetail
+                            .invoicingAddress.streetName,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 25),
-            child: Text("78000 Versailles",
+            child: Text(
+                bloc.interventionDetail.interventionDetail.invoicingAddress
+                            .streetNumber ==
+                        null
+                    ? ""
+                    : bloc.interventionDetail.interventionDetail
+                                    .invoicingAddress.city.postcode +
+                                " " +
+                                bloc.interventionDetail.interventionDetail
+                                    .invoicingAddress.streetName ==
+                            null
+                        ? ""
+                        : bloc.interventionDetail.interventionDetail
+                            .invoicingAddress.city.name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
-          ElevatedButton(
-            child: Ink(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: Border.all(color: AppColors.md_dark_blue),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(12),
-                ),
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 50,
-                child: Text(
-                  "MODIFIER L’ADRESSE DE FACTURATION",
-                  style: AppStyles.buttonTextDarkBlue,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               showDialog(
                   context: context,
                   builder: (context) {
@@ -227,15 +227,12 @@ class _ClientWidgetState extends State<ClientWidget> {
                     });
                   });
             },
-            style: ElevatedButton.styleFrom(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                onPrimary: AppColors.md_dark_blue.withOpacity(0.1),
-                primary: Colors.transparent,
-                padding: EdgeInsets.zero,
-                textStyle:
-                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+            child: Center(
+              child: Text(
+                "MODIFIER L’ADRESSE DE FACTURATION",
+                style: AppStyles.underlinedTertiaryButtonText,
+              ),
+            ),
           ),
         ],
       ),
@@ -264,8 +261,12 @@ class _ClientWidgetState extends State<ClientWidget> {
                     availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
 
                 await availableMaps.first.showMarker(
-                  coords: Coords(37.759392, -122.5107336),
-                  title: "Ocean Beach",
+                  coords: Coords(
+                      bloc.interventionDetail.interventionDetail
+                          .interventionAddress.latitude,
+                      bloc.interventionDetail.interventionDetail
+                          .interventionAddress.longitude),
+                  title: "Adresse d'intervention",
                 );
               },
               child: Row(
@@ -276,12 +277,36 @@ class _ClientWidgetState extends State<ClientWidget> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("53 rue André Chemin, Bat B",
+                      Text(
+                          bloc.interventionDetail.interventionDetail
+                                      .interventionAddress.streetNumber ==
+                                  null
+                              ? ""
+                              : bloc
+                                              .interventionDetail
+                                              .interventionDetail
+                                              .interventionAddress
+                                              .streetNumber +
+                                          " " +
+                                          bloc
+                                              .interventionDetail
+                                              .interventionDetail
+                                              .interventionAddress
+                                              .streetName ==
+                                      null
+                                  ? ""
+                                  : bloc.interventionDetail.interventionDetail
+                                      .interventionAddress.streetName,
                           style: AppStyles.bodyPrimaryColor,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2),
                       SizedBox(height: 5),
-                      Text("78000 Versailles",
+                      Text(
+                          bloc.interventionDetail.interventionDetail
+                                  .interventionAddress.city.postcode +
+                              " " +
+                              bloc.interventionDetail.interventionDetail
+                                  .interventionAddress.city.department.name,
                           style: AppStyles.bodyPrimaryColor,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2),
@@ -317,8 +342,10 @@ class _ClientWidgetState extends State<ClientWidget> {
                                   .distanceBetweenTwoLocalisations(
                                       _userPosition.latitude,
                                       _userPosition.longitude,
-                                      48.8014,
-                                      2.1301)
+                                      bloc.interventionDetail.interventionDetail
+                                          .interventionAddress.latitude,
+                                      bloc.interventionDetail.interventionDetail
+                                          .interventionAddress.longitude)
                                   .toStringAsFixed(1) +
                               " km de ma position actuelle",
                           style: AppStyles.textNormal),
@@ -342,7 +369,28 @@ class _ClientWidgetState extends State<ClientWidget> {
                       text: "    " +
                           userLocation
                               .distanceBetweenTwoLocalisations(
-                                  48.866667, 2.333333, 48.8014, 2.1301)
+                                  bloc
+                                      .interventionDetail
+                                      .interventionDetail
+                                      .subcontractors
+                                      .first
+                                      .company
+                                      .addresses
+                                      .first
+                                      .latitude,
+                                  bloc
+                                      .interventionDetail
+                                      .interventionDetail
+                                      .subcontractors
+                                      .first
+                                      .company
+                                      .addresses
+                                      .first
+                                      .longitude,
+                                  bloc.interventionDetail.interventionDetail
+                                      .interventionAddress.latitude,
+                                  bloc.interventionDetail.interventionDetail
+                                      .interventionAddress.longitude)
                               .toStringAsFixed(1) +
                           "km de xx SARL",
                       style: AppStyles.textNormal),
@@ -371,7 +419,9 @@ class _ClientWidgetState extends State<ClientWidget> {
           Padding(
             padding: EdgeInsets.only(left: 0, bottom: 25),
             child: Text(
-                "Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.",
+                bloc.interventionDetail.interventionDetail.description == ""
+                    ? "Aucun commentaire"
+                    : bloc.interventionDetail.interventionDetail.description,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 120),
@@ -410,7 +460,10 @@ class _ClientWidgetState extends State<ClientWidget> {
                   )),
             ),
             onPressed: () {
-              _callPhone("0648635422");
+              _callPhone(bloc.interventionDetail.interventionDetail.clients.commchannels
+                  .firstWhere((element) =>
+              (element.preferred) && (element.type.name == "Mobile"))
+                  .name);
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
@@ -445,7 +498,10 @@ class _ClientWidgetState extends State<ClientWidget> {
               ),
             ),
             onPressed: () {
-              _sendSMS("0648635422");
+              _sendSMS(bloc.interventionDetail.interventionDetail.clients.commchannels
+                  .firstWhere((element) =>
+              (element.preferred) && (element.type.name == "Mobile"))
+                  .name);
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,

@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/meeting.dart';
+import 'package:mdp/models/responses/user_appointments_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/widgets/gradients/dark_gradient.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
@@ -22,8 +25,10 @@ class CalendrierPriseRdvWidget extends StatefulWidget {
 class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionBloc>();
+  final _priseRdvBloc = Modular.get<PriseRdvBloc>();
   final List<Meeting> meetings = <Meeting>[];
   CalendarController _controller;
+  UserAppointmentsResponse _userAppointmentsResponse = UserAppointmentsResponse();
 
   //mode is bool variable 1 for month view and 2 for day view
   int mode = 1;
@@ -31,8 +36,24 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   @override
   Future<void> initState() {
     super.initState();
+    _getAppointments();
     _controller = CalendarController();
-    _getDataSource();
+  }
+
+  _getAppointments() async {
+    //TODO: change user ID
+    _userAppointmentsResponse = await _priseRdvBloc.getUserAppointments("152945");
+    _convertAppointmentsToMeetings();
+  }
+
+  _convertAppointmentsToMeetings(){
+    DateFormat format = new DateFormat("dd-MM-yyyy HH:mm");
+    _userAppointmentsResponse.data.forEach((element) {
+      setState(() {
+        meetings.add(Meeting(
+            element.order.code+element.client.firstName+element.client.lastName, format.parse(element.startDate), format.parse(element.startDate), AppColors.md_tertiary, false));
+      });
+    });
   }
 
   @override
@@ -174,7 +195,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                      EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           gradient: mode == 1 ? DarkGradient() : null,
@@ -195,7 +216,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                     },
                     child: Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                      EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           gradient: mode == 2 ? DarkGradient() : null,
@@ -212,7 +233,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
             ),
           ),
           GestureDetector(
-            onTap: (){
+            onTap: () {
               Modular.to.pushNamed(Routes.ajouterRDV);
             },
             child: Column(
@@ -242,14 +263,8 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
       view: CalendarView.day,
       cellBorderColor: AppColors.md_gray,
       todayHighlightColor: AppColors.md_tertiary,
+      initialDisplayDate: DateTime.now(),
       appointmentTextStyle: AppStyles.smallTitleWhite,
-      // this commented line used to show only working days
-      /*timeSlotViewSettings: TimeSlotViewSettings(
-                  startHour: 9,
-                  endHour: 16,
-                  nonWorkingDays: <int>[DateTime.friday, DateTime.saturday]),*/
-      //change first day in month view
-      //firstDayOfWeek: 1,
       onTap: (event) {
         //print("event is " + event.appointments.first.eventName);
         setState(() {
@@ -344,7 +359,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           onPrimary: AppColors.white,
           primary: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -379,7 +394,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           onPrimary: AppColors.white,
           primary: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -387,24 +402,8 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
     );
   }
 
-  List<Meeting> _getDataSource() {
-    final DateTime today = DateTime.now();
-    DateTime startTime = DateTime(today.year, today.month, today.day, 9, 0, 0);
-    DateTime endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting(
-        'Conference', startTime, endTime, AppColors.md_tertiary, false));
-    startTime.add(Duration(hours: 3));
-    endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(Meeting('Second', startTime.add(Duration(hours: 3)),
-        endTime.add(Duration(hours: 3)), AppColors.md_tertiary, false));
-    startTime.add(Duration(hours: 3));
-    endTime = startTime.add(const Duration(hours: 2));
-    meetings.add(
-        Meeting('Third', startTime, endTime, AppColors.md_tertiary, false));
-    return meetings;
-  }
-
-  void _callPhone(String numero) async => await canLaunch("tel:" + numero)
-      ? await launch("tel:" + numero)
-      : throw 'Could not launch';
+  void _callPhone(String numero) async =>
+      await canLaunch("tel:" + numero)
+          ? await launch("tel:" + numero)
+          : throw 'Could not launch';
 }

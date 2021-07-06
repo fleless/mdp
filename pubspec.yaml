@@ -101,6 +101,8 @@ dependencies:
   # package dropdown.
   dropdown_search: ^0.6.1
 
+  dotted_border: ^2.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

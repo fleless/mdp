@@ -6,8 +6,10 @@ import 'package:mdp/ui/home/home_bloc.dart';
 import 'package:mdp/ui/home/home_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/detail_commande_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/ajouter_rdv.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/calendrier_prise_rdv_screen.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/redaction_devis_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_screen.dart';
@@ -30,6 +32,7 @@ class AppModule extends MainModule {
         Bind((_) => InterventionBloc()),
         Bind((_) => UserLocation()),
         Bind((_) => InterventionsBloc()),
+        Bind((_) => PriseRdvBloc()),
       ];
 
   // Provide all the routes for your module
@@ -62,6 +65,8 @@ class AppModule extends MainModule {
                 child: (_, args) => DetailCommandeScreen()),
             ModularRouter(Routes.calendrierPriseRDV,
                 child: (_, args) => CalendrierPriseRdvWidget()),
+            ModularRouter(Routes.redactionDevis,
+                child: (_, args) => RedactionDevisScreen()),
             ModularRouter(Routes.profil, child: (_, args) => ProfilScreen()),
             ModularRouter(Routes.notifications,
                 child: (_, args) => NotificationsScreen()),

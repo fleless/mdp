@@ -87,38 +87,40 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
         child: Container(
           height: double.infinity,
           child: _buildContent(),
-          /* Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: Center(
-              child: ElevatedButton(
-                child: Text("OUPS!",
-                    style: AppStyles.textNormal,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1),
-                onPressed: () {
-                  showCupertinoModalBottomSheet(
-                    context: context,
-                    expand: false,
-                    enableDrag: true,
-                    builder: (context) => PropositionCommandeWidget(),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    onPrimary: AppColors.defaultColor,
-                    primary: AppColors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                    textStyle:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ),*/
         ),
       ),
       //LoadingIndicator(loading: _bloc.loading),
       //NetworkErrorMessages(error: _bloc.error),
       bottomNavigationBar: const BottomNavbar(route: Routes.mesInterventions),
+    );
+  }
+
+  Widget _fakeButton() {
+    return Container(
+      width: double.infinity,
+      height: 60,
+      child: Center(
+        child: ElevatedButton(
+          child: Text("OUPS!",
+              style: AppStyles.textNormal,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1),
+          onPressed: () {
+            showCupertinoModalBottomSheet(
+              context: context,
+              expand: false,
+              enableDrag: true,
+              builder: (context) => PropositionCommandeWidget(),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+              elevation: 3,
+              onPrimary: AppColors.defaultColor,
+              primary: AppColors.white,
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        ),
+      ),
     );
   }
 
@@ -142,6 +144,7 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
       children: [
         _buildFilters(),
         SizedBox(height: 40),
+        _fakeButton(),
         Text(_interventions.length.toString() + " résultats",
             style: AppStyles.bodyBoldMdDarkBlue),
         Expanded(
@@ -342,13 +345,18 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
                           decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
-                              color: _interventions[index].statut.contains("gence")
-                                  ? AppColors.mdAlert
-                                  : _interventions[index].statut.contains("nage")
-                                      ? AppColors.travaux
-                                      : _interventions[index].statut.contains("vaux")
-                                          ? AppColors.amenagement
-                                          : AppColors.plomberie),
+                              color:
+                                  _interventions[index].statut.contains("gence")
+                                      ? AppColors.mdAlert
+                                      : _interventions[index]
+                                              .statut
+                                              .contains("nage")
+                                          ? AppColors.travaux
+                                          : _interventions[index]
+                                                  .statut
+                                                  .contains("vaux")
+                                              ? AppColors.amenagement
+                                              : AppColors.plomberie),
                           child: Text(
                             _interventions[index].statut,
                             style: AppStyles.buttonTextWhite,

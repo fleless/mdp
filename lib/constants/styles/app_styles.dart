@@ -47,6 +47,17 @@ class AppStyles {
     decorationThickness: 2,
   );
 
+  static const underlinedTertiaryButtonText = TextStyle(
+    shadows: [Shadow(color: AppColors.md_tertiary, offset: Offset(0, -5))],
+    fontFamily: 'roboto',
+    color: Colors.transparent,
+    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    decoration: TextDecoration.underline,
+    decorationColor: AppColors.md_tertiary,
+    decorationThickness: 2,
+  );
+
   static const header1 = TextStyle(
     fontFamily: 'UniformRounded',
     color: AppColors.default_black,
@@ -103,6 +114,13 @@ class AppStyles {
     fontSize: 14,
   );
 
+  static const buttonTextTertiary = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.md_tertiary,
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+  );
+
   static const buttonInactiveText = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.placeHolder,
@@ -134,6 +152,13 @@ class AppStyles {
     color: AppColors.mdAlert,
     fontWeight: FontWeight.w700,
     fontSize: 16,
+  );
+
+  static const largeTextBoldDefaultBlack = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.default_black,
+    fontWeight: FontWeight.w700,
+    fontSize: 22,
   );
 
   static const largeTextBoldDarkBlue = TextStyle(
@@ -207,8 +232,6 @@ class AppStyles {
     fontWeight: FontWeight.w400,
     fontSize: 16,
   );
-
-
 
   static const textNormalBold = TextStyle(
     fontFamily: 'roboto',
@@ -357,4 +380,10 @@ class AppStyles {
     fontSize: 16,
   );
 
+  static const bodyBlack = TextStyle(
+    fontFamily: 'roboto',
+    color: Colors.black,
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+  );
 }

@@ -9,14 +9,30 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:mdp/widgets/gradients/md_gradient.dart';
 
+import '../../interventions_bloc.dart';
+
 class MotifRefusWidget extends StatefulWidget {
+  ShowInterventionResponse _intervention;
+
+  MotifRefusWidget(this._intervention);
+
   @override
   State<StatefulWidget> createState() => _MotifRefusWidgetState();
 }
 
 class _MotifRefusWidgetState extends State<MotifRefusWidget> {
+  final bloc = Modular.get<InterventionsBloc>();
+  bool loading = false;
+  TextEditingController _refusTextController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -67,7 +83,7 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: TextFormField(
-                  //controller: ,
+                  controller: _refusTextController,
                   obscureText: false,
                   cursorColor: AppColors.default_black,
                   keyboardType: TextInputType.multiline,
@@ -99,40 +115,21 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
                 alignment: Alignment.center,
                 width: double.infinity,
                 height: 55,
-                child: Text(
-                  "VALIDER",
-                  style: AppStyles.smallTitleWhite,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: loading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        color: AppColors.white,
+                      ))
+                    : Text(
+                        "VALIDER",
+                        style: AppStyles.smallTitleWhite,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
               ),
             ),
             onPressed: () {
-              Modular.to.pop();
-              Modular.to.pop();
-              Modular.to.pushNamed(Routes.home);
-              Timer timer =
-                  Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
-                Modular.to.pop();
-              });
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return StatefulBuilder(
-                        builder: (BuildContext context, StateSetter setState) {
-                      return Dialog(
-                        backgroundColor: AppColors.md_light_gray,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        child: _popUpMotifRefus(),
-                      );
-                    });
-                  }).then((value) {
-                // dispose the timer in case something else has triggered the dismiss.
-                timer?.cancel();
-                timer = null;
-              });
+              loading ? null : _validAction();
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
@@ -147,6 +144,42 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
         ],
       ),
     );
+  }
+
+  _validAction() async {
+    Intervention _intervention = widget._intervention.intervention;
+    setState(() {
+      loading = true;
+    });
+    int response = await bloc.refuseIntervention(_intervention.code,
+        _refusTextController.text, _intervention.id, _intervention.uuid, null);
+    setState(() {
+      loading = false;
+    });
+    Modular.to.pop();
+    Modular.to.pop();
+    Modular.to.pushNamed(Routes.home);
+    Timer timer = Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
+      Modular.to.pop();
+    });
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              backgroundColor: AppColors.md_light_gray,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: _popUpMotifRefus(),
+            );
+          });
+        }).then((value) {
+      // dispose the timer in case something else has triggered the dismiss.
+      timer?.cancel();
+      timer = null;
+    });
   }
 
   Widget _popUpMotifRefus() {

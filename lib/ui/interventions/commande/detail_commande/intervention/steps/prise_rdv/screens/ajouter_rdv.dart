@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
@@ -14,10 +15,25 @@ class AjouterRDVScreen extends StatefulWidget {
 class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionBloc>();
+  DateTime _startDate;
+  DateTime _endDate;
+  TimeOfDay _startTime;
+  TimeOfDay _endTime;
 
   @override
   Future<void> initState() {
+    _intiDates();
     super.initState();
+  }
+
+  _intiDates() {
+    setState(() {
+      _startDate = DateTime.now();
+      _endDate = DateTime.now();
+      _startTime = TimeOfDay.now();
+      _endTime =
+          TimeOfDay(hour: _startTime.hour + 1, minute: _startTime.minute);
+    });
   }
 
   @override
@@ -194,12 +210,28 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("  " + "26 mai 2021",
-                        style: AppStyles.bodyBold,
-                        overflow: TextOverflow.ellipsis),
-                    Text("17h00" + "  ",
-                        style: AppStyles.bodyBold,
-                        overflow: TextOverflow.ellipsis),
+                    GestureDetector(
+                      onTap: () {
+                        _pickStartDate();
+                      },
+                      child: Text("  " + _formatDate(_startDate),
+                          style: AppStyles.bodyBold,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        _pickStartTime();
+                      },
+                      child: Text(
+                          ((_startTime.hour < 10) ? "0" : "") +
+                              _startTime.hour.toString() +
+                              "h" +
+                              ((_startTime.minute < 10) ? "0" : "") +
+                              _startTime.minute.toString() +
+                              " ",
+                          style: AppStyles.bodyBold,
+                          overflow: TextOverflow.ellipsis),
+                    ),
                   ],
                 )),
           ],
@@ -222,12 +254,28 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("  " + "26 mai 2021",
-                        style: AppStyles.bodyBold,
-                        overflow: TextOverflow.ellipsis),
-                    Text("18h00" + "  ",
-                        style: AppStyles.bodyBold,
-                        overflow: TextOverflow.ellipsis),
+                    GestureDetector(
+                      onTap: () {
+                        _pickEndDate();
+                      },
+                      child: Text("  " + _formatDate(_endDate),
+                          style: AppStyles.bodyBold,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        _pickEndTime();
+                      },
+                      child: Text(
+                          ((_endTime.hour < 10) ? "0" : "") +
+                              _endTime.hour.toString() +
+                              "h" +
+                              ((_endTime.minute < 10) ? "0" : "") +
+                              _endTime.minute.toString() +
+                              " ",
+                          style: AppStyles.bodyBold,
+                          overflow: TextOverflow.ellipsis),
+                    ),
                   ],
                 )),
           ],
@@ -332,5 +380,105 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
         ),
       ],
     );
+  }
+
+  String _formatDate(DateTime date) {
+    int timeInMillis = date.millisecondsSinceEpoch;
+    var date2 = DateTime.fromMillisecondsSinceEpoch(timeInMillis);
+    final DateFormat format = new DateFormat("dd-MM-yyyy");
+    var formattedDate = format.format(date2);
+    return formattedDate.toString();
+  }
+
+  _pickStartDate() async {
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: _startDate,
+        firstDate: DateTime(2020),
+        lastDate: DateTime(2045),
+        helpText: "SÉLECTIONNER UNE DATE",
+        cancelText: "ANNULER",
+        confirmText: "OK",
+        errorFormatText: "Entrer une date valide",
+        errorInvalidText: "Entrer une date valide",
+        fieldLabelText: "Saisir une date",
+        fieldHintText: "Mois/Jour/Année",
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light(),
+            child: child,
+          );
+        });
+    if (pickedDate != null) {
+      setState(() {
+        _startDate = pickedDate;
+      });
+    }
+  }
+
+  _pickEndDate() async {
+    final pickedDate = await showDatePicker(
+        context: context,
+        initialDate: _endDate,
+        firstDate: DateTime(2020),
+        lastDate: DateTime(2045),
+        helpText: "SÉLECTIONNER UNE DATE",
+        cancelText: "ANNULER",
+        confirmText: "OK",
+        errorFormatText: "Entrer une date valide",
+        errorInvalidText: "Entrer une date valide",
+        fieldLabelText: "Saisir une date",
+        fieldHintText: "Mois/Jour/Année",
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light(),
+            child: child,
+          );
+        });
+    if (pickedDate != null) {
+      setState(() {
+        _endDate = pickedDate;
+      });
+    }
+  }
+
+  _pickStartTime() async {
+    final pickedTime = await showTimePicker(
+        context: context,
+        helpText: "SÉLECTIONNER UN HORAIRE",
+        cancelText: "ANNULER",
+        confirmText: "OK",
+        initialTime: _startTime,
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light(),
+            child: child,
+          );
+        });
+    if (pickedTime != null) {
+      setState(() {
+        _startTime = pickedTime;
+      });
+    }
+  }
+
+  _pickEndTime() async {
+    final pickedTime = await showTimePicker(
+        context: context,
+        helpText: "SÉLECTIONNER UN HORAIRE",
+        cancelText: "ANNULER",
+        confirmText: "OK",
+        initialTime: _endTime,
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light(),
+            child: child,
+          );
+        });
+    if (pickedTime != null) {
+      setState(() {
+        _endTime = pickedTime;
+      });
+    }
   }
 }

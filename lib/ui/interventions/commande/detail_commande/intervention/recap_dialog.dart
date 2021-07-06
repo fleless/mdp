@@ -8,17 +8,21 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 
+import '../../../interventions_bloc.dart';
+
 class RecapDialog extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _RecapDialogState();
 }
 
 class _RecapDialogState extends State<RecapDialog> {
+  final bloc = Modular.get<InterventionsBloc>();
+
   @override
   Widget build(BuildContext context) {
     return Material(
         child: Container(
-          color: AppColors.white,
+      color: AppColors.white,
       height: MediaQuery.of(context).size.height * 0.88,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -48,8 +52,7 @@ class _RecapDialogState extends State<RecapDialog> {
   Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      decoration: BoxDecoration(
-          color: AppColors.closeDialogColor),
+      decoration: BoxDecoration(color: AppColors.closeDialogColor),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -82,7 +85,9 @@ class _RecapDialogState extends State<RecapDialog> {
               children: [
                 TextSpan(text: "Partenaire : ", style: AppStyles.textNormal),
                 TextSpan(
-                    text: "MesDépanneurs.fr", style: AppStyles.textNormalBold),
+                    text: bloc.interventionDetail.interventionDetail
+                        .subcontractors.first.company.name,
+                    style: AppStyles.textNormalBold),
               ],
             ),
           ),
@@ -95,46 +100,61 @@ class _RecapDialogState extends State<RecapDialog> {
               children: [
                 TextSpan(
                     text: "N° de référence : ", style: AppStyles.textNormal),
-                TextSpan(text: "FR - 6DH3", style: AppStyles.textNormalBold),
+                TextSpan(
+                    text: bloc.interventionDetail.interventionDetail.code,
+                    style: AppStyles.textNormalBold),
               ],
             ),
           ),
           SizedBox(height: 30),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15),
-                topLeft: Radius.circular(15),
-              ),
-              color: AppColors.closeDialogColor,
-            ),
-            child: Text(
-                "SERR37 - Fourniture et pose d’une serrure 3-points standard",
-                style: AppStyles.smallTitleWhite,
-                textAlign: TextAlign.center,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis),
-          ),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(15),
-                bottomRight: Radius.circular(15),
-              ),
-              color: AppColors.md_gray,
-            ),
-            child: Text("Franchise de 100€ à appliquer.",
-                style: AppStyles.textNormal,
-                textAlign: TextAlign.left,
-                maxLines: 5,
-                overflow: TextOverflow.ellipsis),
-          ),
+          for (var i in bloc.interventionDetail.interventionDetail.details)
+            Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: _orderCase(i.ordercase.code, i.ordercase.name)),
         ],
       ),
+    );
+  }
+
+  Widget _orderCase(String code, String name) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topRight: Radius.circular(15),
+              topLeft: Radius.circular(15),
+            ),
+            color: AppColors.closeDialogColor,
+          ),
+          child: Text(code + " - " + name,
+              style: AppStyles.smallTitleWhite,
+              textAlign: TextAlign.center,
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis),
+        ),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(15),
+              bottomRight: Radius.circular(15),
+            ),
+            color: AppColors.md_gray,
+          ),
+          child: Text(
+              bloc.interventionDetail.interventionDetail.indication == ""
+                  ? "Aucun commentaire."
+                  : bloc.interventionDetail.interventionDetail.indication,
+              style: AppStyles.textNormal,
+              textAlign: TextAlign.left,
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis),
+        ),
+      ],
     );
   }
 
@@ -151,14 +171,15 @@ class _RecapDialogState extends State<RecapDialog> {
             height: 250,
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: 5,
+                itemCount: bloc
+                    .interventionDetail.interventionDetail.clientPhotos.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () => {
                       Modular.to.pushNamed(Routes.photoView, arguments: {
-                        'image':
-                            "https://www.travaux.com/images/cms/medium/5d09d48b-2e3d-4106-8b80-11c2cc260bec.jpg"
+                        'image': bloc.interventionDetail.interventionDetail
+                            .clientPhotos[index]
                       })
                     },
                     child: Card(
@@ -166,13 +187,14 @@ class _RecapDialogState extends State<RecapDialog> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      elevation: 0,
+                      elevation: 4,
                       child: Container(
                         width: 180,
                         child: Hero(
                           tag: AppConstants.IMAGE_VIEWER_TAG,
                           child: Image.network(
-                              "https://www.travaux.com/images/cms/medium/5d09d48b-2e3d-4106-8b80-11c2cc260bec.jpg",
+                              bloc.interventionDetail.interventionDetail
+                                  .clientPhotos[index],
                               fit: BoxFit.fill),
                         ),
                       ),
@@ -214,11 +236,22 @@ class _RecapDialogState extends State<RecapDialog> {
                   ),
                 ),
               ),
-              title: Text("Min : 600 € - Max : 1200 €",
+              title: Text(
+                  "Min : " +
+                      bloc.interventionDetail.interventionDetail.totalMinPrice
+                          .toString() +
+                      " € - Max : " +
+                      bloc.interventionDetail.interventionDetail.totalMaxPrice
+                          .toString() +
+                      " €",
                   style: AppStyles.body,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
-              subtitle: Text("Montant pré-bloqué 1 200 €",
+              subtitle: Text(
+                  "Montant pré-bloqué " +
+                      bloc.interventionDetail.interventionDetail.amountToBlock
+                          .toString() +
+                      " €",
                   style: AppStyles.smallGray,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),

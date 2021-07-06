@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
@@ -24,6 +25,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
   ShowInterventionResponse _showInterventionResponse =
       ShowInterventionResponse();
   final bloc = Modular.get<InterventionsBloc>();
+  bool _acceptLoading = false;
 
   @override
   Future<void> initState() {
@@ -453,16 +455,20 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             alignment: Alignment.center,
             width: double.infinity,
             height: 55,
-            child: Text(
-              "AJOUTER L'INTERVENTION",
-              style: AppStyles.smallTitleWhite,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: _acceptLoading
+                ? Center(
+                    child: CircularProgressIndicator(color: AppColors.white),
+                  )
+                : Text(
+                    "ACCEPTER L'INTERVENTION",
+                    style: AppStyles.smallTitleWhite,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
           ),
         ),
         onPressed: () {
-          Modular.to.popAndPushNamed(Routes.detailCommande);
+          _acceptLoading ? null : _acceptAction();
         },
         style: ElevatedButton.styleFrom(
             elevation: 5,
@@ -474,6 +480,29 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
       ),
     );
+  }
+
+  _acceptAction() async {
+    setState(() {
+      _acceptLoading = true;
+    });
+    Intervention _intervention = _showInterventionResponse.intervention;
+    int response = await bloc.acceptIntervention(
+        _intervention.code, _intervention.id, _intervention.uuid, null);
+    if (response == 200) {
+      Modular.to.popAndPushNamed(Routes.detailCommande);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Compétition introuvable",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+      );
+      //TODO: remove when release mode
+      Modular.to.popAndPushNamed(Routes.detailCommande);
+    }
+    setState(() {
+      _acceptLoading = false;
+    });
   }
 
   Widget _buildRejectButton() {
@@ -511,7 +540,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: MotifRefusWidget(),
+                    child: MotifRefusWidget(_showInterventionResponse),
                   );
                 });
               });

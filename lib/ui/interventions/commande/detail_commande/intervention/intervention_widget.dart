@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
+import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/recap_dialog.dart';
@@ -55,7 +56,13 @@ class _InterventionWidgetState extends State<InterventionWidget> {
             child: Column(mainAxisSize: MainAxisSize.min, children: [
               PriseRdvWidget(),
               Container(height: 1, color: AppColors.md_gray),
-              RedactionDevisWidget(),
+              //TODO : remove gesture detector
+              GestureDetector(
+                onTap: () {
+                  Modular.to.pushNamed(Routes.redactionDevis);
+                },
+                child: RedactionDevisWidget(),
+              ),
               Container(height: 1, color: AppColors.md_gray),
               RealisationTravauxWidget(),
               Container(height: 1, color: AppColors.md_gray),
