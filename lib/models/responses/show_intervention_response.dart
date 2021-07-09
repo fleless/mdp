@@ -29,17 +29,17 @@ class ShowInterventionResponse {
 }
 
 class Intervention {
-  int id;
+  num id;
   String uuid;
   String code;
-  int amountInitial;
-  Null amountFinal;
-  int amountToBlock;
-  Null amountToPay;
-  int franchiseSum;
-  int coveredSum;
-  int totalMinPrice;
-  int totalMaxPrice;
+  num amountInitial;
+  num amountFinal;
+  num amountToBlock;
+  num amountToPay;
+  num franchiseSum;
+  num coveredSum;
+  num totalMinPrice;
+  num totalMaxPrice;
   PreferredVisitDate preferredVisitDate;
   Partner partner;
   InterventionAddress interventionAddress;
@@ -133,7 +133,7 @@ class Intervention {
 
 class PreferredVisitDate {
   String date;
-  int timezoneType;
+  num timezoneType;
   String timezone;
 
   PreferredVisitDate({this.date, this.timezoneType, this.timezone});
@@ -194,7 +194,7 @@ class InterventionAddress {
 }
 
 class City {
-  int id;
+  num id;
   String name;
   String inseeCode;
   String postcode;
@@ -239,7 +239,7 @@ class City {
 }
 
 class Department {
-  int id;
+  num id;
   String name;
   String code;
   Region region;
@@ -267,7 +267,7 @@ class Department {
 }
 
 class Region {
-  int id;
+  num id;
   String name;
   String code;
   Country country;
@@ -295,7 +295,7 @@ class Region {
 }
 
 class Country {
-  int id;
+  num id;
   String name;
   String code;
 
@@ -317,8 +317,8 @@ class Country {
 }
 
 class Details {
-  int price;
-  int quantity;
+  num price;
+  num quantity;
   Ordercase ordercase;
 
   Details({this.price, this.quantity, this.ordercase});
@@ -348,8 +348,8 @@ class Ordercase {
   String description;
   Domain domain;
   Domain type;
-  int minprice;
-  int maxprice;
+  num minprice;
+  num maxprice;
 
   Ordercase(
       {this.name,
@@ -389,7 +389,7 @@ class Ordercase {
 }
 
 class Domain {
-  Null uuid;
+  num uuid;
   String name;
   String code;
   bool enabled;

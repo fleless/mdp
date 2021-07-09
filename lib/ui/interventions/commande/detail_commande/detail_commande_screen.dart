@@ -19,6 +19,7 @@ class DetailCommandeScreen extends StatefulWidget {
 
 class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  GlobalKey<ContainedTabBarViewState> _key = GlobalKey();
   int indexTab = 0;
   final bloc = Modular.get<InterventionsBloc>();
   bool _loading = false;
@@ -26,6 +27,9 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
   @override
   Future<void> initState() {
     _getDetails();
+    setState(() {
+      indexTab = 1;
+    });
     super.initState();
   }
 
@@ -34,7 +38,7 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
       _loading = true;
     });
     //TODO: change intervention id
-    await bloc.getInterventionDetail("aefba5bc-d735-11eb-8bb3-06a455080f39");
+    await bloc.getInterventionDetail("73467dae-df59-11eb-a612-0ace6068ba3f");
     setState(() {
       _loading = false;
     });
@@ -90,7 +94,11 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
               children: [
                 TextSpan(
                     text: "Intervention n° ", style: AppStyles.header1White),
-                TextSpan(text: _loading?"":bloc.interventionDetail.interventionDetail.code, style: AppStyles.header1WhiteBold),
+                TextSpan(
+                    text: _loading
+                        ? ""
+                        : bloc.interventionDetail.interventionDetail.code,
+                    style: AppStyles.header1WhiteBold),
               ],
             ),
           ),
@@ -116,6 +124,8 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
       width: double.infinity,
       height: double.infinity,
       child: ContainedTabBarView(
+          key: _key,
+          initialIndex: 1,
           tabBarProperties: TabBarProperties(
               padding: EdgeInsets.only(left: 10, right: 10, bottom: 0.5),
               indicatorWeight: 3.0,

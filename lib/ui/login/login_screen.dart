@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
@@ -206,6 +207,15 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
             if ((response.token != null) && (response.token != "")) {
               Modular.to.pushNamedAndRemoveUntil(
                   Routes.home, (Route<dynamic> route) => false);
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Utilisateur introuvable",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: AppColors.mdAlert,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
             }
           }
         }

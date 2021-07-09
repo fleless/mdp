@@ -1,11 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/endpoints.dart';
+import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
+import 'package:mdp/models/responses/add_appointment_response.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 
 class AjouterRDVScreen extends StatefulWidget {
   @override
@@ -14,15 +19,21 @@ class AjouterRDVScreen extends StatefulWidget {
 
 class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final bloc = Modular.get<InterventionBloc>();
+  TextEditingController _commentaireController = TextEditingController();
+  final bloc = Modular.get<InterventionsBloc>();
+  final _rdvBloc = Modular.get<PriseRdvBloc>();
   DateTime _startDate;
   DateTime _endDate;
   TimeOfDay _startTime;
   TimeOfDay _endTime;
+  bool _loading = false;
+  String title = "";
+  bool _error = false;
 
   @override
   Future<void> initState() {
     _intiDates();
+    title = bloc.interventionDetail.interventionDetail.details.first.ordercase.name;
     super.initState();
   }
 
@@ -118,7 +129,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text("Intervention SERR37",
+          child: Text(title,
               style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
         ),
         SizedBox(height: 20),
@@ -132,8 +143,22 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text("53 rue André Chemin, Bat B",
-              style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
+          child: Text(
+              bloc.interventionDetail.interventionDetail.interventionAddress
+                          .streetNumber ==
+                      null
+                  ? ""
+                  : (bloc.interventionDetail.interventionDetail
+                                      .interventionAddress.streetNumber +
+                                  " ") +
+                              bloc.interventionDetail.interventionDetail
+                                  .interventionAddress.streetName ==
+                          null
+                      ? ""
+                      : bloc.interventionDetail.interventionDetail
+                          .interventionAddress.streetName,
+              style: AppStyles.bodyBold,
+              overflow: TextOverflow.ellipsis),
         ),
         SizedBox(height: 1),
         Container(
@@ -146,8 +171,14 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text("78000 Versailles",
-              style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
+          child: Text(
+              bloc.interventionDetail.interventionDetail.interventionAddress
+                      .city.postcode +
+                  " " +
+                  bloc.interventionDetail.interventionDetail.interventionAddress
+                      .city.department.name,
+              style: AppStyles.bodyBold,
+              overflow: TextOverflow.ellipsis),
         ),
         SizedBox(height: 20),
         Container(
@@ -160,8 +191,12 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text("Marc DUPUIS",
-              style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
+          child: Text(
+              bloc.interventionDetail.interventionDetail.clients.firstname +
+                  " " +
+                  bloc.interventionDetail.interventionDetail.clients.lastname,
+              style: AppStyles.bodyBold,
+              overflow: TextOverflow.ellipsis),
         ),
         SizedBox(height: 1),
         Container(
@@ -174,8 +209,13 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text("06 54 34 34 02",
-              style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
+          child: Text(
+              bloc.interventionDetail.interventionDetail.clients.commchannels
+                  .firstWhere((element) =>
+                      (element.preferred) && (element.type.name == "Mobile"))
+                  .name,
+              style: AppStyles.bodyBold,
+              overflow: TextOverflow.ellipsis),
         ),
         Container(
           alignment: Alignment.centerLeft,
@@ -187,8 +227,21 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text("M.Dupuis@gmail.com",
-              style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
+          child: Text(
+              bloc.interventionDetail.interventionDetail.clients.commchannels
+                          .firstWhere((element) =>
+                              (element.preferred) &&
+                              (element.type.name == "Email"))
+                          .name ==
+                      null
+                  ? ""
+                  : bloc.interventionDetail.interventionDetail.clients
+                      .commchannels
+                      .firstWhere((element) =>
+                          (element.preferred) && (element.type.name == "Email"))
+                      .name,
+              style: AppStyles.bodyBold,
+              overflow: TextOverflow.ellipsis),
         ),
         SizedBox(height: 15),
         Container(height: 1.1, color: AppColors.placeHolder),
@@ -280,6 +333,20 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
                 )),
           ],
         ),
+        _error ? SizedBox(height: 15) : SizedBox.shrink(),
+        _error
+            ? Container(
+                width: double.infinity,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  "La date de fin doit être supérieure à la date de début",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: AppStyles.alertNormalText,
+                ),
+              )
+            : SizedBox.shrink(),
         SizedBox(height: 15),
         Container(height: 1.1, color: AppColors.placeHolder),
         SizedBox(height: 15),
@@ -296,7 +363,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
           child: Align(
             alignment: Alignment.topLeft,
             child: TextFormField(
-              //controller: ,
+              controller: _commentaireController,
               obscureText: false,
               cursorColor: AppColors.default_black,
               keyboardType: TextInputType.multiline,
@@ -328,15 +395,21 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
               alignment: Alignment.center,
               width: double.infinity,
               height: 50,
-              child: Text(
-                "AJOUTER",
-                style: AppStyles.smallTitleWhite,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: _loading
+                  ? Center(
+                      child: CircularProgressIndicator(color: AppColors.white),
+                    )
+                  : Text(
+                      "AJOUTER",
+                      style: AppStyles.smallTitleWhite,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            _loading ? null : _goAdd();
+          },
           style: ElevatedButton.styleFrom(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -478,6 +551,52 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
     if (pickedTime != null) {
       setState(() {
         _endTime = pickedTime;
+      });
+    }
+  }
+
+  _goAdd() async {
+    setState(() {
+      _error = false;
+    });
+    FocusScope.of(context).requestFocus(new FocusNode());
+    setState(() {
+      _loading = true;
+    });
+    DateTime _start = DateTime(_startDate.year, _startDate.month,
+        _startDate.day, _startTime.hour, _startTime.minute);
+    DateTime _end = DateTime(_endDate.year, _endDate.month, _endDate.day,
+        _endTime.hour, _endTime.minute);
+    if (_start.isBefore(_end)) {
+      AddAppointmentResponse response = await _rdvBloc.addAppointment(
+          title,
+          _commentaireController.text,
+          bloc.interventionDetail.interventionDetail.id,
+          Endpoints.subcontractor_id,
+          _start.toString(),
+          _end.toString());
+      if (response != null) {
+        setState(() {
+          _loading = false;
+        });
+        Modular.to.popAndPushNamed(Routes.detailCommande);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Une erreur est survenue !",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: AppColors.mdAlert,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        setState(() {
+          _loading = false;
+        });
+      }
+    } else {
+      setState(() {
+        _error = true;
+        _loading = false;
       });
     }
   }

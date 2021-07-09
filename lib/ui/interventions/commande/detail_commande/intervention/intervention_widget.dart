@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
+import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/recap_dialog.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_widget.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/realisation_travaux/realisation_travaux_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
+import '../../../interventions_bloc.dart';
 
 class InterventionWidget extends StatefulWidget {
   @override
@@ -20,16 +23,31 @@ class InterventionWidget extends StatefulWidget {
 
 class _InterventionWidgetState extends State<InterventionWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final bloc = Modular.get<InterventionBloc>();
+  final bloc = Modular.get<InterventionsBloc>();
+  final _rdvBloc = Modular.get<PriseRdvBloc>();
+  bool _loading = true;
 
   @override
   void initState() {
+    _loadDatas();
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  _loadDatas() async {
+    setState(() {
+      _loading = true;
+    });
+    await _rdvBloc.getUserAppointmentsForSpecificOrder(
+        Endpoints.subcontractor_id,
+        bloc.interventionDetail.interventionDetail.id.toString());
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -50,27 +68,34 @@ class _InterventionWidgetState extends State<InterventionWidget> {
   Widget _buildContent() {
     return Stack(
       children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Container(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              PriseRdvWidget(),
-              Container(height: 1, color: AppColors.md_gray),
-              //TODO : remove gesture detector
-              GestureDetector(
-                onTap: () {
-                  Modular.to.pushNamed(Routes.redactionDevis);
-                },
-                child: RedactionDevisWidget(),
+        _loading
+            ? Container(
+                height: double.infinity,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 50,
+                  width: 50,
+                  child: CircularProgressIndicator(
+                    color: AppColors.md_dark_blue,
+                  ),
+                ),
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Container(
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    PriseRdvWidget(),
+                    Container(height: 1, color: AppColors.md_gray),
+                    //TODO : remove gesture detector
+                    RedactionDevisWidget(),
+                    Container(height: 1, color: AppColors.md_gray),
+                    RealisationTravauxWidget(),
+                    Container(height: 1, color: AppColors.md_gray),
+                    FinalisationInterventionWidget(),
+                    SizedBox(height: 60),
+                  ]),
+                ),
               ),
-              Container(height: 1, color: AppColors.md_gray),
-              RealisationTravauxWidget(),
-              Container(height: 1, color: AppColors.md_gray),
-              FinalisationInterventionWidget(),
-              SizedBox(height: 60),
-            ]),
-          ),
-        ),
         _buildBottomRecap()
       ],
     );

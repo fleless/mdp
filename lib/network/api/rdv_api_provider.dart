@@ -2,12 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mdp/constants/endpoints.dart';
+import 'package:mdp/models/responses/add_appointment_response.dart';
 import 'package:mdp/models/responses/user_appointments_response.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class RdvApiProvider {
-  final String getUserAppointmentsURL =
-      Endpoints.CORE_URL + "visits";
+  final String getUserAppointmentsURL = Endpoints.CORE_URL + "visits";
+  final String addAppointmentEndPoint = Endpoints.CORE_URL + "visits";
 
   Dio _dio;
 
@@ -17,7 +18,7 @@ class RdvApiProvider {
           receiveDataWhenStatusError: true,
           connectTimeout: 3 * 1000, // 5 seconds
           receiveTimeout: 3 * 1000 // 5 seconds
-      );
+          );
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
@@ -31,11 +32,12 @@ class RdvApiProvider {
     }
   }
 
-  Future<UserAppointmentsResponse> getUserAppointments(
-      String idUser) async {
+  Future<UserAppointmentsResponse> getUserAppointments(String idUser) async {
     try {
-      Response response =
-      await _dio.get(getUserAppointmentsURL + "/"+idUser+"/2021-01-01/2100-12-31",
+      Response response = await _dio.get(
+          getUserAppointmentsURL +
+              "?start_date=2021-01-01&end_date=2050-08-31&subcontractor_id=" +
+              idUser,
           options: Options(responseType: ResponseType.json, headers: {
             'Content-type': 'application/json',
             'Accept': 'application/json',
@@ -48,4 +50,55 @@ class RdvApiProvider {
     }
   }
 
+  Future<UserAppointmentsResponse> getUserAppointmentsForSpecificOrder(
+      String idUser, String orderId) async {
+    try {
+      Response response = await _dio.get(
+          getUserAppointmentsURL +
+              "?order_id=" +
+              orderId +
+              "&start_date=2021-01-01&end_date=2050-08-31&subcontractor_id=" +
+              idUser,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }));
+      return UserAppointmentsResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return UserAppointmentsResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<AddAppointmentResponse> addFirstAppointment(
+      String title,
+      String comment,
+      int orderId,
+      String subContractorId,
+      String startDate,
+      String endDate) async {
+    var params = {
+      "title": title,
+      "comment": comment,
+      "type_id": "1",
+      "order_id": orderId,
+      "subcontractor_id": subContractorId,
+      "start_date": startDate,
+      "end_date": endDate
+    };
+    try {
+      Response response = await _dio.post(addAppointmentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return AddAppointmentResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return AddAppointmentResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
 }

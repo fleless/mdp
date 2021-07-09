@@ -1,42 +1,61 @@
 class UserAppointmentsResponse {
-  List<Data> data;
-  int totalRecords;
+  List<ListVisitData> listVisitData;
+  List<Null> errors;
 
-  UserAppointmentsResponse({this.data, this.totalRecords});
+  UserAppointmentsResponse({this.listVisitData, this.errors});
 
   UserAppointmentsResponse.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      data = new List<Data>();
-      json['data'].forEach((v) {
-        data.add(new Data.fromJson(v));
+    if (json['list-visit-data'] != null) {
+      listVisitData = new List<ListVisitData>();
+      json['list-visit-data'].forEach((v) {
+        listVisitData.add(new ListVisitData.fromJson(v));
       });
     }
-    totalRecords = json['total-records'];
+    if (json['errors'] != null) {
+      errors = new List<Null>();
+      json['errors'].forEach((v) {
+        //errors.add(new Null.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data.map((v) => v.toJson()).toList();
+    if (this.listVisitData != null) {
+      data['list-visit-data'] =
+          this.listVisitData.map((v) => v.toJson()).toList();
     }
-    data['total-records'] = this.totalRecords;
+    if (this.errors != null) {
+      //data['errors'] = this.errors.map((v) => v.toJson()).toList();
+    }
     return data;
   }
 }
 
-class Data {
+class ListVisitData {
   int id;
   String startDate;
   String endDate;
+  String type;
+  String title;
   Client client;
   Order order;
 
-  Data({this.id, this.startDate, this.endDate, this.client, this.order});
+  ListVisitData(
+      {this.id,
+      this.startDate,
+      this.endDate,
+      this.type,
+      this.title,
+      this.client,
+      this.order});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ListVisitData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     startDate = json['start_date'];
     endDate = json['end_date'];
+    title = json['title'];
+    type = json['type'];
     client =
         json['client'] != null ? new Client.fromJson(json['client']) : null;
     order = json['order'] != null ? new Order.fromJson(json['order']) : null;
@@ -47,6 +66,8 @@ class Data {
     data['id'] = this.id;
     data['start_date'] = this.startDate;
     data['end_date'] = this.endDate;
+    data['title'] = this.title;
+    data['type'] = this.type;
     if (this.client != null) {
       data['client'] = this.client.toJson();
     }
@@ -60,25 +81,31 @@ class Data {
 class Client {
   String firstName;
   String lastName;
+  String email;
+  String mobile;
 
-  Client({this.firstName, this.lastName});
+  Client({this.firstName, this.lastName, this.email, this.mobile});
 
   Client.fromJson(Map<String, dynamic> json) {
     firstName = json['first_name'];
     lastName = json['last_name'];
+    email = json['Email'];
+    mobile = json['Mobile'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
+    data['Email'] = this.email;
+    data['Mobile'] = this.mobile;
     return data;
   }
 }
 
 class Order {
   String code;
-  num id;
+  int id;
   Address address;
 
   Order({this.code, this.id, this.address});

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/meeting.dart';
@@ -28,7 +29,8 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   final _priseRdvBloc = Modular.get<PriseRdvBloc>();
   final List<Meeting> meetings = <Meeting>[];
   CalendarController _controller;
-  UserAppointmentsResponse _userAppointmentsResponse = UserAppointmentsResponse();
+  UserAppointmentsResponse _userAppointmentsResponse =
+      UserAppointmentsResponse();
 
   //mode is bool variable 1 for month view and 2 for day view
   int mode = 1;
@@ -42,16 +44,18 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
 
   _getAppointments() async {
     //TODO: change user ID
-    _userAppointmentsResponse = await _priseRdvBloc.getUserAppointments("152945");
+    _userAppointmentsResponse =
+        await _priseRdvBloc.getUserAppointments(Endpoints.subcontractor_id);
     _convertAppointmentsToMeetings();
   }
 
-  _convertAppointmentsToMeetings(){
+  _convertAppointmentsToMeetings() {
     DateFormat format = new DateFormat("dd-MM-yyyy HH:mm");
-    _userAppointmentsResponse.data.forEach((element) {
+    DateFormat formatt = new DateFormat("dd-MM-yyyy  HH:mm");
+    _userAppointmentsResponse.listVisitData.forEach((element) {
       setState(() {
-        meetings.add(Meeting(
-            element.order.code+element.client.firstName+element.client.lastName, format.parse(element.startDate), format.parse(element.startDate), AppColors.md_tertiary, false));
+        meetings.add(Meeting(element.title, format.parse(element.startDate),
+            formatt.parse(element.endDate), AppColors.md_tertiary, false));
       });
     });
   }
@@ -108,12 +112,12 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                 overflow: TextOverflow.clip,
               ),
             ),
-            SizedBox(height: 5),
+            /*SizedBox(height: 5),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: AppConstants.default_padding),
               child: _buildValidationButton(),
-            ),
+            ),*/
             SizedBox(height: 40),
           ],
         ));
@@ -170,10 +174,15 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          FaIcon(
-            FontAwesomeIcons.chevronLeft,
-            color: AppColors.md_dark_blue,
-            size: 18,
+          GestureDetector(
+            onTap: () {
+              Modular.to.pop();
+            },
+            child: FaIcon(
+              FontAwesomeIcons.chevronLeft,
+              color: AppColors.md_dark_blue,
+              size: 18,
+            ),
           ),
           Card(
             elevation: 5,
@@ -195,7 +204,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                     },
                     child: Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           gradient: mode == 1 ? DarkGradient() : null,
@@ -216,7 +225,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                     },
                     child: Container(
                       padding:
-                      EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                          EdgeInsets.symmetric(horizontal: 25, vertical: 8),
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                           gradient: mode == 2 ? DarkGradient() : null,
@@ -359,7 +368,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           onPrimary: AppColors.white,
           primary: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -394,7 +403,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           onPrimary: AppColors.white,
           primary: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -402,8 +411,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
     );
   }
 
-  void _callPhone(String numero) async =>
-      await canLaunch("tel:" + numero)
-          ? await launch("tel:" + numero)
-          : throw 'Could not launch';
+  void _callPhone(String numero) async => await canLaunch("tel:" + numero)
+      ? await launch("tel:" + numero)
+      : throw 'Could not launch';
 }
