@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
+import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -151,8 +152,12 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
     setState(() {
       loading = true;
     });
-    int response = await bloc.refuseIntervention(_intervention.code,
-        _refusTextController.text, _intervention.id, _intervention.uuid, null);
+    int response = await bloc.refuseIntervention(
+        _intervention.code,
+        _refusTextController.text,
+        _intervention.id,
+        _intervention.uuid,
+        Endpoints.subcontractor_id);
     setState(() {
       loading = false;
     });

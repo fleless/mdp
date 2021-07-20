@@ -3,8 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:group_radio_button/group_radio_button.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/result_message_response.dart';
+
+import '../../../interventions_bloc.dart';
 
 class ModifierCoordonneesWidget extends StatefulWidget {
   @override
@@ -17,6 +22,9 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
+  final bloc = Modular.get<InterventionsBloc>();
+  bool _loading = false;
+  String _singleValue = "";
 
   @override
   void initState() {
@@ -25,10 +33,24 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
   }
 
   _initValues() {
-    _firstNameController.text = "Marc";
-    _lastNameController.text = "DUPUIS";
-    _phoneController.text = "0794859483";
-    _emailController.text = "Marc.dupuis@email.com";
+    _firstNameController.text =
+        bloc.interventionDetail.interventionDetail.clients.firstname;
+    _lastNameController.text =
+        bloc.interventionDetail.interventionDetail.clients.lastname;
+    _phoneController.text = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhere(
+            (element) => (element.preferred) && (element.type.name == "Phone"))
+        .name;
+    _emailController.text = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhere(
+            (element) => (element.preferred) && (element.type.name == "Email"))
+        .name;
+    setState(() {
+      _singleValue =
+          bloc.interventionDetail.interventionDetail.clients.civility;
+    });
   }
 
   @override
@@ -83,6 +105,8 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
           key: formKey,
           child: Column(
             children: [
+              _buildCivility(),
+              SizedBox(height: 10),
               _buildFirstName(),
               SizedBox(height: 10),
               _buildLastName(),
@@ -95,6 +119,51 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCivility() {
+    return Theme(
+      data: ThemeData(
+        unselectedWidgetColor: AppColors.defaultColorMaterial,
+        primarySwatch: AppColors.defaultColorMaterial,
+      ),
+      child: Row(
+        children: [
+          Text(
+            "Civilité",
+            style: AppStyles.textNormal,
+          ),
+          Row(
+            children: [
+              RadioButton(
+                description: "",
+                value: "M",
+                groupValue: _singleValue,
+                onChanged: (value) => setState(
+                  () => _singleValue = value,
+                ),
+                textPosition: RadioButtonTextPosition.left,
+              ),
+              Text("M", style: AppStyles.textNormal),
+            ],
+          ),
+          Row(
+            children: [
+              RadioButton(
+                description: "",
+                value: "Mme",
+                groupValue: _singleValue,
+                onChanged: (value) => setState(
+                  () => _singleValue = value,
+                ),
+                textPosition: RadioButtonTextPosition.left,
+              ),
+              Text("Mme", style: AppStyles.textNormal),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -253,19 +322,48 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
           alignment: Alignment.center,
           width: double.infinity,
           height: 55,
-          child: Text(
-            "VALIDER LES MODIFICATIONS",
-            style: AppStyles.smallTitleWhite,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: _loading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.white,
+                  ),
+                )
+              : Text(
+                  "VALIDER LES MODIFICATIONS",
+                  style: AppStyles.smallTitleWhite,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
         ),
       ),
-      onPressed: () {
+      onPressed: () async {
+        setState(() {
+          _loading = true;
+        });
         final formState = formKey.currentState;
         if (formState.validate()) {
           // then do something
+          ResultMessageResponse result = await bloc.modifCoordClient(
+              _singleValue,
+              _firstNameController.text,
+              _lastNameController.text,
+              _phoneController.text,
+              _emailController.text,
+              bloc.interventionDetail.interventionDetail.clients.uuid);
+          if (result.result == 'OK') {
+            await bloc.getInterventionDetail(
+                bloc.interventionDetail.interventionDetail.uuid);
+            Modular.to.pop();
+          } else {
+            Fluttertoast.showToast(
+                msg: "Erreur survenue",
+                backgroundColor: AppColors.mdAlert,
+                textColor: AppColors.white);
+          }
         }
+        setState(() {
+          _loading = false;
+        });
       },
       style: ElevatedButton.styleFrom(
           elevation: 5,

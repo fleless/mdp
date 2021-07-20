@@ -30,6 +30,9 @@ class _ClientWidgetState extends State<ClientWidget> {
   @override
   void initState() {
     _getUserLocation();
+    bloc.changesNotifier.listen((value) {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -101,7 +104,7 @@ class _ClientWidgetState extends State<ClientWidget> {
             child: Text(
                 bloc.interventionDetail.interventionDetail.clients.commchannels
                     .firstWhere((element) =>
-                        (element.preferred) && (element.type.name == "Mobile"))
+                        (element.preferred) && (element.type.name == "Phone"))
                     .name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
@@ -171,41 +174,70 @@ class _ClientWidgetState extends State<ClientWidget> {
                 maxLines: 2),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 30, bottom: 5),
-            child: Text(
-                bloc.interventionDetail.interventionDetail.invoicingAddress
-                            .streetNumber ==
-                        null
-                    ? ""
-                    : bloc.interventionDetail.interventionDetail
-                                    .invoicingAddress.streetNumber +
-                                " " +
-                                bloc.interventionDetail.interventionDetail
-                                    .invoicingAddress.streetName ==
-                            null
-                        ? ""
-                        : bloc.interventionDetail.interventionDetail
-                            .invoicingAddress.streetName,
-                style: AppStyles.body,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 2),
-          ),
+              padding: EdgeInsets.only(left: 30, bottom: 5),
+              child: Text(
+                  bloc.interventionDetail.interventionDetail.invoicingAddress !=
+                          null
+                      ? (bloc.interventionDetail.interventionDetail
+                                  .invoicingAddress.streetNumber ==
+                              null
+                          ? ""
+                          : bloc.interventionDetail.interventionDetail
+                                          .invoicingAddress.streetNumber +
+                                      " " +
+                                      bloc.interventionDetail.interventionDetail
+                                          .invoicingAddress.streetName ==
+                                  null
+                              ? ""
+                              : bloc.interventionDetail.interventionDetail
+                                  .invoicingAddress.streetName)
+                      : (bloc.interventionDetail.interventionDetail
+                                  .interventionAddress.streetNumber ==
+                              null
+                          ? ""
+                          : bloc.interventionDetail.interventionDetail
+                                          .interventionAddress.streetNumber +
+                                      " " +
+                                      bloc.interventionDetail.interventionDetail
+                                          .interventionAddress.streetName ==
+                                  null
+                              ? ""
+                              : bloc.interventionDetail.interventionDetail
+                                  .interventionAddress.streetName),
+                  style: AppStyles.body,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2)),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 25),
             child: Text(
-                bloc.interventionDetail.interventionDetail.invoicingAddress
-                            .streetNumber ==
+                bloc.interventionDetail.interventionDetail.invoicingAddress !=
                         null
-                    ? ""
-                    : bloc.interventionDetail.interventionDetail
-                                    .invoicingAddress.city.postcode +
-                                " " +
-                                bloc.interventionDetail.interventionDetail
-                                    .invoicingAddress.streetName ==
+                    ? (bloc.interventionDetail.interventionDetail
+                                .invoicingAddress.streetNumber ==
                             null
                         ? ""
                         : bloc.interventionDetail.interventionDetail
-                            .invoicingAddress.city.name,
+                                        .invoicingAddress.city.postcode +
+                                    " " +
+                                    bloc.interventionDetail.interventionDetail
+                                        .invoicingAddress.streetName ==
+                                null
+                            ? ""
+                            : bloc.interventionDetail.interventionDetail
+                                .invoicingAddress.city.name)
+                    : (bloc.interventionDetail.interventionDetail
+                                .interventionAddress.streetNumber ==
+                            null
+                        ? ""
+                        : bloc.interventionDetail.interventionDetail
+                                        .interventionAddress.city.postcode +
+                                    " " +
+                                    bloc.interventionDetail.interventionDetail
+                                        .interventionAddress.streetName ==
+                                null
+                            ? ""
+                            : bloc.interventionDetail.interventionDetail
+                                .interventionAddress.city.name),
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
@@ -460,9 +492,10 @@ class _ClientWidgetState extends State<ClientWidget> {
                   )),
             ),
             onPressed: () {
-              _callPhone(bloc.interventionDetail.interventionDetail.clients.commchannels
+              _callPhone(bloc
+                  .interventionDetail.interventionDetail.clients.commchannels
                   .firstWhere((element) =>
-              (element.preferred) && (element.type.name == "Mobile"))
+                      (element.preferred) && (element.type.name == "Phone"))
                   .name);
             },
             style: ElevatedButton.styleFrom(
@@ -498,9 +531,10 @@ class _ClientWidgetState extends State<ClientWidget> {
               ),
             ),
             onPressed: () {
-              _sendSMS(bloc.interventionDetail.interventionDetail.clients.commchannels
+              _sendSMS(bloc
+                  .interventionDetail.interventionDetail.clients.commchannels
                   .firstWhere((element) =>
-              (element.preferred) && (element.type.name == "Mobile"))
+                      (element.preferred) && (element.type.name == "Phone"))
                   .name);
             },
             style: ElevatedButton.styleFrom(

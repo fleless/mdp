@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -38,7 +39,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
       loading = true;
     });
     _showInterventionResponse =
-        await bloc.showIntervention("73467dae-df59-11eb-a612-0ace6068ba3f");
+        await bloc.showIntervention(Endpoints.interventions_uuid);
     setState(() {
       loading = false;
     });
@@ -493,9 +494,9 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
       Modular.to.popAndPushNamed(Routes.detailCommande);
     } else {
       Fluttertoast.showToast(
-          msg: "Compétition introuvable",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+        msg: "Compétition introuvable",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
       );
       //TODO: remove when release mode
       Modular.to.popAndPushNamed(Routes.detailCommande);
@@ -588,7 +589,8 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
             color: AppColors.md_gray,
           ),
           child: Text(
-              _showInterventionResponse.intervention.indication == ""
+              ((_showInterventionResponse.intervention.indication == null) ||
+                      (_showInterventionResponse.intervention.indication == ""))
                   ? "Aucun commentaire."
                   : _showInterventionResponse.intervention.indication,
               style: AppStyles.textNormal,

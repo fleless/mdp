@@ -12,6 +12,7 @@ import 'package:mdp/models/meeting.dart';
 import 'package:mdp/models/responses/user_appointments_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/widgets/gradients/dark_gradient.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
@@ -19,13 +20,17 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CalendrierPriseRdvWidget extends StatefulWidget {
+  ListVisitData rdv = ListVisitData();
+
+  CalendrierPriseRdvWidget(this.rdv);
+
   @override
   State<StatefulWidget> createState() => _CalendrierPriseRdvWidgetState();
 }
 
 class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final bloc = Modular.get<InterventionBloc>();
+  final bloc = Modular.get<InterventionsBloc>();
   final _priseRdvBloc = Modular.get<PriseRdvBloc>();
   final List<Meeting> meetings = <Meeting>[];
   CalendarController _controller;
@@ -51,11 +56,10 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
 
   _convertAppointmentsToMeetings() {
     DateFormat format = new DateFormat("dd-MM-yyyy HH:mm");
-    DateFormat formatt = new DateFormat("dd-MM-yyyy  HH:mm");
     _userAppointmentsResponse.listVisitData.forEach((element) {
       setState(() {
         meetings.add(Meeting(element.title, format.parse(element.startDate),
-            formatt.parse(element.endDate), AppColors.md_tertiary, false));
+            format.parse(element.endDate), AppColors.md_tertiary, false));
       });
     });
   }
@@ -243,7 +247,11 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
           ),
           GestureDetector(
             onTap: () {
-              Modular.to.pushNamed(Routes.ajouterRDV);
+              widget.rdv.id == null
+                  ? Modular.to.pushNamed(Routes.ajouterRDV)
+                  : Modular.to.pushNamed(Routes.modifierRdv, arguments: {
+                      'rdv': _priseRdvBloc.userOrderAppointmentsResponse.first
+                    });
             },
             child: Column(
               children: [
@@ -253,7 +261,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                   size: 25,
                 ),
                 SizedBox(height: 3),
-                Text("Ajouter",
+                Text(widget.rdv.id == null ? "Ajouter" : "Modifier",
                     style: AppStyles.miniCap,
                     maxLines: 1,
                     overflow: TextOverflow.clip)
@@ -363,7 +371,11 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
             )),
       ),
       onPressed: () {
-        _callPhone("0648635422");
+        _callPhone(bloc
+            .interventionDetail.interventionDetail.clients.commchannels
+            .firstWhere((element) =>
+                (element.preferred) && (element.type.name == "Phone"))
+            .name);
       },
       style: ElevatedButton.styleFrom(
           elevation: 5,

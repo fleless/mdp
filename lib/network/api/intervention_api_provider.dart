@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
+import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
@@ -13,6 +14,8 @@ class InterventionApiProvider {
   final String acceptEndPoint = Endpoints.URL + "competition/accept";
   final String getInterventionDetailEndPoint =
       Endpoints.CORE_URL + "order-detail/";
+  final String modifierCoordClientEndPoint = Endpoints.URL_PERSON + "/client/";
+
   Dio _dio;
 
   InterventionApiProvider() {
@@ -56,11 +59,11 @@ class InterventionApiProvider {
       String idIntervention) async {
     try {
       Response response =
-      await _dio.get(getInterventionDetailEndPoint + idIntervention,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          await _dio.get(getInterventionDetailEndPoint + idIntervention,
+              options: Options(responseType: ResponseType.json, headers: {
+                'Content-type': 'application/json',
+                'Accept': 'application/json',
+              }));
       return InterventionDetailResponse.fromJson(response.data);
     } on DioError catch (e) {
       return InterventionDetailResponse();
@@ -111,6 +114,36 @@ class InterventionApiProvider {
       return response.statusCode;
     } on DioError catch (e) {
       return 500;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<ResultMessageResponse> modifCoordClient(
+      String civility,
+      String firstname,
+      String lastname,
+      String phonenumber,
+      String mail,
+      String uuidClient) async {
+    try {
+      var params = {
+        "civility": civility,
+        "firstname": firstname,
+        "lastname": lastname,
+        "phononumber": phonenumber,
+        "mail": mail
+      };
+      Response response = await _dio.put(
+          modifierCoordClientEndPoint + uuidClient + "/update-info",
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return ResultMessageResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return ResultMessageResponse(result: "KO", message: "erreur");
     } catch (e) {
       throw e;
     }

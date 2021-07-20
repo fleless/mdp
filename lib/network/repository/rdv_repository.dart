@@ -9,7 +9,8 @@ class RdvRepository {
     return _apiProvider.getUserAppointments(idUser);
   }
 
-  Future<UserAppointmentsResponse> getUserAppointmentsForSpecificOrder(String idUser, String orderId) {
+  Future<UserAppointmentsResponse> getUserAppointmentsForSpecificOrder(
+      String idUser, String orderId) {
     return _apiProvider.getUserAppointmentsForSpecificOrder(idUser, orderId);
   }
 
@@ -22,5 +23,11 @@ class RdvRepository {
       String endDate) {
     return _apiProvider.addFirstAppointment(
         title, comment, orderId, subContractorId, startDate, endDate);
+  }
+
+  Future<AddAppointmentResponse> updateFirstAppointment(
+      String title, String comment, String startDate, String endDate, String idRdv) {
+    return _apiProvider.updateFirstAppointment(
+        title, comment, startDate, endDate, idRdv);
   }
 }

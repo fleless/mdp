@@ -1,4 +1,5 @@
 import 'package:mdp/models/responses/intervention_detail_response.dart';
+import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:mdp/network/api/intervention_api_provider.dart';
 
@@ -24,5 +25,16 @@ class InterventionRepository {
   Future<InterventionDetailResponse> getInterventionDetail(
       String idIntervention) {
     return _apiProvider.getInterventionDetail(idIntervention);
+  }
+
+  Future<ResultMessageResponse> modifCoordClient(
+      String civility,
+      String firstname,
+      String lastname,
+      String phonenumber,
+      String mail,
+      String uuidClient) async {
+    return _apiProvider.modifCoordClient(
+        civility, firstname, lastname, phonenumber, mail, uuidClient);
   }
 }

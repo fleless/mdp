@@ -205,7 +205,11 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
               ),
             ),
             onPressed: () {
-              Modular.to.pushNamed(Routes.calendrierPriseRDV);
+              Modular.to.pushNamed(Routes.calendrierPriseRDV, arguments: {
+                'rdv': _rdvBloc.userOrderAppointmentsResponse.length > 0
+                    ? _rdvBloc.userOrderAppointmentsResponse.first
+                    : ListVisitData()
+              });
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,

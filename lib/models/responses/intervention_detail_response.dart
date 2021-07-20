@@ -414,15 +414,17 @@ class Country {
 
 class Clients {
   num id;
+  String uuid;
+  String nameOld;
   String civility;
   String firstname;
   String lastname;
-  String nameOld;
   List<Commchannels> commchannels;
   List<Addresses> addresses;
 
   Clients(
       {this.id,
+        this.uuid,
       this.civility,
       this.firstname,
       this.lastname,
@@ -432,6 +434,7 @@ class Clients {
 
   Clients.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    uuid = json['uuid'];
     civility = json['civility'];
     firstname = json['firstname'];
     lastname = json['lastname'];
@@ -453,6 +456,7 @@ class Clients {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['uuid'] = this.uuid;
     data['civility'] = this.civility;
     data['firstname'] = this.firstname;
     data['lastname'] = this.lastname;

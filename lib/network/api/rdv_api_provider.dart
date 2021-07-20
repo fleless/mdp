@@ -9,6 +9,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class RdvApiProvider {
   final String getUserAppointmentsURL = Endpoints.CORE_URL + "visits";
   final String addAppointmentEndPoint = Endpoints.CORE_URL + "visits";
+  final String updateAppointmentEndPoint = Endpoints.CORE_URL + "visits/";
 
   Dio _dio;
 
@@ -89,6 +90,29 @@ class RdvApiProvider {
     };
     try {
       Response response = await _dio.post(addAppointmentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return AddAppointmentResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return AddAppointmentResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<AddAppointmentResponse> updateFirstAppointment(
+      String title, String comment, String startDate, String endDate, String idRdv) async {
+    var params = {
+      "title": title,
+      "comment": comment,
+      "start_date": startDate,
+      "end_date": endDate
+    };
+    try {
+      Response response = await _dio.put(updateAppointmentEndPoint+idRdv,
           options: Options(responseType: ResponseType.json, headers: {
             'Content-type': 'application/json',
             'Accept': 'application/json',

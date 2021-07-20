@@ -9,15 +9,20 @@ import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/add_appointment_response.dart';
+import 'package:mdp/models/responses/user_appointments_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 
-class AjouterRDVScreen extends StatefulWidget {
+class ModifierRdvScreen extends StatefulWidget {
+  ListVisitData rdv = ListVisitData();
+
+  ModifierRdvScreen(this.rdv);
+
   @override
-  State<StatefulWidget> createState() => _AjouterRDVScreenState();
+  State<StatefulWidget> createState() => _ModifierRdvScreenState();
 }
 
-class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
+class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _commentaireController = TextEditingController();
   final bloc = Modular.get<InterventionsBloc>();
@@ -27,24 +32,24 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
   TimeOfDay _startTime;
   TimeOfDay _endTime;
   bool _loading = false;
-  String title = "";
   bool _error = false;
 
   @override
   Future<void> initState() {
     _intiDates();
-    title =
-        bloc.interventionDetail.interventionDetail.details.first.ordercase.name;
     super.initState();
   }
 
   _intiDates() {
+    DateFormat format = new DateFormat("dd-MM-yyyy HH:mm");
+
     setState(() {
-      _startDate = DateTime.now();
-      _endDate = DateTime.now();
-      _startTime = TimeOfDay.now();
-      _endTime =
-          TimeOfDay(hour: _startTime.hour + 1, minute: _startTime.minute);
+      DateTime _start = format.parse(widget.rdv.startDate);
+      DateTime _end = format.parse(widget.rdv.endDate);
+      _startDate = _start;
+      _endDate = _end;
+      _startTime = TimeOfDay(hour: _start.hour, minute: _start.minute);
+      _endTime = TimeOfDay(hour: _end.hour, minute: _end.minute);
     });
   }
 
@@ -95,7 +100,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
         children: [
           Center(
             child: Text(
-              "Nouvelle Intervention",
+              "Modifier date intervention",
               style: AppStyles.header1WhiteBold,
             ),
           ),
@@ -130,7 +135,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             ),
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
-          child: Text(title,
+          child: Text(widget.rdv.title,
               style: AppStyles.bodyBold, overflow: TextOverflow.ellipsis),
         ),
         SizedBox(height: 20),
@@ -401,7 +406,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
                       child: CircularProgressIndicator(color: AppColors.white),
                     )
                   : Text(
-                      "AJOUTER",
+                      "MODIFIER",
                       style: AppStyles.smallTitleWhite,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -569,13 +574,12 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
     DateTime _end = DateTime(_endDate.year, _endDate.month, _endDate.day,
         _endTime.hour, _endTime.minute);
     if (_start.isBefore(_end)) {
-      AddAppointmentResponse response = await _rdvBloc.addAppointment(
-          title,
+      AddAppointmentResponse response = await _rdvBloc.updateFirstAppointment(
+          widget.rdv.title,
           _commentaireController.text,
-          bloc.interventionDetail.interventionDetail.id,
-          Endpoints.subcontractor_id,
           DateFormat('yyyy-MM-dd HH:mm:ss').format(_start),
-          DateFormat('yyyy-MM-dd HH:mm:ss').format(_end));
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(_end),
+          widget.rdv.id.toString());
       if (response != null) {
         setState(() {
           _loading = false;

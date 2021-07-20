@@ -37,6 +37,13 @@ class PriseRdvBloc extends Disposable {
     return response;
   }
 
+  Future<AddAppointmentResponse> updateFirstAppointment(String title,
+      String comment, String startDate, String endDate, String idRdv) async {
+    AddAppointmentResponse response = await _rdvRepository
+        .updateFirstAppointment(title, comment, startDate, endDate, idRdv);
+    return response;
+  }
+
   dispose() {
     controller.close();
   }

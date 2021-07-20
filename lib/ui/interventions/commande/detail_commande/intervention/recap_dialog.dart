@@ -146,7 +146,10 @@ class _RecapDialogState extends State<RecapDialog> {
             color: AppColors.md_gray,
           ),
           child: Text(
-              bloc.interventionDetail.interventionDetail.indication == ""
+              ((bloc.interventionDetail.interventionDetail.indication ==
+                          null) ||
+                      (bloc.interventionDetail.interventionDetail.indication ==
+                          ""))
                   ? "Aucun commentaire."
                   : bloc.interventionDetail.interventionDetail.indication,
               style: AppStyles.textNormal,
