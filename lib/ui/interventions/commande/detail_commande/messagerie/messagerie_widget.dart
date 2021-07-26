@@ -5,7 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/message.dart';
+import 'package:mdp/models/responses/messagerie_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/send_message_dialog.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 
 import 'messagerie_bloc.dart';
 
@@ -17,6 +19,7 @@ class MessagerieWidget extends StatefulWidget {
 class _MessagerieWidgetState extends State<MessagerieWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<MessagerieBloc>();
+  final intervention_bloc = Modular.get<InterventionsBloc>();
 
   // when we add new message we use this boolean to load a loader until message approved in database
   bool messageReadyToAdd = false;
@@ -25,7 +28,7 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
   void initState() {
     super.initState();
     bloc.initBloc();
-    bloc.getMessages();
+    _loadMessages();
     bloc.addingMessage.stream.listen((event) {
       if (mounted) {
         setState(() {
@@ -33,6 +36,11 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
         });
       }
     });
+  }
+
+  _loadMessages() async {
+    await bloc.getMessages(
+        intervention_bloc.interventionDetail.interventionDetail.id.toString());
   }
 
   @override
@@ -77,7 +85,7 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
         });
   }
 
-  Widget _buildMessageBloc(int index, Message message) {
+  Widget _buildMessageBloc(int index, ListOrderMessage message) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(20),
@@ -89,7 +97,7 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                message.from,
+                message.user,
                 style: AppStyles.header2DarkBlue,
               ),
               RichText(
@@ -103,7 +111,7 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
                           size: 16, color: AppColors.md_text_light),
                     ),
                     TextSpan(
-                        text: "  "+message.date,
+                        text: "  " + message.created,
                         style: AppStyles.smallGray),
                   ],
                 ),
@@ -111,7 +119,11 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
             ],
           ),
           SizedBox(height: 12),
-          Text(message.description, style: AppStyles.textNormal, textAlign: TextAlign.left,),
+          Text(
+            message.body,
+            style: AppStyles.textNormal,
+            textAlign: TextAlign.left,
+          ),
         ],
       ),
     );
@@ -206,35 +218,34 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
               ),
               SizedBox(width: 10),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Besoin d'assistance ? \nContactez le Service Client de MesDépanneurs.fr",
-                      textAlign: TextAlign.start,
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppStyles.bodyBold,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "Tél : 01 39 48 74 36",
-                      textAlign: TextAlign.start,
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppStyles.largeTextBoldDarkBlue,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      "Tous les jours 8h30 - 19h30",
-                      textAlign: TextAlign.start,
-                      maxLines: 5,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppStyles.body,
-                    ),
-                  ],
-                )
-              ),
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Besoin d'assistance ? \nContactez le Service Client de MesDépanneurs.fr",
+                    textAlign: TextAlign.start,
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.bodyBold,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Tél : 01 39 48 74 36",
+                    textAlign: TextAlign.start,
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.largeTextBoldDarkBlue,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Tous les jours 8h30 - 19h30",
+                    textAlign: TextAlign.start,
+                    maxLines: 5,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.body,
+                  ),
+                ],
+              )),
             ],
           ),
         ],

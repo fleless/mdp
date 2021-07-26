@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/routes.dart';
+import 'package:mdp/ui/calendar/calendar_bloc.dart';
+import 'package:mdp/ui/calendar/calendar_screen.dart';
 import 'package:mdp/ui/home/home_bloc.dart';
 import 'package:mdp/ui/home/home_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/detail_commande_screen.dart';
@@ -10,6 +12,8 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/ajouter_rdv.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/calendrier_prise_rdv_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/modifier_rdv.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/creation_designation_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/redaction_devis_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
@@ -18,6 +22,7 @@ import 'package:mdp/ui/login/login_bloc.dart';
 import 'package:mdp/ui/login/login_screen.dart';
 import 'package:mdp/ui/notifications/notifications_screen.dart';
 import 'package:mdp/ui/profil/profil_screen.dart';
+import 'package:mdp/ui/profil/profile_bloc.dart';
 import 'package:mdp/ui/splash/splash_screen.dart';
 import 'package:mdp/utils/user_location.dart';
 import 'package:mdp/widgets/photo_view_screen.dart';
@@ -28,12 +33,15 @@ class AppModule extends MainModule {
   @override
   List<Bind> get binds => [
         Bind((_) => LoginBloc()),
+        Bind((_) => ProfileBloc()),
         Bind((_) => HomeBloc()),
+        Bind((_) => CalendarBloc()),
         Bind((_) => MessagerieBloc()),
         Bind((_) => InterventionBloc()),
         Bind((_) => UserLocation()),
         Bind((_) => InterventionsBloc()),
         Bind((_) => PriseRdvBloc()),
+        Bind((_) => RedactionDevisBloc()),
       ];
 
   // Provide all the routes for your module
@@ -58,12 +66,15 @@ class AppModule extends MainModule {
             ModularRouter(Routes.login,
                 child: (_, args) => LoginScreenWidget()),
             ModularRouter(Routes.home, child: (_, args) => HomeScreen()),
+            ModularRouter(Routes.calendar,
+                child: (_, args) => CalendarScreen()),
             ModularRouter(Routes.splash,
                 child: (_, args) => SplashScreenWidget()),
             ModularRouter(Routes.mesInterventions,
                 child: (_, args) => InterventionsScreen()),
             ModularRouter(Routes.photoView,
-                child: (_, args) => PhotoViewScreenWidget(args.data['image'])),
+                child: (_, args) => PhotoViewScreenWidget(
+                    args.data['image'], args.data['path'])),
             ModularRouter(Routes.detailCommande,
                 child: (_, args) => DetailCommandeScreen()),
             ModularRouter(Routes.calendrierPriseRDV,
@@ -73,6 +84,8 @@ class AppModule extends MainModule {
             ModularRouter(Routes.profil, child: (_, args) => ProfilScreen()),
             ModularRouter(Routes.notifications,
                 child: (_, args) => NotificationsScreen()),
+            ModularRouter(Routes.creationDesignation,
+                child: (_, args) => CreationDesignationScreen()),
           ],
         ),
       ];

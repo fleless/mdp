@@ -246,6 +246,9 @@ class Partner {
 
 class InterventionAddress {
   num id;
+  String uuid;
+  String addressFirstname;
+  String addressLastname;
   String streetNumber;
   String streetName;
   num longitude;
@@ -255,6 +258,9 @@ class InterventionAddress {
 
   InterventionAddress(
       {this.id,
+      this.uuid,
+      this.addressFirstname,
+      this.addressLastname,
       this.streetNumber,
       this.streetName,
       this.longitude,
@@ -264,6 +270,9 @@ class InterventionAddress {
 
   InterventionAddress.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    uuid = json['uuid'];
+    addressFirstname = json['addressFirstname'];
+    addressLastname = json['addressLastname'];
     streetNumber = json['streetNumber'];
     streetName = json['streetName'];
     longitude = json['longitude'];
@@ -275,6 +284,9 @@ class InterventionAddress {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['uuid'] = this.uuid;
+    data['addressFirstname'] = this.addressFirstname;
+    data['addressLastname'] = this.addressLastname;
     data['streetNumber'] = this.streetNumber;
     data['streetName'] = this.streetName;
     data['longitude'] = this.longitude;
@@ -424,7 +436,7 @@ class Clients {
 
   Clients(
       {this.id,
-        this.uuid,
+      this.uuid,
       this.civility,
       this.firstname,
       this.lastname,

@@ -7,6 +7,7 @@ import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
 
 class RedactionDevisWidget extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _RedactionDevisWidgetState extends State<RedactionDevisWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionBloc>();
   final _rdvBloc = Modular.get<PriseRdvBloc>();
+  final _RedactionDevisBloc = Modular.get<RedactionDevisBloc>();
   bool opened = false;
 
   @override
@@ -126,7 +128,7 @@ class _RedactionDevisWidgetState extends State<RedactionDevisWidget> {
               ),
             ),
             Container(
-              height: 10,
+              height: 30,
               child: IconButton(
                 onPressed: () {
                   _rdvBloc.userOrderAppointmentsResponse.length > 0
@@ -196,7 +198,7 @@ class _RedactionDevisWidgetState extends State<RedactionDevisWidget> {
                 primary: Colors.transparent,
                 padding: EdgeInsets.zero,
                 textStyle:
-                TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
           ),
           SizedBox(height: 10),
         ],

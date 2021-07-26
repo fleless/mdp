@@ -182,7 +182,8 @@ class _RecapDialogState extends State<RecapDialog> {
                     onTap: () => {
                       Modular.to.pushNamed(Routes.photoView, arguments: {
                         'image': bloc.interventionDetail.interventionDetail
-                            .clientPhotos[index]
+                            .clientPhotos[index],
+                        'path': ""
                       })
                     },
                     child: Card(

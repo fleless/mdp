@@ -75,10 +75,10 @@ class _BottomNavbarState extends State<BottomNavbar> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildCalendarIcon(widget.route == Routes.home),
+                _buildCalendarIcon(widget.route == Routes.calendar),
                 Text(
                   'Calendrier',
-                  style: widget.route == Routes.home
+                  style: widget.route == Routes.calendar
                       ? AppStyles.navBarTitle
                       : AppStyles.navBarTitle,
                   textAlign: TextAlign.center,
@@ -138,7 +138,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
             size: iconSize,
           ),
         ),
-        onPressed: () => _navigateTo(Routes.home),
+        onPressed: () => _navigateTo(Routes.calendar),
       );
 
   Widget _buildNotificationsIcon(bool selected) => IconButton(

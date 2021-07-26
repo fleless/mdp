@@ -1,3 +1,4 @@
+import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -36,5 +37,45 @@ class InterventionRepository {
       String uuidClient) async {
     return _apiProvider.modifCoordClient(
         civility, firstname, lastname, phonenumber, mail, uuidClient);
+  }
+
+  Future<AddAdressFacturationResponse> addAddressFacturation(
+      String order,
+      String adressFirstname,
+      String adressLastName,
+      String streetNumber,
+      String streetName,
+      String additionalAddress,
+      String city,
+      String postcode) async {
+    return _apiProvider.addAddressFacturation(
+        order,
+        adressFirstname,
+        adressLastName,
+        streetNumber,
+        streetName,
+        additionalAddress,
+        city,
+        postcode);
+  }
+
+  Future<AddAdressFacturationResponse> modifierAddressFacturation(
+      String order,
+      String adressFirstname,
+      String adressLastName,
+      String streetNumber,
+      String streetName,
+      String additionalAddress,
+      String city,
+      String postcode) async {
+    return _apiProvider.modifierAddressFacturation(
+        order,
+        adressFirstname,
+        adressLastName,
+        streetNumber,
+        streetName,
+        additionalAddress,
+        city,
+        postcode);
   }
 }

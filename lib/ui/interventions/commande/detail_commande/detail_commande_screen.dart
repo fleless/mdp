@@ -39,6 +39,8 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
     });
     //TODO: change intervention id
     await bloc.getInterventionDetail("73467dae-df59-11eb-a612-0ace6068ba3f");
+    await bloc.getDesignationsName();
+    await bloc.getMaterials();
     setState(() {
       _loading = false;
     });

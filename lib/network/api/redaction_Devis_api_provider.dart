@@ -2,18 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mdp/constants/endpoints.dart';
-import 'package:mdp/models/responses/login_response.dart';
-import 'package:mdp/models/responses/profile_response.dart';
+import 'package:mdp/models/responses/get_designations_name.dart';
+import 'package:mdp/models/responses/get_materials_response.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-class LoginApiProvider {
-  final String getTokenEndPoint = Endpoints.AUTH_URL + "token";
-  final String getProfilEndPoint =
-      Endpoints.AUTH_URL + "subcontractor/profile/";
+class RedactionDevisApiProvider {
+  final String getDesignationsNameURL = Endpoints.CORE_URL + "quote/reference";
+  final String getMaterialsEndPoint =
+      Endpoints.CORE_URL + "workload?types[]=MATERIAL";
 
   Dio _dio;
 
-  LoginApiProvider() {
+  RedactionDevisApiProvider() {
     if (_dio == null) {
       BaseOptions options = new BaseOptions(
           receiveDataWhenStatusError: true,
@@ -24,50 +24,40 @@ class LoginApiProvider {
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
           requestHeader: true,
-          requestBody: false,
+          requestBody: true,
           responseBody: true,
-          responseHeader: false,
+          responseHeader: true,
           error: true,
           compact: true,
           maxWidth: 90));
     }
   }
 
-  Future<LoginResponse> getToken(String username, String password) async {
+  Future<GetDesignationsNameResponse> getDesignationsName() async {
     try {
-      var params = {
-        "username": username,
-        "password": password,
-        "host": "ios-app"
-      };
-      const Map<String, String> header = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
-      };
-      Response response = await _dio.post(getTokenEndPoint,
+      Response response = await _dio.get(getDesignationsNameURL,
           options: Options(responseType: ResponseType.json, headers: {
             'Content-type': 'application/json',
             'Accept': 'application/json',
-          }),
-          data: jsonEncode(params));
-      return LoginResponse.fromJson(response.data);
+          }));
+      return GetDesignationsNameResponse.fromJson(response.data);
     } on DioError catch (e) {
-      return LoginResponse();
+      return GetDesignationsNameResponse();
     } catch (e) {
       throw e;
     }
   }
 
-  Future<ProfileResponse> getProfile(String uuidUser) async {
+  Future<GetMaterialResponse> getMaterials() async {
     try {
-      Response response = await _dio.get(getProfilEndPoint + uuidUser,
+      Response response = await _dio.get(getMaterialsEndPoint,
           options: Options(responseType: ResponseType.json, headers: {
             'Content-type': 'application/json',
             'Accept': 'application/json',
           }));
-      return ProfileResponse.fromJson(response.data);
+      return GetMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
-      return ProfileResponse();
+      return GetMaterialResponse();
     } catch (e) {
       throw e;
     }

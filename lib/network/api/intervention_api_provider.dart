@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mdp/constants/endpoints.dart';
+import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -15,6 +16,10 @@ class InterventionApiProvider {
   final String getInterventionDetailEndPoint =
       Endpoints.CORE_URL + "order-detail/";
   final String modifierCoordClientEndPoint = Endpoints.URL_PERSON + "/client/";
+  final String ajouterAdresseFacturationEndPoint =
+      Endpoints.URL_PERSON + "/address/create-invoicing-address";
+  final String modifierAdresseFacturationEndPoint =
+      Endpoints.URL_PERSON + "/address/";
 
   Dio _dio;
 
@@ -22,8 +27,8 @@ class InterventionApiProvider {
     if (_dio == null) {
       BaseOptions options = new BaseOptions(
           receiveDataWhenStatusError: true,
-          connectTimeout: 3 * 1000, // 5 seconds
-          receiveTimeout: 3 * 1000 // 5 seconds
+          connectTimeout: 5 * 1000, // 5 seconds
+          receiveTimeout: 5 * 1000 // 5 seconds
           );
 
       _dio = new Dio(options);
@@ -144,6 +149,76 @@ class InterventionApiProvider {
       return ResultMessageResponse.fromJson(response.data);
     } on DioError catch (e) {
       return ResultMessageResponse(result: "KO", message: "erreur");
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<AddAdressFacturationResponse> addAddressFacturation(
+      String order,
+      String adressFirstname,
+      String adressLastName,
+      String streetNumber,
+      String streetName,
+      String additionalAddress,
+      String city,
+      String postcode) async {
+    try {
+      var params = {
+        "order": order,
+        "addressFirstname": adressFirstname,
+        "addressLastname": adressLastName,
+        "streetNumber": streetNumber,
+        "streetName": streetName,
+        "additionalAddress": additionalAddress,
+        "city": city,
+        "postcode": postcode
+      };
+      Response response = await _dio.post(ajouterAdresseFacturationEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return AddAdressFacturationResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return AddAdressFacturationResponse(result: "KO", message: "erreur");
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<AddAdressFacturationResponse> modifierAddressFacturation(
+      String order,
+      String adressFirstname,
+      String adressLastName,
+      String streetNumber,
+      String streetName,
+      String additionalAddress,
+      String city,
+      String postcode) async {
+    try {
+      var params = {
+        "addressFirstname": adressFirstname,
+        "addressLastname": adressLastName,
+        "streetNumber": streetNumber,
+        "streetName": streetName,
+        "additionalAddress": additionalAddress,
+        "city": city,
+        "postcode": postcode
+      };
+      Response response = await _dio.put(
+          modifierAdresseFacturationEndPoint +
+              order +
+              "/update-invoicing-address",
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return AddAdressFacturationResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return AddAdressFacturationResponse(result: "KO", message: "erreur");
     } catch (e) {
       throw e;
     }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
@@ -61,6 +62,16 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
           padding: EdgeInsets.all(AppConstants.default_padding),
           child: _buildBody(),
         ),
+        Padding(
+          padding: EdgeInsets.all(AppConstants.default_padding),
+          child: _buildSignButton(),
+        ),
+        Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: AppConstants.default_padding),
+          child: _buildSaveAndContinueAfterButton(),
+        ),
+        SizedBox(height: 30),
       ],
     );
   }
@@ -173,7 +184,9 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
               ),
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Modular.to.pushNamed(Routes.creationDesignation);
+          },
           style: ElevatedButton.styleFrom(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -354,6 +367,76 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSignButton() {
+    return ElevatedButton(
+      child: Ink(
+        decoration: BoxDecoration(
+          color: AppColors.inactive,
+          borderRadius: BorderRadius.all(
+            Radius.circular(12),
+          ),
+          border: Border.all(color: AppColors.inactive),
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          width: double.infinity,
+          height: 55,
+          child: Text(
+            "SIGNER ET GENERER LE DEVIS",
+            style: AppStyles.buttonInactiveText,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+      onPressed: () {
+        Modular.to.pushNamed(Routes.redactionDevis);
+      },
+      style: ElevatedButton.styleFrom(
+          elevation: 5,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          onPrimary: AppColors.white,
+          primary: Colors.transparent,
+          padding: EdgeInsets.zero,
+          textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _buildSaveAndContinueAfterButton() {
+    return ElevatedButton(
+      child: Ink(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.all(
+            Radius.circular(12),
+          ),
+          border: Border.all(color: AppColors.md_dark_blue),
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          width: double.infinity,
+          height: 55,
+          child: Text(
+            "ENREGISTRER ET CONTINUER PLUS TARD",
+            style: AppStyles.buttonTextDarkBlue,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+          elevation: 5,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          onPrimary: AppColors.white,
+          primary: Colors.transparent,
+          padding: EdgeInsets.zero,
+          textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     );
   }
 

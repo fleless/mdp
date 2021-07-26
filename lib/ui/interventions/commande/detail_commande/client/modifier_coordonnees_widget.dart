@@ -8,6 +8,7 @@ import 'package:group_radio_button/group_radio_button.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
+import 'package:collection/collection.dart';
 
 import '../../../interventions_bloc.dart';
 
@@ -33,6 +34,10 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
   }
 
   _initValues() {
+    dynamic email = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhereOrNull(
+            (element) => (element.preferred) && (element.type.name == "Email"));
     _firstNameController.text =
         bloc.interventionDetail.interventionDetail.clients.firstname;
     _lastNameController.text =
@@ -42,7 +47,7 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
         .firstWhere(
             (element) => (element.preferred) && (element.type.name == "Phone"))
         .name;
-    _emailController.text = bloc
+    email == null ? _emailController.text ="" : _emailController.text = bloc
         .interventionDetail.interventionDetail.clients.commchannels
         .firstWhere(
             (element) => (element.preferred) && (element.type.name == "Email"))

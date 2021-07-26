@@ -65,6 +65,13 @@ class AppStyles {
     fontSize: 19,
   );
 
+  static const uniformRoundedHeader = TextStyle(
+    fontFamily: 'UniformRounded',
+    color: AppColors.default_black,
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+  );
+
   static const header3 = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.default_black,
@@ -97,7 +104,7 @@ class AppStyles {
     fontFamily: 'roboto',
     color: AppColors.md_text_light,
     fontWeight: FontWeight.w400,
-    fontSize: 15,
+    fontSize: 14,
   );
 
   static const buttonTextWhite = TextStyle(

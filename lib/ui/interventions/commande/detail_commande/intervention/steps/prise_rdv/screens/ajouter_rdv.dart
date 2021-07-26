@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -5,12 +8,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/add_appointment_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/popup_notifier.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
+import 'package:mdp/utils/date_formatter.dart';
 
 class AjouterRDVScreen extends StatefulWidget {
   @override
@@ -29,6 +35,13 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
   bool _loading = false;
   String title = "";
   bool _error = false;
+  DeviceCalendarPlugin _deviceCalendarPlugin;
+  List<Calendar> _calendars;
+  Calendar _selectedCalendar;
+
+  _AjouterRDVScreenState() {
+    _deviceCalendarPlugin = new DeviceCalendarPlugin();
+  }
 
   @override
   Future<void> initState() {
@@ -36,6 +49,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
     title =
         bloc.interventionDetail.interventionDetail.details.first.ordercase.name;
     super.initState();
+    _retrieveCalendars();
   }
 
   _intiDates() {
@@ -46,6 +60,27 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
       _endTime =
           TimeOfDay(hour: _startTime.hour + 1, minute: _startTime.minute);
     });
+  }
+
+  void _retrieveCalendars() async {
+    //Retrieve user's calendars from mobile device
+    //Request permissions first if they haven't been granted
+    try {
+      var permissionsGranted = await _deviceCalendarPlugin.hasPermissions();
+      if (permissionsGranted.isSuccess && !permissionsGranted.data) {
+        permissionsGranted = await _deviceCalendarPlugin.requestPermissions();
+        if (!permissionsGranted.isSuccess || !permissionsGranted.data) {
+          return;
+        }
+      }
+
+      final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
+      setState(() {
+        _calendars = calendarsResult?.data;
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -442,7 +477,9 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
               ),
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            _addToCalendar();
+          },
           style: ElevatedButton.styleFrom(
               elevation: 5,
               shape: RoundedRectangleBorder(
@@ -598,6 +635,73 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
       setState(() {
         _error = true;
         _loading = false;
+      });
+    }
+  }
+
+  _addToCalendar() async {
+    setState(() {
+      _error = false;
+    });
+    _selectedCalendar = _calendars[0];
+    FocusScope.of(context).requestFocus(new FocusNode());
+    DateTime _start = DateTime(_startDate.year, _startDate.month,
+        _startDate.day, _startTime.hour, _startTime.minute);
+    DateTime _end = DateTime(_endDate.year, _endDate.month, _endDate.day,
+        _endTime.hour, _endTime.minute);
+    if (_start.isBefore(_end)) {
+      final event = new Event(_selectedCalendar.id);
+      event.start = _start;
+      event.end = _end;
+      event.title = title;
+      event.description = bloc.interventionDetail.interventionDetail.code +
+          " pour le client " +
+          (bloc.interventionDetail.interventionDetail.clients.firstname ?? "") +
+          " " +
+          (bloc.interventionDetail.interventionDetail.clients.lastname ?? "");
+      final createEventResult =
+          await _deviceCalendarPlugin.createOrUpdateEvent(event);
+      if (createEventResult.isSuccess &&
+          (createEventResult.data?.isNotEmpty ?? false)) {
+        Timer timer =
+            Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
+          Modular.to.pop();
+        });
+        showDialog(
+            context: context,
+            builder: (context) {
+              return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return Dialog(
+                  backgroundColor: AppColors.md_light_gray,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: popUpNotifier(
+                      "Votre intervention a bien été ajouté à votre agenda à la date du " +
+                          DateFormatter.formatDateDMY(_startDate.toString()) +
+                          ".",
+                      AppImages.rdv,
+                      "FERMER"),
+                );
+              });
+            }).then((value) {
+          // dispose the timer in case something else has triggered the dismiss.
+          timer?.cancel();
+          timer = null;
+        });
+      } else {
+        if (createEventResult.isSuccess &&
+            (createEventResult.data?.isNotEmpty ?? false)) {
+          Fluttertoast.showToast(
+              msg: "Une erreur est survenu",
+              textColor: AppColors.white,
+              backgroundColor: AppColors.mdAlert);
+        }
+      }
+    } else {
+      setState(() {
+        _error = true;
       });
     }
   }

@@ -4,13 +4,17 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
+import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/login_response.dart';
+import 'package:mdp/models/responses/profile_response.dart';
 import 'package:mdp/ui/home/home_screen.dart';
+import 'package:mdp/ui/profil/profile_bloc.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:splashscreen/splashscreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilScreen extends StatefulWidget {
   @override
@@ -20,10 +24,24 @@ class ProfilScreen extends StatefulWidget {
 class _ProfilScreenState extends State<ProfilScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> formKey = new GlobalKey();
+  bool _loading = false;
+  final bloc = Modular.get<ProfileBloc>();
+  ProfileResponse profile;
 
   @override
   void initState() {
+    _loadData();
     super.initState();
+  }
+
+  _loadData() async {
+    setState(() {
+      _loading = true;
+    });
+    profile = await bloc.getProfile(Endpoints.subcontractor_id);
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -35,23 +53,28 @@ class _ProfilScreenState extends State<ProfilScreen> {
       //drawer: DrawerWidget(),
       body: SafeArea(
           child: Container(
-        child: Column(
-          children: [
-            Container(
-              height: 220,
-              decoration: BoxDecoration(
-                gradient: MdGradientLightt(),
+        child: _loading
+            ? Center(
+                child: CircularProgressIndicator(color: AppColors.md_dark_blue),
+              )
+            : Column(
+                children: [
+                  Container(
+                    height: 220,
+                    decoration: BoxDecoration(
+                      gradient: MdGradientLightt(),
+                    ),
+                    child: _buildTitle(),
+                  ),
+                  _buildContent(),
+                  Expanded(
+                    child: _buildButtons(),
+                  ),
+                  SizedBox(height: 15),
+                ],
               ),
-              child: _buildTitle(),
-            ),
-            _buildContent(),
-            Expanded(
-              child: _buildButtons(),
-            ),
-            SizedBox(height: 15),
-          ],
-        ),
-      )), //LoadingIndicator(loading: _bloc.loading),
+      )),
+      //LoadingIndicator(loading: _bloc.loading),
       //NetworkErrorMessages(error: _bloc.error),
       bottomNavigationBar: const BottomNavbar(route: Routes.home),
     );
@@ -81,7 +104,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
               SizedBox(height: 10),
               Flexible(
                   child: Text(
-                "Isabelle",
+                (profile.subcontractor.user.firstName ?? "") +
+                    " " +
+                    (profile.subcontractor.user.lastName ?? ""),
                 style: AppStyles.headerWhite,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -94,7 +119,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 text: TextSpan(
                   children: [
                     TextSpan(text: "Alias : ", style: AppStyles.bodyBoldWhite),
-                    TextSpan(text: "IsaSARL", style: AppStyles.bodyWhite),
+                    TextSpan(
+                        text: profile.subcontractor.company.name,
+                        style: AppStyles.bodyWhite),
                   ],
                 ),
               ),
@@ -106,7 +133,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 text: TextSpan(
                   children: [
                     TextSpan(text: "ID : ", style: AppStyles.bodyBoldWhite),
-                    TextSpan(text: "Isabelle", style: AppStyles.bodyWhite),
+                    TextSpan(
+                        text: profile.subcontractor.company.alias,
+                        style: AppStyles.bodyWhite),
                   ],
                 ),
               ),
@@ -140,7 +169,10 @@ class _ProfilScreenState extends State<ProfilScreen> {
               children: [
                 TextSpan(text: "Contact : ", style: AppStyles.bigSecondaryText),
                 TextSpan(
-                    text: "Nathanaelle", style: AppStyles.bodyDefaultBlack),
+                    text: profile.subcontractor.responsible.lastName ??
+                        "" + " " + profile.subcontractor.responsible.lastName ??
+                        "",
+                    style: AppStyles.bodyDefaultBlack),
               ],
             ),
           ),
@@ -153,7 +185,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
               children: [
                 TextSpan(text: "Mail : ", style: AppStyles.bigSecondaryText),
                 TextSpan(
-                    text: "Nath@mesdepanneurs.fr",
+                    text: profile.subcontractor.responsible.mail ?? "indéfini",
                     style: AppStyles.bodyDefaultBlack),
               ],
             ),
@@ -167,7 +199,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
               children: [
                 TextSpan(
                     text: "Téléphone : ", style: AppStyles.bigSecondaryText),
-                TextSpan(text: "0746680640", style: AppStyles.bodyDefaultBlack),
+                TextSpan(
+                    text: profile.subcontractor.responsible.phone ?? "indéfini",
+                    style: AppStyles.bodyDefaultBlack),
               ],
             ),
           ),
@@ -197,7 +231,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
                   width: double.infinity,
                   child: Text(
-                      "PLUS DE FONCTIONNALITÉS SUR ESPACE PRO.MESDÉPANNEURS.FR",
+                    "PLUS DE FONCTIONNALITÉS SUR ESPACE PRO.MESDÉPANNEURS.FR",
                     textAlign: TextAlign.center,
                     style: AppStyles.buttonTextWhite,
                     maxLines: 5,
@@ -205,7 +239,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                _launchURL("https://espacepro.mesdepanneurs.fr/");
+              },
               style: ElevatedButton.styleFrom(
                   elevation: 5,
                   shape: RoundedRectangleBorder(
@@ -253,4 +289,8 @@ class _ProfilScreenState extends State<ProfilScreen> {
       ),
     );
   }
+
+  void _launchURL(String _url) async => await canLaunch(_url)
+      ? await launch(_url)
+      : throw 'Could not launch $_url';
 }

@@ -10,6 +10,7 @@ import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/user_appointments_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
+import 'package:mdp/utils/date_formatter.dart';
 
 import '../../../../../interventions_bloc.dart';
 
@@ -167,10 +168,10 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
                 SizedBox(height: 10),
                 Text(
                   _rdvBloc.userOrderAppointmentsResponse.length > 0
-                      ? _formatSecondDate(_rdvBloc
+                      ? DateFormatter.formatSecondDate(_rdvBloc
                           .userOrderAppointmentsResponse.first.startDate)
-                      : _formatDate(bloc.interventionDetail.interventionDetail
-                          .preferredVisitDate.date),
+                      : DateFormatter.formatDate(bloc.interventionDetail
+                          .interventionDetail.preferredVisitDate.date),
                   style: AppStyles.header2,
                 ),
               ],
@@ -227,147 +228,5 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
         ],
       ),
     );
-  }
-
-  _formatSecondDate(String date) {
-    DateTime dateTime = new DateFormat("dd-MM-yyyy HH:mm").parse(date);
-    String day = DateFormat('EEEE').format(dateTime);
-    switch (day) {
-      case "Saturday":
-        day = "Samedi";
-        break;
-      case "Monday":
-        day = "Lundi";
-        break;
-      case "Thursday":
-        day = "Mardi";
-        break;
-      case "Wednesday":
-        day = "mercredi";
-        break;
-      case "Tuesday":
-        day = "Jeudi";
-        break;
-      case "Friday":
-        day = "Vendredi";
-        break;
-    }
-    day += " ";
-    day += dateTime.day.toString();
-    day += " ";
-    String month = "";
-    switch (dateTime.month) {
-      case 1:
-        month = "Janvier";
-        break;
-      case 2:
-        month = "Février";
-        break;
-      case 3:
-        month = "Mars";
-        break;
-      case 4:
-        month = "Avril";
-        break;
-      case 5:
-        month = "Mai";
-        break;
-      case 6:
-        month = "Juin";
-        break;
-      case 7:
-        month = "Juillet";
-        break;
-      case 8:
-        month = "Août";
-        break;
-      case 9:
-        month = "Septembre";
-        break;
-      case 10:
-        month = "Octobre";
-        break;
-      case 11:
-        month = "Novembre";
-        break;
-      case 12:
-        month = "Décembre";
-        break;
-    }
-    day += month;
-    day += " - ";
-    day += (DateFormat('HH:mm').format(dateTime)).replaceAll(":", "h");
-    return day;
-  }
-
-  _formatDate(String date) {
-    DateTime dateTime = DateTime.parse(date);
-    String day = DateFormat('EEEE').format(dateTime);
-    switch (day) {
-      case "Saturday":
-        day = "Samedi";
-        break;
-      case "Monday":
-        day = "Lundi";
-        break;
-      case "Thursday":
-        day = "Mardi";
-        break;
-      case "Wednesday":
-        day = "mercredi";
-        break;
-      case "Tuesday":
-        day = "Jeudi";
-        break;
-      case "Friday":
-        day = "Vendredi";
-        break;
-    }
-    day += " ";
-    day += dateTime.day.toString();
-    day += " ";
-    String month = "";
-    switch (dateTime.month) {
-      case 1:
-        month = "Janvier";
-        break;
-      case 2:
-        month = "Février";
-        break;
-      case 3:
-        month = "Mars";
-        break;
-      case 4:
-        month = "Avril";
-        break;
-      case 5:
-        month = "Mai";
-        break;
-      case 6:
-        month = "Juin";
-        break;
-      case 7:
-        month = "Juillet";
-        break;
-      case 8:
-        month = "Août";
-        break;
-      case 9:
-        month = "Septembre";
-        break;
-      case 10:
-        month = "Octobre";
-        break;
-      case 11:
-        month = "Novembre";
-        break;
-      case 12:
-        month = "Décembre";
-        break;
-    }
-    day += month;
-    day += " - ";
-    day += (DateFormat('HH:mm').format(dateTime)).replaceAll(":", "h");
-    return day;
   }
 }

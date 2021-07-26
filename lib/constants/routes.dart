@@ -11,6 +11,7 @@ class Routes {
   static const String login = '/login';
   static const String home = '/home';
   static const String splash = '/splash';
+  static const String calendar = '/calendar';
   static const String mesInterventions = '/interventions';
   static const String photoView = '/photoView';
   static const String detailCommande = '/detailCommande';
@@ -20,10 +21,12 @@ class Routes {
   static const String redactionDevis = '/redactionDevis';
   static const String profil = '/profil';
   static const String notifications = '/notifications';
+  static const String creationDesignation = '/creationDesignation';
 
   // Utility method used to build a dynamic route with params.
   // Example: Routes.buildRouteWithParams('/users/{id}, {'id': 1}); would generate '/users/1'
-  String buildRouteWithParams(final String route, final Map<String, dynamic> params) {
+  String buildRouteWithParams(
+      final String route, final Map<String, dynamic> params) {
     return interpolation.eval(route, params);
   }
 }

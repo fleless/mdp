@@ -413,7 +413,8 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                     onTap: () => {
                       Modular.to.pushNamed(Routes.photoView, arguments: {
                         'image': _showInterventionResponse
-                            .intervention.clientPhotos[index]
+                            .intervention.clientPhotos[index],
+                        'path': ""
                       })
                     },
                     child: Card(

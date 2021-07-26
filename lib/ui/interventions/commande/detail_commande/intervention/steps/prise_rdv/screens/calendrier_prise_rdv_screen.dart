@@ -145,7 +145,8 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
                   children: [
                     TextSpan(text: "n° ", style: AppStyles.header1White),
                     TextSpan(
-                        text: "FR-6DH3", style: AppStyles.header1WhiteBold),
+                        text: bloc.interventionDetail.interventionDetail.code,
+                        style: AppStyles.header1WhiteBold),
                   ],
                 ),
               ),

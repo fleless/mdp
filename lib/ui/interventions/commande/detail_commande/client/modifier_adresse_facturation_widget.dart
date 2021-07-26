@@ -1,37 +1,66 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
+import 'package:mdp/models/responses/adressResponse.dart';
+
+import '../../../interventions_bloc.dart';
 
 class ModifierAdresseFacturationWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _ModifierAdresseFacturationWidgetState();
+  State<StatefulWidget> createState() =>
+      _ModifierAdresseFacturationWidgetState();
 }
 
-class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFacturationWidget> {
+class _ModifierAdresseFacturationWidgetState
+    extends State<ModifierAdresseFacturationWidget> {
   GlobalKey<FormState> formKey = new GlobalKey();
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _adressController = TextEditingController();
   TextEditingController _complementAdresseController = TextEditingController();
   TextEditingController _zipController = TextEditingController();
+  TextEditingController _streetNumberController = TextEditingController();
   TextEditingController _communityController = TextEditingController();
+  final bloc = Modular.get<InterventionsBloc>();
+  bool loading = false;
+  List<AdressResponse> listeCommunites = <AdressResponse>[];
 
   @override
   void initState() {
-    _initValues();
+    bloc.interventionDetail.interventionDetail.invoicingAddress != null
+        ? _initValues()
+        : null;
     super.initState();
   }
 
-  _initValues(){
-    _firstNameController.text = "Marc";
-    _lastNameController.text = "DUPUIS";
-    _adressController.text = "53 Rue André Chemin";
-    _complementAdresseController.text = "Bat B";
-    _zipController.text = "78000";
-    _communityController.text = "Versailles";
+  _initValues() {
+    _firstNameController.text = bloc.interventionDetail.interventionDetail
+            .invoicingAddress.addressFirstname ??
+        "";
+    _lastNameController.text = bloc.interventionDetail.interventionDetail
+            .invoicingAddress.addressLastname ??
+        "";
+    _adressController.text = (bloc.interventionDetail.interventionDetail
+            .invoicingAddress.streetName ??
+        "");
+    _streetNumberController.text = bloc.interventionDetail.interventionDetail
+            .invoicingAddress.streetNumber ??
+        "";
+    _complementAdresseController.text = bloc.interventionDetail
+            .interventionDetail.invoicingAddress.streetNumber ??
+        "";
+    _zipController.text = (bloc.interventionDetail.interventionDetail
+            .invoicingAddress.city.postcode ??
+        "");
+    _communityController.text =
+        bloc.interventionDetail.interventionDetail.invoicingAddress.city.name ??
+            "";
   }
 
   @override
@@ -92,6 +121,8 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
               SizedBox(height: 10),
               _buildLastName(),
               SizedBox(height: 10),
+              _buildStreetNumber(),
+              SizedBox(height: 10),
               _buildAdress(),
               SizedBox(height: 10),
               _buildComplementAdress(),
@@ -130,14 +161,14 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
         ),
         contentPadding:
-        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+            EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
         errorStyle: AppStyles.textFieldError,
         hintText: "Prénom",
         hintStyle: AppStyles.textNormalPlaceholder,
       ),
       style: AppStyles.textNormal,
       validator: (String value) =>
-      (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
+          (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
     );
   }
 
@@ -163,14 +194,14 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
         ),
         contentPadding:
-        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+            EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
         errorStyle: AppStyles.textFieldError,
         hintText: "Nom",
         hintStyle: AppStyles.textNormalPlaceholder,
       ),
       style: AppStyles.textNormal,
       validator: (String value) =>
-      (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
+          (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
     );
   }
 
@@ -196,14 +227,14 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
         ),
         contentPadding:
-        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+            EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
         errorStyle: AppStyles.textFieldError,
         hintText: "Adresse",
         hintStyle: AppStyles.textNormalPlaceholder,
       ),
       style: AppStyles.textNormal,
       validator: (String value) =>
-      (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
+          (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
     );
   }
 
@@ -229,24 +260,23 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
         ),
         contentPadding:
-        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+            EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
         errorStyle: AppStyles.textFieldError,
         hintText: "Complément d'adresse",
         hintStyle: AppStyles.textNormalPlaceholder,
       ),
       style: AppStyles.textNormal,
       validator: (String value) =>
-      (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
+          (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
     );
   }
 
-  Widget _buildZip() {
+  Widget _buildStreetNumber() {
     return TextFormField(
-      controller: _zipController,
+      controller: _streetNumberController,
       obscureText: false,
       inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.allow(
-            RegExp(r'(^\d+)')),
+        FilteringTextInputFormatter.allow(RegExp(r'(^\d+)')),
       ],
       cursorColor: AppColors.default_black,
       keyboardType: TextInputType.number,
@@ -266,26 +296,41 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
         ),
         contentPadding:
-        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+            EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
         errorStyle: AppStyles.textFieldError,
-        hintText: "Code postale",
+        hintText: "Numéro de l'avenue",
         hintStyle: AppStyles.textNormalPlaceholder,
       ),
       style: AppStyles.textNormal,
       validator: (String value) => (value.isEmpty)
           ? 'ce champ ne peut pas être vide'
-          : (value.length != 5)
-          ? 'code postale invalide'
-          : null,
+          : (value.length >= 4)
+              ? 'numéro avenue invalide'
+              : null,
     );
   }
 
-  Widget _buildCommunity() {
+  Widget _buildZip() {
     return TextFormField(
-      controller: _communityController,
+      controller: _zipController,
       obscureText: false,
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.allow(RegExp(r'(^\d+)')),
+      ],
       cursorColor: AppColors.default_black,
-      keyboardType: TextInputType.text,
+      onChanged: (value) async {
+        List<AdressResponse> resp = await bloc.getCommunity(value);
+        setState(() {
+          _communityController.text = "";
+          listeCommunites = resp;
+        });
+        if ((resp == null) || (resp.length < 1)) {
+          print("community not found");
+        } else {
+          print("community is " + resp[0].nom);
+        }
+      },
+      keyboardType: TextInputType.number,
       decoration: const InputDecoration(
         filled: true,
         fillColor: AppColors.white,
@@ -302,14 +347,57 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
         ),
         contentPadding:
-        EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+            EdgeInsets.only(bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
         errorStyle: AppStyles.textFieldError,
-        hintText: "Communité",
+        hintText: "Code postale",
         hintStyle: AppStyles.textNormalPlaceholder,
       ),
       style: AppStyles.textNormal,
-      validator: (String value) =>
-      (value.isEmpty) ? 'ce champ ne peut pas être vide' : null,
+      validator: (String value) => (value.isEmpty)
+          ? 'ce champ ne peut pas être vide'
+          : ((value.length != 5) || (listeCommunites.length == 0))
+              ? 'code postale invalide'
+              : null,
+    );
+  }
+
+  List<String> _getCommunities() {
+    List<String> lista = <String>[];
+    listeCommunites.forEach((element) {
+      lista.add(element.nom);
+    });
+    return lista;
+  }
+
+  Widget _buildCommunity() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 0),
+      child: Container(
+        height: 45,
+        child: Theme(
+          // Create a unique theme with "ThemeData"
+          data: ThemeData(
+            primarySwatch: AppColors.defaultColorMaterial,
+          ),
+          child: DropdownSearch<String>(
+              selectedItem: _communityController.text,
+              searchBoxController: _communityController,
+              searchBoxDecoration: null,
+              dropdownSearchDecoration: null,
+              mode: Mode.MENU,
+              showSelectedItem: true,
+              popupSafeArea: PopupSafeArea(top: false),
+              popupBackgroundColor: AppColors.white,
+              items: _getCommunities(),
+              label: "Communité",
+              hint: "Sélectionner une communité",
+              onChanged: (value) {
+                setState(() {
+                  _communityController.text = value;
+                });
+              }),
+        ),
+      ),
     );
   }
 
@@ -326,24 +414,25 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
           alignment: Alignment.center,
           width: double.infinity,
           height: 55,
-          child: Text(
-            "VALIDER LES MODIFICATIONS",
-            style: AppStyles.smallTitleWhite,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: loading
+              ? Center(
+                  child: CircularProgressIndicator(color: AppColors.white),
+                )
+              : Text(
+                  "VALIDER LES MODIFICATIONS",
+                  style: AppStyles.smallTitleWhite,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
         ),
       ),
       onPressed: () {
-        final formState = formKey.currentState;
-        if (formState.validate()) {
-          // then do something
-        }
+        loading ? null : _goAction();
       },
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           onPrimary: AppColors.white,
           primary: Colors.transparent,
           padding: EdgeInsets.zero,
@@ -351,4 +440,74 @@ class _ModifierAdresseFacturationWidgetState extends State<ModifierAdresseFactur
     );
   }
 
+  _goAction() {
+    final formState = formKey.currentState;
+    if ((formState.validate()) && (_communityController.text != "")) {
+      // then do something
+      if ((bloc.interventionDetail.interventionDetail.invoicingAddress ==
+              null) ||
+          (bloc.interventionDetail.interventionDetail.invoicingAddress.id ==
+              null)) {
+        _ajouterAdresseFacturation();
+      } else {
+        _modifierAdresseFacturation();
+      }
+    }
+  }
+
+  _ajouterAdresseFacturation() async {
+    setState(() {
+      loading = true;
+    });
+    AddAdressFacturationResponse resp = await bloc.addAddressFacturation(
+        bloc.interventionDetail.interventionDetail.uuid,
+        _firstNameController.text,
+        _lastNameController.text,
+        _streetNumberController.text,
+        _adressController.text,
+        _complementAdresseController.text,
+        _communityController.text,
+        _zipController.text);
+    if (resp.result == 'OK') {
+      await bloc.getInterventionDetail(
+          bloc.interventionDetail.interventionDetail.uuid);
+      Modular.to.pop();
+    } else {
+      Fluttertoast.showToast(
+          msg: "Erreur survenue",
+          backgroundColor: AppColors.mdAlert,
+          textColor: AppColors.white);
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  _modifierAdresseFacturation() async {
+    setState(() {
+      loading = true;
+    });
+    AddAdressFacturationResponse resp = await bloc.modifierAddressFacturation(
+        bloc.interventionDetail.interventionDetail.invoicingAddress.uuid,
+        _firstNameController.text,
+        _lastNameController.text,
+        _streetNumberController.text,
+        _adressController.text,
+        _complementAdresseController.text,
+        _communityController.text,
+        _zipController.text);
+    if (resp.result == 'OK') {
+      await bloc.getInterventionDetail(
+          bloc.interventionDetail.interventionDetail.uuid);
+      Modular.to.pop();
+    } else {
+      Fluttertoast.showToast(
+          msg: "Erreur survenue",
+          backgroundColor: AppColors.mdAlert,
+          textColor: AppColors.white);
+    }
+    setState(() {
+      loading = false;
+    });
+  }
 }

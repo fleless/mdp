@@ -4,12 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/message.dart';
+import 'package:mdp/models/responses/add_message_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_bloc.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 
 class SendMessageDialog extends StatefulWidget {
   @override
@@ -18,7 +21,9 @@ class SendMessageDialog extends StatefulWidget {
 
 class _SendMessageDialogState extends State<SendMessageDialog> {
   final bloc = Modular.get<MessagerieBloc>();
+  final _interventionBloc = Modular.get<InterventionsBloc>();
   final TextEditingController _messageController = TextEditingController();
+  GlobalKey<FormState> formKey = new GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -69,23 +74,32 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
               height: 200,
               child: Align(
                 alignment: Alignment.topLeft,
-                child: TextFormField(
-                  controller: _messageController,
-                  obscureText: false,
-                  cursorColor: AppColors.default_black,
-                  keyboardType: TextInputType.multiline,
-                  expands: true,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(
-                        bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
-                    errorStyle: TextStyle(height: 0),
-                    hintText: "Écrire votre message ...",
-                    hintStyle: AppStyles.textNormalPlaceholder,
+                child: Form(
+                  key: formKey,
+                  child: TextFormField(
+                    controller: _messageController,
+                    obscureText: false,
+                    cursorColor: AppColors.default_black,
+                    keyboardType: TextInputType.multiline,
+                    expands: true,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      errorBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColors.mdAlert, width: 1),
+                      ),
+                      contentPadding: EdgeInsets.only(
+                          bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
+                      errorStyle: TextStyle(height: 0),
+                      hintText: "Écrire votre message ...",
+                      hintStyle: AppStyles.textNormalPlaceholder,
+                    ),
+                    style: AppStyles.textNormal,
+                    validator: (String value) => (value.trim().isEmpty)
+                        ? 'Le message ne peut pas être vide'
+                        : null,
                   ),
-                  style: AppStyles.textNormal,
-                  validator: (String value) {},
                 ),
               ),
             ),
@@ -111,35 +125,44 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
               ),
             ),
             onPressed: () async {
-              if (_messageController.text.trim().isNotEmpty) {
-                Modular.to.pop();
-                Timer timer = Timer(
-                    Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
+              if (formKey.currentState.validate()) {
+                AddMessageResponse resp = await bloc.sendMessage(
+                    _interventionBloc.interventionDetail.interventionDetail.id
+                        .toString(),
+                    _messageController.text);
+                if (resp.orderMessage.id == null) {
+                  Fluttertoast.showToast(
+                      msg: "Une erreur est survenue lors de l'envoi du message",
+                      backgroundColor: AppColors.mdAlert,
+                      textColor: AppColors.white);
+                } else {
                   Modular.to.pop();
-                });
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return StatefulBuilder(builder:
-                          (BuildContext context, StateSetter setState) {
-                        return Dialog(
-                          backgroundColor: AppColors.md_light_gray,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: _popUpMerci(),
-                        );
-                      });
-                    }).then((value) {
-                  // dispose the timer in case something else has triggered the dismiss.
-                  timer?.cancel();
-                  timer = null;
-                });
-                bloc.addingMessage.add(1);
-                await Future.delayed(Duration(seconds: 1));
-                bloc.listMessages.add(Message(DateTime.now().toString(),
-                    "Isabelle R.", _messageController.text));
-                bloc.addingMessage.add(0);
+                  Timer timer = Timer(
+                      Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
+                    Modular.to.pop();
+                  });
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return StatefulBuilder(builder:
+                            (BuildContext context, StateSetter setState) {
+                          return Dialog(
+                            backgroundColor: AppColors.md_light_gray,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: _popUpMerci(),
+                          );
+                        });
+                      }).then((value) {
+                    // dispose the timer in case something else has triggered the dismiss.
+                    timer?.cancel();
+                    timer = null;
+                  });
+                  bloc.getMessages(_interventionBloc
+                      .interventionDetail.interventionDetail.id
+                      .toString());
+                }
               }
             },
             style: ElevatedButton.styleFrom(
@@ -169,7 +192,7 @@ class _SendMessageDialogState extends State<SendMessageDialog> {
               textAlign: TextAlign.center,
               maxLines: 10,
               overflow: TextOverflow.ellipsis),
-          SvgPicture.asset(AppImages.message),
+          Image.asset(AppImages.message),
           ElevatedButton(
             child: Ink(
               decoration: BoxDecoration(

@@ -12,6 +12,7 @@ import 'package:mdp/ui/interventions/commande/detail_commande/client/modifier_co
 import 'package:mdp/utils/user_location.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:collection/collection.dart';
 
 import '../../../interventions_bloc.dart';
 
@@ -31,7 +32,9 @@ class _ClientWidgetState extends State<ClientWidget> {
   void initState() {
     _getUserLocation();
     bloc.changesNotifier.listen((value) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     super.initState();
   }
@@ -77,6 +80,10 @@ class _ClientWidgetState extends State<ClientWidget> {
   }
 
   Widget _buildCoordonnees() {
+    dynamic email = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhereOrNull(
+            (element) => (element.preferred) && (element.type.name == "Email"));
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -113,10 +120,14 @@ class _ClientWidgetState extends State<ClientWidget> {
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 25),
             child: Text(
-                bloc.interventionDetail.interventionDetail.clients.commchannels
-                    .firstWhere((element) =>
-                        (element.preferred) && (element.type.name == "Email"))
-                    .name,
+                email == null
+                    ? "email non défini"
+                    : bloc.interventionDetail.interventionDetail.clients
+                        .commchannels
+                        .firstWhereOrNull((element) =>
+                            (element.preferred) &&
+                            (element.type.name == "Email"))
+                        .name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
@@ -210,8 +221,8 @@ class _ClientWidgetState extends State<ClientWidget> {
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 25),
             child: Text(
-                bloc.interventionDetail.interventionDetail.invoicingAddress !=
-                        null
+                (bloc.interventionDetail.interventionDetail.invoicingAddress !=
+                        null)
                     ? (bloc.interventionDetail.interventionDetail
                                 .invoicingAddress.streetNumber ==
                             null

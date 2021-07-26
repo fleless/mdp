@@ -1,5 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
@@ -318,90 +319,95 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
       child: ListView.builder(
           itemCount: _interventions.length,
           itemBuilder: (context, index) {
-            return Card(
-              clipBehavior: Clip.antiAlias,
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Container(
-                color: AppColors.md_light_gray,
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Expanded(
-                            child: Text(
-                          _interventions[index].reference,
-                          style: AppStyles.bodyBoldMdDarkBlue,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        )),
-                        Container(
-                          padding: EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              color:
-                                  _interventions[index].statut.contains("gence")
-                                      ? AppColors.mdAlert
-                                      : _interventions[index]
-                                              .statut
-                                              .contains("nage")
-                                          ? AppColors.travaux
-                                          : _interventions[index]
-                                                  .statut
-                                                  .contains("vaux")
-                                              ? AppColors.amenagement
-                                              : AppColors.plomberie),
-                          child: Text(
-                            _interventions[index].statut,
-                            style: AppStyles.buttonTextWhite,
-                          ),
-                        ),
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.close,
-                              color: AppColors.default_black,
-                            ))
-                      ],
-                    ),
-                    _interventions[index].action
-                        ? Container(
-                            padding: EdgeInsets.all(3),
+            return GestureDetector(
+              onTap: (){
+                Modular.to.pushNamed(Routes.detailCommande);
+              },
+              child: Card(
+                clipBehavior: Clip.antiAlias,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Container(
+                  color: AppColors.md_light_gray,
+                  padding: EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                              child: Text(
+                                _interventions[index].reference,
+                                style: AppStyles.bodyBoldMdDarkBlue,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )),
+                          Container(
+                            padding: EdgeInsets.all(6),
                             decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                                color: AppColors.mdAlert),
+                                BorderRadius.all(Radius.circular(10)),
+                                color:
+                                _interventions[index].statut.contains("gence")
+                                    ? AppColors.mdAlert
+                                    : _interventions[index]
+                                    .statut
+                                    .contains("nage")
+                                    ? AppColors.travaux
+                                    : _interventions[index]
+                                    .statut
+                                    .contains("vaux")
+                                    ? AppColors.amenagement
+                                    : AppColors.plomberie),
                             child: Text(
-                              "Action requise",
+                              _interventions[index].statut,
                               style: AppStyles.buttonTextWhite,
                             ),
-                          )
-                        : SizedBox.shrink(),
-                    SizedBox(height: 20),
-                    Text(
-                      _interventions[index].order,
-                      style: AppStyles.bodyDefaultBlack,
-                    ),
-                    Text(
-                      _interventions[index].orderMessage,
-                      style: AppStyles.bodyDefaultBlack,
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      _interventions[index].name,
-                      style: AppStyles.bodyDefaultBlack,
-                    ),
-                    Text(
-                      _interventions[index].adresse,
-                      style: AppStyles.bodyDefaultBlack,
-                    )
-                  ],
+                          ),
+                          IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.close,
+                                color: AppColors.default_black,
+                              ))
+                        ],
+                      ),
+                      _interventions[index].action
+                          ? Container(
+                        padding: EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(10)),
+                            color: AppColors.mdAlert),
+                        child: Text(
+                          "Action requise",
+                          style: AppStyles.buttonTextWhite,
+                        ),
+                      )
+                          : SizedBox.shrink(),
+                      SizedBox(height: 20),
+                      Text(
+                        _interventions[index].order,
+                        style: AppStyles.bodyDefaultBlack,
+                      ),
+                      Text(
+                        _interventions[index].orderMessage,
+                        style: AppStyles.bodyDefaultBlack,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        _interventions[index].name,
+                        style: AppStyles.bodyDefaultBlack,
+                      ),
+                      Text(
+                        _interventions[index].adresse,
+                        style: AppStyles.bodyDefaultBlack,
+                      )
+                    ],
+                  ),
                 ),
               ),
             );

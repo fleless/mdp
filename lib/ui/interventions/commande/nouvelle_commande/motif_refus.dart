@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -27,7 +28,7 @@ class MotifRefusWidget extends StatefulWidget {
 class _MotifRefusWidgetState extends State<MotifRefusWidget> {
   final bloc = Modular.get<InterventionsBloc>();
   bool loading = false;
-  TextEditingController _refusTextController = TextEditingController();
+  String _refusText = " ";
 
   @override
   void initState() {
@@ -70,37 +71,31 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
             ],
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 15),
+            padding: EdgeInsets.symmetric(vertical: 80),
             child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: Border.all(
-                  color: AppColors.md_gray,
-                  width: 1,
+              child: Theme(
+                // Create a unique theme with "ThemeData"
+                data: ThemeData(
+                  primarySwatch: AppColors.defaultColorMaterial,
                 ),
-              ),
-              width: double.infinity,
-              height: 200,
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: TextFormField(
-                  controller: _refusTextController,
-                  obscureText: false,
-                  cursorColor: AppColors.default_black,
-                  keyboardType: TextInputType.multiline,
-                  expands: true,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(
-                        bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
-                    errorStyle: TextStyle(height: 0),
-                    hintText: "Écrire votre message ...",
-                    hintStyle: AppStyles.textNormalPlaceholder,
-                  ),
-                  style: AppStyles.textNormal,
-                  validator: (String value) {},
-                ),
+                child: DropdownSearch<String>(
+                    searchBoxDecoration: null,
+                    dropdownSearchDecoration: null,
+                    mode: Mode.MENU,
+                    showSelectedItem: true,
+                    popupSafeArea: PopupSafeArea(top: false),
+                    items: [
+                      "Je ne suis pas disponible",
+                      "C'est trop loin",
+                      "C'est hors de mes compétences",
+                      "Il n'y a pas assez d'informations",
+                      "C'est un doublon"
+                    ],
+                    label: "Motif de refus",
+                    hint: "Sélectionner un motif",
+                    onChanged: (value) {
+                      _refusText = value;
+                    }),
               ),
             ),
           ),
@@ -152,12 +147,8 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
     setState(() {
       loading = true;
     });
-    int response = await bloc.refuseIntervention(
-        _intervention.code,
-        _refusTextController.text,
-        _intervention.id,
-        _intervention.uuid,
-        Endpoints.subcontractor_id);
+    int response = await bloc.refuseIntervention(_intervention.code, _refusText,
+        _intervention.id, _intervention.uuid, Endpoints.subcontractor_id);
     setState(() {
       loading = false;
     });
