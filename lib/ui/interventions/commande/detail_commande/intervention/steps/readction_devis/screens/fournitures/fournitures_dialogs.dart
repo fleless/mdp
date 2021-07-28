@@ -47,7 +47,7 @@ class _FournituresDialogWidgetState extends State<FournituresDialogWidget> {
                 textFieldConfiguration: TextFieldConfiguration(
                     controller: _FournitureController,
                     cursorColor: AppColors.md_dark_blue,
-                    autofocus: true,
+                    autofocus: false,
                     style: AppStyles.textNormal,
                     decoration: InputDecoration(
                         fillColor: AppColors.white,
@@ -68,7 +68,6 @@ class _FournituresDialogWidgetState extends State<FournituresDialogWidget> {
                         .contains(pattern.toUpperCase()))
                     .toList(),
                 noItemsFoundBuilder: (value) {
-                  var localizedMessage = "Aucun résultat trouvé ";
                   return _buildAjouterElementButton();
                 },
                 itemBuilder: (context, suggestion) {

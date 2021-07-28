@@ -9,6 +9,7 @@ import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
+import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/network/repository/adress_repository.dart';
 import 'package:mdp/network/repository/intervention_repository.dart';
 import 'package:mdp/network/repository/login_repository.dart';
@@ -26,6 +27,8 @@ class InterventionsBloc extends Disposable {
   final changesNotifier = PublishSubject<bool>();
   List<ListQuoteReference> liste_names = <ListQuoteReference>[];
   List<ListWorkload> liste_materials = <ListWorkload>[];
+  List<ListWorkloadUnits> liste_units = <ListWorkloadUnits>[];
+  List<String> liste_unit_names = <String>[];
   RedactionDevisRepository _redactionDevisRepository =
       RedactionDevisRepository();
 
@@ -41,6 +44,17 @@ class InterventionsBloc extends Disposable {
     liste_materials.clear();
     GetMaterialResponse resp = await _redactionDevisRepository.getMaterials();
     liste_materials.addAll(resp.listWorkload);
+    return resp;
+  }
+
+  Future<GetUnitsResponse> getUnits() async {
+    liste_units.clear();
+    GetUnitsResponse resp = await _redactionDevisRepository.getUnits();
+    liste_units.addAll(resp.listWorkloadUnits);
+    liste_unit_names.clear();
+    liste_units.forEach((element) {
+      liste_unit_names.add(element.name);
+    });
     return resp;
   }
 

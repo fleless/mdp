@@ -167,7 +167,7 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
               textFieldConfiguration: TextFieldConfiguration(
                   controller: _designationTitleController,
                   cursorColor: AppColors.md_dark_blue,
-                  autofocus: true,
+                  autofocus: false,
                   style: AppStyles.textNormal,
                   decoration: InputDecoration(
                       filled: true,
@@ -523,7 +523,7 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
         enableCamera: true,
         selectedAssets: images,
         materialOptions: MaterialOptions(
-            actionBarTitle: "GalBLUElerie",
+            actionBarTitle: "Galerie",
             actionBarColor: "",
             lightStatusBar: true),
       );

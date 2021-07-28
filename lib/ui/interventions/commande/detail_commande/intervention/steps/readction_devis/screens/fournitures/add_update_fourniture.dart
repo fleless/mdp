@@ -160,8 +160,7 @@ class _AddUpdateFournituresDialogState
             hintStyle: AppStyles.textNormalPlaceholder,
           ),
           style: AppStyles.textNormal,
-          validator: (String value) =>
-              (value.isEmpty) ? '' : null,
+          validator: (String value) => (value.isEmpty) ? '' : null,
         ),
       ],
     );
@@ -170,7 +169,7 @@ class _AddUpdateFournituresDialogState
   Widget _buildQuantity() {
     return Row(
       children: [
-        Text("Quantité (/h):",
+        Text("Quantité (/" + widget.liste.unitName + "):",
             style: AppStyles.bodyDefaultBlack,
             maxLines: 2,
             overflow: TextOverflow.ellipsis),
@@ -338,8 +337,7 @@ class _AddUpdateFournituresDialogState
           hintStyle: AppStyles.textNormalPlaceholder,
         ),
         style: AppStyles.textNormal,
-        validator: (String value) =>
-            (value.isEmpty) ? '' : null,
+        validator: (String value) => (value.isEmpty) ? '' : null,
       ),
     );
   }

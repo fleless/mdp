@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
+import 'package:mdp/models/responses/get_interventions.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class InterventionApiProvider {
+  final String getInterventionsEndPoint = Endpoints.URL + "list-intervention";
   final String showInterventionEndPoint =
       Endpoints.CORE_URL + "show-intervention/";
   final String refuseEndPoint = Endpoints.URL + "competition/refuse";
@@ -40,6 +42,29 @@ class InterventionApiProvider {
           error: true,
           compact: true,
           maxWidth: 90));
+    }
+  }
+
+  Future<GetInterventionsResponse> getInterventions(
+      String subcontractorId, String code) async {
+    var params = {
+      "subcontractorId": subcontractorId,
+      "sortField": "created",
+      "sortOrder": "DESC",
+      "filters": {"code": code}
+    };
+    try {
+      Response response = await _dio.post(getInterventionsEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return GetInterventionsResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return GetInterventionsResponse();
+    } catch (e) {
+      throw e;
     }
   }
 
