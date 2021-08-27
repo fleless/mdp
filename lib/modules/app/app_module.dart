@@ -15,6 +15,12 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/creation_designation_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/redaction_devis_screen.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/signature_devis/envoyer_devis_mail.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/signature_devis/presentation_devis.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/signature_devis/signature_artisan.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/signature_devis/signature_client.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/realisation_travaux/screens/ajouter_realisation_rdv.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/realisation_travaux/screens/calendrier_realisation_rdv_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_screen.dart';
@@ -76,7 +82,7 @@ class AppModule extends MainModule {
                 child: (_, args) => PhotoViewScreenWidget(
                     args.data['image'], args.data['path'])),
             ModularRouter(Routes.detailCommande,
-                child: (_, args) => DetailCommandeScreen()),
+                child: (_, args) => DetailCommandeScreen(args.data['uuid'])),
             ModularRouter(Routes.calendrierPriseRDV,
                 child: (_, args) => CalendrierPriseRdvWidget(args.data['rdv'])),
             ModularRouter(Routes.redactionDevis,
@@ -85,7 +91,20 @@ class AppModule extends MainModule {
             ModularRouter(Routes.notifications,
                 child: (_, args) => NotificationsScreen()),
             ModularRouter(Routes.creationDesignation,
-                child: (_, args) => CreationDesignationScreen()),
+                child: (_, args) => CreationDesignationScreen(
+                    args.data['designationToUpdate'], args.data['isAdd'])),
+            ModularRouter(Routes.signatureArtisan,
+                child: (_, args) => SignatureArtisanScreen()),
+            ModularRouter(Routes.presentationDevis,
+                child: (_, args) => PresentationDevisScreen()),
+            ModularRouter(Routes.envoyerDevisMail,
+                child: (_, args) => EnvoyerDevisMailScreen()),
+            ModularRouter(Routes.signatureClient,
+                child: (_, args) => SignatureClientScreen()),
+            ModularRouter(Routes.calendrierRealisationRDV,
+                child: (_, args) => CalendrierRealisationRdvWidget()),
+            ModularRouter(Routes.ajouterRealisationRDV,
+                child: (_, args) => AjouterRealisationRDVScreen()),
           ],
         ),
       ];

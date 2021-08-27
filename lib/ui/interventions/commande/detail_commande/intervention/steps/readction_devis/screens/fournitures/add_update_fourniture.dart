@@ -5,14 +5,17 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
+import 'package:mdp/models/workload_model.dart';
 import "dart:ui" as ui;
 import '../../../../../../../interventions_bloc.dart';
+import '../../redaction_devis_bloc.dart';
 
 class AddUpdateFournituresDialog extends StatefulWidget {
   ListWorkload liste;
   bool isAdd;
+  WorkLoadModel workLoadModel;
 
-  AddUpdateFournituresDialog(this.liste, this.isAdd);
+  AddUpdateFournituresDialog(this.liste, this.isAdd, this.workLoadModel);
 
   @override
   State<StatefulWidget> createState() => _AddUpdateFournituresDialogState();
@@ -21,8 +24,8 @@ class AddUpdateFournituresDialog extends StatefulWidget {
 class _AddUpdateFournituresDialogState
     extends State<AddUpdateFournituresDialog> {
   final bloc = Modular.get<InterventionsBloc>();
+  final _redactionBloc = Modular.get<RedactionDevisBloc>();
   GlobalKey<FormState> formKey = new GlobalKey();
-  TextEditingController _nomController = TextEditingController();
   TextEditingController _qteController = TextEditingController();
   TextEditingController _priceController = TextEditingController();
   TextEditingController _commentController = TextEditingController();
@@ -39,6 +42,9 @@ class _AddUpdateFournituresDialogState
     if (widget.isAdd) {
       _qteController.text = widget.liste.recommendedQuantity.toString();
       _priceController.text = widget.liste.recommendedPrice.toString();
+    } else {
+      _qteController.text = widget.workLoadModel.quantity.toString();
+      _priceController.text = widget.workLoadModel.price_ht.toString();
     }
   }
 
@@ -59,8 +65,6 @@ class _AddUpdateFournituresDialogState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildName(),
-                    SizedBox(height: 20),
                     _buildQuantity(),
                     _showQuantityError
                         ? Text(
@@ -124,55 +128,26 @@ class _AddUpdateFournituresDialogState
     );
   }
 
-  Widget _buildName() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("Nom de l'élément : ",
-            style: AppStyles.bodyDefaultBlack,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis),
-        SizedBox(height: 10),
-        TextFormField(
-          controller: _nomController,
-          obscureText: false,
-          cursorColor: AppColors.default_black,
-          keyboardType: TextInputType.text,
-          decoration: const InputDecoration(
-            filled: true,
-            fillColor: AppColors.white,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.md_gray, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.md_gray, width: 1),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.mdAlert, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.md_dark_blue, width: 1),
-            ),
-            contentPadding: EdgeInsets.only(
-                bottom: 10.0, left: 10.0, right: 10.0, top: 10.0),
-            errorStyle: AppStyles.textFieldError,
-            hintText: "Xxxx",
-            hintStyle: AppStyles.textNormalPlaceholder,
-          ),
-          style: AppStyles.textNormal,
-          validator: (String value) => (value.isEmpty) ? '' : null,
-        ),
-      ],
-    );
-  }
-
   Widget _buildQuantity() {
     return Row(
       children: [
-        Text("Quantité (/" + widget.liste.unitName + "):",
-            style: AppStyles.bodyDefaultBlack,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Quantité (/" + widget.liste.unitName + "):",
+                style: AppStyles.bodyDefaultBlack,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis),
+            Text(
+                "quantité max: " +
+                    widget.liste.maximumQuantity.toString() +
+                    " " +
+                    widget.liste.unitName,
+                style: AppStyles.miniCap,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis),
+          ],
+        ),
         SizedBox(width: 10),
         Container(
           width: 50,
@@ -237,10 +212,19 @@ class _AddUpdateFournituresDialogState
   Widget _buildPrice() {
     return Row(
       children: [
-        Text("Tarif unitaire :",
-            style: AppStyles.bodyDefaultBlack,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Tarif unitaire :",
+                style: AppStyles.bodyDefaultBlack,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis),
+            Text("tarif max: " + widget.liste.maximumPrice.toString() + "€ HT",
+                style: AppStyles.miniCap,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis),
+          ],
+        ),
         SizedBox(width: 10),
         Container(
           width: 120,
@@ -337,7 +321,6 @@ class _AddUpdateFournituresDialogState
           hintStyle: AppStyles.textNormalPlaceholder,
         ),
         style: AppStyles.textNormal,
-        validator: (String value) => (value.isEmpty) ? '' : null,
       ),
     );
   }
@@ -365,7 +348,29 @@ class _AddUpdateFournituresDialogState
         ),
       ),
       onPressed: () {
-        if (formKey.currentState.validate()) {}
+        if (formKey.currentState.validate()) {
+          if (widget.isAdd) {
+            _redactionBloc.liste_materiel.add(WorkLoadModel(
+                widget.liste.id,
+                widget.liste.name,
+                _qteController.text,
+                _priceController.text,
+                _commentController.text));
+            Modular.to.pop();
+            _redactionBloc.notifyChanges.add(0);
+          } else {
+            int position =
+                _redactionBloc.liste_materiel.indexOf(widget.workLoadModel);
+            _redactionBloc.liste_materiel[position].quantity =
+                _qteController.text;
+            _redactionBloc.liste_materiel[position].price_ht =
+                _priceController.text;
+            _redactionBloc.liste_materiel[position].comment =
+                _commentController.text;
+            Modular.to.pop();
+            _redactionBloc.notifyChanges.add(0);
+          }
+        }
       },
       style: ElevatedButton.styleFrom(
           elevation: 2,

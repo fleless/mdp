@@ -8,6 +8,7 @@ class PriseRdvBloc extends Disposable {
   final controller = StreamController();
   final RdvRepository _rdvRepository = RdvRepository();
   List<ListVisitData> userOrderAppointmentsResponse;
+  List<ListVisitData> userOrderTravauxResponse;
 
   Future<UserAppointmentsResponse> getUserAppointments(String idUser) async {
     UserAppointmentsResponse response =
@@ -22,6 +23,9 @@ class PriseRdvBloc extends Disposable {
     userOrderAppointmentsResponse = response.listVisitData
         .where((element) => element.type == "Premiere visite")
         .toList();
+    userOrderTravauxResponse = response.listVisitData
+        .where((element) => element.type == "deuxieme visite")
+        .toList();
     return response;
   }
 
@@ -34,6 +38,19 @@ class PriseRdvBloc extends Disposable {
       String endDate) async {
     AddAppointmentResponse response = await _rdvRepository.addFirstAppointment(
         title, comment, orderId, subContractorId, startDate, endDate);
+    return response;
+  }
+
+  Future<AddAppointmentResponse> addRealisationAppointment(
+      String title,
+      String comment,
+      int orderId,
+      String subContractorId,
+      String startDate,
+      String endDate) async {
+    AddAppointmentResponse response =
+        await _rdvRepository.addRealisationAppointment(
+            title, comment, orderId, subContractorId, startDate, endDate);
     return response;
   }
 

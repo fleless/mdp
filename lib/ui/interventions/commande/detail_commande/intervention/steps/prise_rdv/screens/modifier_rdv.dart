@@ -18,6 +18,7 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/popup_notifier.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/utils/date_formatter.dart';
+import 'package:collection/collection.dart';
 
 class ModifierRdvScreen extends StatefulWidget {
   ListVisitData rdv = ListVisitData();
@@ -158,6 +159,10 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
   }
 
   Widget _buildInfo() {
+    dynamic email = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhereOrNull(
+            (element) => (element.preferred) && (element.type.name == "Email"));
     return Column(
       children: [
         Container(
@@ -269,18 +274,22 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
           child: Text(
-              bloc.interventionDetail.interventionDetail.clients.commchannels
+              email == null
+                  ? "email non défini"
+                  : (bloc.interventionDetail.interventionDetail.clients
+                              .commchannels
+                              .firstWhere((element) =>
+                                  (element.preferred) &&
+                                  (element.type.name == "Email"))
+                              .name ==
+                          null
+                      ? ""
+                      : bloc.interventionDetail.interventionDetail.clients
+                          .commchannels
                           .firstWhere((element) =>
                               (element.preferred) &&
                               (element.type.name == "Email"))
-                          .name ==
-                      null
-                  ? ""
-                  : bloc.interventionDetail.interventionDetail.clients
-                      .commchannels
-                      .firstWhere((element) =>
-                          (element.preferred) && (element.type.name == "Email"))
-                      .name,
+                          .name),
               style: AppStyles.bodyBold,
               overflow: TextOverflow.ellipsis),
         ),
@@ -621,7 +630,39 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
         setState(() {
           _loading = false;
         });
-        Modular.to.popAndPushNamed(Routes.detailCommande);
+        Modular.to.pop();
+        Modular.to.pushReplacementNamed(Routes.detailCommande, arguments: {
+          "uuid": bloc.interventionDetail.interventionDetail.uuid
+        });
+        Timer timer =
+            Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
+          Modular.to.pop();
+        });
+        showDialog(
+            context: context,
+            builder: (context) {
+              return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                return Dialog(
+                  backgroundColor: AppColors.md_light_gray,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: popUpNotifier(
+                      "Rdv planifée à la date du " +
+                          DateFormatter.formatDateDMY(_startDate.toString()) +
+                          DateFormatter.addHoursAndMinutesPrecision(
+                              _startTime) +
+                          ".",
+                      AppImages.rdv,
+                      "FERMER"),
+                );
+              });
+            }).then((value) {
+          // dispose the timer in case something else has triggered the dismiss.
+          timer?.cancel();
+          timer = null;
+        });
       } else {
         Fluttertoast.showToast(
             msg: "Une erreur est survenue !",
@@ -684,6 +725,8 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
                   child: popUpNotifier(
                       "Votre intervention a bien été ajouté à votre agenda à la date du " +
                           DateFormatter.formatDateDMY(_startDate.toString()) +
+                          DateFormatter.addHoursAndMinutesPrecision(
+                              _startTime) +
                           ".",
                       AppImages.rdv,
                       "FERMER"),

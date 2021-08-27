@@ -4,14 +4,16 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
-import 'package:mdp/models/interventions.dart';
-import 'package:mdp/models/responses/show_intervention_response.dart';
+import 'package:mdp/models/responses/get_interventions.dart' as interventions;
 import 'package:mdp/ui/interventions/commande/nouvelle_commande/proposition_comande.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
+import 'interventions_bloc.dart';
 
 class InterventionsScreen extends StatefulWidget {
   @override
@@ -21,55 +23,37 @@ class InterventionsScreen extends StatefulWidget {
 class _InterventionsScreenState extends State<InterventionsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final _searchController = TextEditingController();
-  List<InterventionsClass> _interventions = <InterventionsClass>[];
+  bool _loading = false;
+  final bloc = Modular.get<InterventionsBloc>();
+  List<interventions.Interventions> _listeInterventions =
+      <interventions.Interventions>[];
 
   @override
   Future<void> initState() {
-    _fillIntervention();
     super.initState();
+    _loadInterventions();
   }
 
-  _fillIntervention() {
-    _interventions.add(InterventionsClass(
-        "FR-6DH3",
-        "Urgence",
-        true,
-        "SERR37",
-        "Fourniture et pose serrure 3 points standard",
-        "Marc DUPUIS",
-        "78000 Versailles"));
-    _interventions.add(InterventionsClass(
-        "FR-6DH3",
-        "Dépannage",
-        false,
-        "SERR37",
-        "Fourniture et pose serrure 3 points standard",
-        "Marc DUPUIS",
-        "78000 Versailles"));
-    _interventions.add(InterventionsClass(
-        "FR-6DH3",
-        "Travaux",
-        false,
-        "SERR37",
-        "Fourniture et pose serrure 3 points standard",
-        "Marc DUPUIS",
-        "78000 Versailles"));
-    _interventions.add(InterventionsClass(
-        "FR-6DH3",
-        "Confort",
-        false,
-        "SERR37",
-        "Fourniture et pose serrure 3 points standard",
-        "Marc DUPUIS",
-        "78000 Versailles"));
-    _interventions.add(InterventionsClass(
-        "FR-6DH3",
-        "Dépannage",
-        false,
-        "SERR37",
-        "Fourniture et pose serrure 3 points standard",
-        "Marc DUPUIS",
-        "78000 Versailles"));
+  _loadInterventions() async {
+    setState(() {
+      _loading = true;
+    });
+    interventions.GetInterventionsResponse resp = await bloc.getInterventions(
+        Endpoints.subcontractor_uuid,
+        _searchController.text == null ? "" : _searchController.text);
+    if (resp.interventions == null) {
+      setState(() {
+        _listeInterventions.clear();
+      });
+    } else {
+      setState(() {
+        _listeInterventions.clear();
+        _listeInterventions.addAll(resp.interventions);
+      });
+    }
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -96,35 +80,6 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
     );
   }
 
-  Widget _fakeButton() {
-    return Container(
-      width: double.infinity,
-      height: 60,
-      child: Center(
-        child: ElevatedButton(
-          child: Text("OUPS!",
-              style: AppStyles.textNormal,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1),
-          onPressed: () {
-            showCupertinoModalBottomSheet(
-              context: context,
-              expand: false,
-              enableDrag: true,
-              builder: (context) => PropositionCommandeWidget(),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-              elevation: 3,
-              onPrimary: AppColors.defaultColor,
-              primary: AppColors.white,
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        ),
-      ),
-    );
-  }
-
   Widget _buildContent() {
     return Column(
       children: [
@@ -145,11 +100,19 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
       children: [
         _buildFilters(),
         SizedBox(height: 40),
-        _fakeButton(),
-        Text(_interventions.length.toString() + " résultats",
+        Text(_listeInterventions.length.toString() + " résultats",
             style: AppStyles.bodyBoldMdDarkBlue),
         Expanded(
-          child: _buildList(),
+          child: _loading
+              ? Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                        color: AppColors.md_dark_blue),
+                  ),
+                )
+              : _buildList(),
         ),
       ],
     );
@@ -164,8 +127,8 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
         padding: EdgeInsets.only(
             left: AppConstants.default_padding,
             right: AppConstants.default_padding,
-            bottom: AppConstants.default_padding * 2,
-            top: AppConstants.default_padding * 2),
+            bottom: AppConstants.default_padding * 1.3,
+            top: AppConstants.default_padding * 1.3),
         child: Container(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -236,7 +199,9 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
               ),
             ),
             InkWell(
-              onTap: () async {},
+              onTap: () async {
+                _loadInterventions();
+              },
               child: Container(
                 decoration: new BoxDecoration(
                   color: AppColors.white,
@@ -317,11 +282,12 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
   Widget _buildList() {
     return Container(
       child: ListView.builder(
-          itemCount: _interventions.length,
+          itemCount: _listeInterventions.length,
           itemBuilder: (context, index) {
             return GestureDetector(
-              onTap: (){
-                Modular.to.pushNamed(Routes.detailCommande);
+              onTap: () {
+                Modular.to.pushNamed(Routes.detailCommande,
+                    arguments: {"uuid": _listeInterventions[index].uuid});
               },
               child: Card(
                 clipBehavior: Clip.antiAlias,
@@ -340,70 +306,99 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
                         children: [
                           Expanded(
                               child: Text(
-                                _interventions[index].reference,
-                                style: AppStyles.bodyBoldMdDarkBlue,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              )),
-                          Container(
+                            _listeInterventions[index].code ?? "",
+                            style: AppStyles.bodyBoldMdDarkBlue,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                          //TODo: wait api change for stats
+                          /*Container(
                             padding: EdgeInsets.all(6),
                             decoration: BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(10)),
-                                color:
-                                _interventions[index].statut.contains("gence")
+                                    BorderRadius.all(Radius.circular(10)),
+                                color: _listeInterventions[index]
+                                        .statut
+                                        .contains("gence")
                                     ? AppColors.mdAlert
                                     : _interventions[index]
-                                    .statut
-                                    .contains("nage")
-                                    ? AppColors.travaux
-                                    : _interventions[index]
-                                    .statut
-                                    .contains("vaux")
-                                    ? AppColors.amenagement
-                                    : AppColors.plomberie),
+                                            .statut
+                                            .contains("nage")
+                                        ? AppColors.travaux
+                                        : _interventions[index]
+                                                .statut
+                                                .contains("vaux")
+                                            ? AppColors.amenagement
+                                            : AppColors.plomberie),
                             child: Text(
                               _interventions[index].statut,
                               style: AppStyles.buttonTextWhite,
                             ),
-                          ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.close,
-                                color: AppColors.default_black,
-                              ))
+                          ),*/
                         ],
                       ),
-                      _interventions[index].action
+                      //TODO; wait api changes
+                      /* _listeInterventions[index].action
                           ? Container(
-                        padding: EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                            borderRadius:
-                            BorderRadius.all(Radius.circular(10)),
-                            color: AppColors.mdAlert),
-                        child: Text(
-                          "Action requise",
-                          style: AppStyles.buttonTextWhite,
-                        ),
-                      )
-                          : SizedBox.shrink(),
+                              padding: EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)),
+                                  color: AppColors.mdAlert),
+                              child: Text(
+                                "Action requise",
+                                style: AppStyles.buttonTextWhite,
+                              ),
+                            )
+                          : SizedBox.shrink(),*/
                       SizedBox(height: 20),
                       Text(
-                        _interventions[index].order,
+                        _listeInterventions[index].code,
                         style: AppStyles.bodyDefaultBlack,
                       ),
                       Text(
-                        _interventions[index].orderMessage,
+                        _listeInterventions[index].details == null
+                            ? ""
+                            : _listeInterventions[index]
+                                .details[0]
+                                .ordercase
+                                .name,
                         style: AppStyles.bodyDefaultBlack,
                       ),
                       SizedBox(height: 10),
                       Text(
-                        _interventions[index].name,
+                        (_listeInterventions[index].clients.firstname ?? "") +
+                            " " +
+                            (_listeInterventions[index].clients.lastname ?? ""),
                         style: AppStyles.bodyDefaultBlack,
                       ),
                       Text(
-                        _interventions[index].adresse,
+                        _listeInterventions[index].clients.addresses == null
+                            ? ""
+                            : ((_listeInterventions[index]
+                                            .clients
+                                            .addresses[0]
+                                            .city ==
+                                        null
+                                    ? " "
+                                    : _listeInterventions[index]
+                                        .clients
+                                        .addresses[0]
+                                        .city
+                                        .postcode) +
+                                " " +
+                                (_listeInterventions[index]
+                                            .clients
+                                            .addresses[0]
+                                            .city ==
+                                        null
+                                    ? ""
+                                    : _listeInterventions[index]
+                                            .clients
+                                            .addresses[0]
+                                            .city
+                                            .name ??
+                                        "")),
                         style: AppStyles.bodyDefaultBlack,
                       )
                     ],

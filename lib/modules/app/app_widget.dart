@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,14 @@ class _AppWidgetState extends State<AppWidget> {
     initPlatformState();
     SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.black));
+    _initFlutterDownloaderPackage();
+  }
+
+  _initFlutterDownloaderPackage() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await FlutterDownloader.initialize(
+        debug: true // optional: set false to disable printing logs to console
+        );
   }
 
   @override

@@ -492,15 +492,16 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
     int response = await bloc.acceptIntervention(
         _intervention.code, _intervention.id, _intervention.uuid, null);
     if (response == 200) {
-      Modular.to.popAndPushNamed(Routes.detailCommande);
+      Modular.to.popAndPushNamed(Routes.detailCommande,
+          arguments: {"uuid": bloc.interventionDetail.interventionDetail.uuid});
     } else {
       Fluttertoast.showToast(
         msg: "Compétition introuvable",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
-      //TODO: remove when release mode
-      Modular.to.popAndPushNamed(Routes.detailCommande);
+      Modular.to.popAndPushNamed(Routes.detailCommande,
+          arguments: {"uuid": bloc.interventionDetail.interventionDetail.uuid});
     }
     setState(() {
       _acceptLoading = false;

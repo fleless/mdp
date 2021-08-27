@@ -100,15 +100,19 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
                   Container(
                     padding: EdgeInsets.all(7),
                     decoration: BoxDecoration(
-                      color: _rdvBloc.userOrderAppointmentsResponse.length > 0
-                          ? AppColors.travaux
-                          : AppColors.mdAlert,
+                      color: bloc.dernierDevis != null
+                          ? AppColors.md_secondary
+                          : (_rdvBloc.userOrderAppointmentsResponse.length > 0
+                              ? AppColors.travaux
+                              : AppColors.mdAlert),
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     child: Text(
-                        _rdvBloc.userOrderAppointmentsResponse.length > 0
-                            ? "Planifié"
-                            : "  À réaliser ",
+                        bloc.dernierDevis != null
+                            ? "Validé"
+                            : (_rdvBloc.userOrderAppointmentsResponse.length > 0
+                                ? "Planifié"
+                                : "  À réaliser "),
                         style: AppStyles.tinyTitleWhite,
                         textAlign: TextAlign.center,
                         maxLines: 1,
@@ -129,7 +133,9 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
                     opened
                         ? FontAwesomeIcons.chevronUp
                         : FontAwesomeIcons.chevronDown,
-                    color: AppColors.md_dark_blue,
+                    color: _rdvBloc.userOrderAppointmentsResponse.length > 0
+                        ? AppColors.md_primary
+                        : AppColors.md_dark_blue,
                     size: 12)),
           ],
         ),
@@ -170,60 +176,67 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
                   _rdvBloc.userOrderAppointmentsResponse.length > 0
                       ? DateFormatter.formatSecondDate(_rdvBloc
                           .userOrderAppointmentsResponse.first.startDate)
-                      : DateFormatter.formatDate(bloc.interventionDetail
-                          .interventionDetail.preferredVisitDate.date),
+                      : (bloc.interventionDetail.interventionDetail
+                                  .preferredVisitDate ==
+                              null
+                          ? "Pas de date préférée"
+                          : (DateFormatter.formatDate(bloc.interventionDetail
+                              .interventionDetail.preferredVisitDate.date))),
                   style: AppStyles.header2,
                 ),
               ],
             ),
           ),
-          SizedBox(height: 15),
-          ElevatedButton(
-            child: Ink(
-              decoration: BoxDecoration(
-                color: _rdvBloc.userOrderAppointmentsResponse.length > 0
-                    ? AppColors.white
-                    : AppColors.md_dark_blue,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(12),
-                ),
-                border: Border.all(color: AppColors.md_dark_blue),
-              ),
-              child: Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 55,
-                child: Text(
-                  _rdvBloc.userOrderAppointmentsResponse.length > 0
-                      ? "MODIFIER LE RENDEZ-VOUS"
-                      : "PLANIFIER LE RENDEZ-VOUS",
-                  style: _rdvBloc.userOrderAppointmentsResponse.length > 0
-                      ? AppStyles.buttonTextDarkBlue
-                      : AppStyles.smallTitleWhite,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            onPressed: () {
-              Modular.to.pushNamed(Routes.calendrierPriseRDV, arguments: {
-                'rdv': _rdvBloc.userOrderAppointmentsResponse.length > 0
-                    ? _rdvBloc.userOrderAppointmentsResponse.first
-                    : ListVisitData()
-              });
-            },
-            style: ElevatedButton.styleFrom(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                onPrimary: _rdvBloc.userOrderAppointmentsResponse.length > 0
-                    ? AppColors.md_dark_blue
-                    : AppColors.white,
-                primary: Colors.transparent,
-                padding: EdgeInsets.zero,
-                textStyle:
-                    TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-          ),
+          bloc.dernierDevis == null ? SizedBox(height: 15) : SizedBox.shrink(),
+          bloc.dernierDevis == null
+              ? ElevatedButton(
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      color: _rdvBloc.userOrderAppointmentsResponse.length > 0
+                          ? AppColors.white
+                          : AppColors.md_dark_blue,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(12),
+                      ),
+                      border: Border.all(color: AppColors.md_dark_blue),
+                    ),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      height: 55,
+                      child: Text(
+                        _rdvBloc.userOrderAppointmentsResponse.length > 0
+                            ? "MODIFIER LE RENDEZ-VOUS"
+                            : "PLANIFIER LE RENDEZ-VOUS",
+                        style: _rdvBloc.userOrderAppointmentsResponse.length > 0
+                            ? AppStyles.buttonTextDarkBlue
+                            : AppStyles.smallTitleWhite,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                  onPressed: () {
+                    Modular.to.pushNamed(Routes.calendrierPriseRDV, arguments: {
+                      'rdv': _rdvBloc.userOrderAppointmentsResponse.length > 0
+                          ? _rdvBloc.userOrderAppointmentsResponse.first
+                          : ListVisitData()
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      onPrimary:
+                          _rdvBloc.userOrderAppointmentsResponse.length > 0
+                              ? AppColors.md_dark_blue
+                              : AppColors.white,
+                      primary: Colors.transparent,
+                      padding: EdgeInsets.zero,
+                      textStyle:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                )
+              : SizedBox.shrink(),
           SizedBox(height: 15),
         ],
       ),

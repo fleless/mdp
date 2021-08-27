@@ -75,8 +75,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       padding: EdgeInsets.only(
           left: AppConstants.default_padding,
           right: AppConstants.default_padding,
-          bottom: AppConstants.default_padding * 2,
-          top: AppConstants.default_padding * 2),
+          bottom: AppConstants.default_padding * 1.3,
+          top: AppConstants.default_padding * 1.3),
       child: Container(
           alignment: Alignment.centerLeft,
           child: Text(

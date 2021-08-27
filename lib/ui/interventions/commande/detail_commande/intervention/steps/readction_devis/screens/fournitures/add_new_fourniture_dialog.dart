@@ -9,6 +9,7 @@ import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/add_new_material_response.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
+import 'package:mdp/models/workload_model.dart';
 import "dart:ui" as ui;
 import '../../../../../../../interventions_bloc.dart';
 import '../../redaction_devis_bloc.dart';
@@ -359,29 +360,20 @@ class _AddNewFournitureDialogState extends State<AddNewFournituresDialog> {
           alignment: Alignment.center,
           width: double.infinity,
           height: 55,
-          child: Text(
-            "AJOUTER",
-            style: AppStyles.buttonTextWhite,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: _loading
+              ? Center(
+                  child: CircularProgressIndicator(color: AppColors.white),
+                )
+              : Text(
+                  "AJOUTER",
+                  style: AppStyles.buttonTextWhite,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
         ),
       ),
-      onPressed: () async {
-        if (formKey.currentState.validate()) {
-          AddNewMaterialResponse resp = await _redactionBloc.addNewMaterial(
-              _nomController.text,
-              _commentController.text,
-              selectedunit.id,
-              int.parse(_qteController.text),
-              double.parse(_priceController.text));
-          if (resp.workLoadData == null) {
-            Fluttertoast.showToast(msg: "error survenue");
-          } else {
-            bloc.getMaterials();
-            Modular.to.pop();
-          }
-        }
+      onPressed: () {
+        _loading ? null : _goSave();
       },
       style: ElevatedButton.styleFrom(
           elevation: 2,
@@ -392,5 +384,35 @@ class _AddNewFournitureDialogState extends State<AddNewFournituresDialog> {
           padding: EdgeInsets.zero,
           textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     );
+  }
+
+  _goSave() async {
+    setState(() {
+      _loading = true;
+    });
+    if (formKey.currentState.validate()) {
+      AddNewMaterialResponse resp = await _redactionBloc.addNewMaterial(
+          _nomController.text,
+          _commentController.text,
+          selectedunit.id,
+          int.parse(_qteController.text),
+          double.parse(_priceController.text));
+      if (resp.workLoadData == null) {
+        Fluttertoast.showToast(msg: "error survenue");
+      } else {
+        await bloc.getMaterials();
+        _redactionBloc.liste_materiel.add(WorkLoadModel(
+            resp.workLoadData.id,
+            _nomController.text,
+            _qteController.text,
+            _priceController.text,
+            _commentController.text));
+        Modular.to.pop();
+        _redactionBloc.notifyChanges.add(0);
+      }
+    }
+    setState(() {
+      _loading = false;
+    });
   }
 }

@@ -86,7 +86,6 @@ class _InterventionWidgetState extends State<InterventionWidget> {
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     PriseRdvWidget(),
                     Container(height: 1, color: AppColors.md_gray),
-                    //TODO : remove gesture detector
                     RedactionDevisWidget(),
                     Container(height: 1, color: AppColors.md_gray),
                     RealisationTravauxWidget(),

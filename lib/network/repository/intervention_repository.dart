@@ -1,4 +1,5 @@
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
+import 'package:mdp/models/responses/get_interventions.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -6,6 +7,11 @@ import 'package:mdp/network/api/intervention_api_provider.dart';
 
 class InterventionRepository {
   InterventionApiProvider _apiProvider = new InterventionApiProvider();
+
+  Future<GetInterventionsResponse> getInterventions(
+      String subcontractorId, String code) async {
+    return _apiProvider.getInterventions(subcontractorId, code);
+  }
 
   Future<ShowInterventionResponse> showIntervention(String idIntervention) {
     return _apiProvider.showIntervention(idIntervention);

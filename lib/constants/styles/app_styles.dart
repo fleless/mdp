@@ -128,6 +128,13 @@ class AppStyles {
     fontSize: 14,
   );
 
+  static const buttonTextAlert = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.mdAlert,
+    fontWeight: FontWeight.w700,
+    fontSize: 14,
+  );
+
   static const buttonInactiveText = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.placeHolder,
@@ -189,6 +196,13 @@ class AppStyles {
     fontSize: 14,
   );
 
+  static const smalltinyWhite = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.md_text_white,
+    fontWeight: FontWeight.w300,
+    fontSize: 14,
+  );
+
   static const navBarTitle = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.md_text_white,
@@ -215,6 +229,13 @@ class AppStyles {
   static const body = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.default_black,
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+  );
+
+  static const bodyMdDarkBlue = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.md_dark_blue,
     fontWeight: FontWeight.w400,
     fontSize: 14,
   );
@@ -371,6 +392,13 @@ class AppStyles {
     color: AppColors.closeDialogColor,
     fontWeight: FontWeight.w400,
     fontSize: 13,
+  );
+
+  static const workChargeMdDark = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.closeDialogColor,
+    fontWeight: FontWeight.w700,
+    fontSize: 15,
   );
 
   static const smallMdDarkBold = TextStyle(

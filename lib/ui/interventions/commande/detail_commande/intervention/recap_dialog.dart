@@ -123,15 +123,16 @@ class _RecapDialogState extends State<RecapDialog> {
           width: double.infinity,
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
+            border: Border.all(color: AppColors.md_dark_blue),
             borderRadius: BorderRadius.only(
               topRight: Radius.circular(15),
               topLeft: Radius.circular(15),
             ),
-            color: AppColors.closeDialogColor,
+            color: AppColors.md_dark_blue,
           ),
           child: Text(code + " - " + name,
               style: AppStyles.smallTitleWhite,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.start,
               maxLines: 5,
               overflow: TextOverflow.ellipsis),
         ),
@@ -139,11 +140,12 @@ class _RecapDialogState extends State<RecapDialog> {
           width: double.infinity,
           padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
+            border: Border.all(color: AppColors.md_dark_blue),
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(15),
               bottomRight: Radius.circular(15),
             ),
-            color: AppColors.md_gray,
+            color: AppColors.white,
           ),
           child: Text(
               ((bloc.interventionDetail.interventionDetail.indication ==
@@ -153,7 +155,7 @@ class _RecapDialogState extends State<RecapDialog> {
                   ? "Aucun commentaire."
                   : bloc.interventionDetail.interventionDetail.indication,
               style: AppStyles.textNormal,
-              textAlign: TextAlign.left,
+              textAlign: TextAlign.start,
               maxLines: 5,
               overflow: TextOverflow.ellipsis),
         ),
@@ -168,7 +170,7 @@ class _RecapDialogState extends State<RecapDialog> {
         width: double.infinity,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text("Photos du client",
-              style: AppStyles.subTitleBlack, overflow: TextOverflow.ellipsis),
+              style: AppStyles.header2, overflow: TextOverflow.ellipsis),
           SizedBox(height: 10),
           Container(
             height: 250,
@@ -199,7 +201,7 @@ class _RecapDialogState extends State<RecapDialog> {
                           child: Image.network(
                               bloc.interventionDetail.interventionDetail
                                   .clientPhotos[index],
-                              fit: BoxFit.fill),
+                              fit: BoxFit.cover),
                         ),
                       ),
                     ),
@@ -219,7 +221,7 @@ class _RecapDialogState extends State<RecapDialog> {
         children: [
           Text(
             "Fourchette tarifaire :",
-            style: AppStyles.subTitleBlack,
+            style: AppStyles.header2,
             textAlign: TextAlign.left,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

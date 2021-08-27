@@ -51,6 +51,7 @@ class InterventionDetail {
   List<Details> details;
   String indication;
   List<Subcontractors> subcontractors;
+  List<Quotes> quotes;
 
   InterventionDetail(
       {this.id,
@@ -74,7 +75,8 @@ class InterventionDetail {
       this.clientPhotos,
       this.details,
       this.indication,
-      this.subcontractors});
+      this.subcontractors,
+      this.quotes});
 
   InterventionDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -105,16 +107,22 @@ class InterventionDetail {
     description = json['description'];
     clientPhotos = json['clientPhotos'].cast<String>();
     if (json['details'] != null) {
-      details = new List<Details>();
+      details = <Details>[];
       json['details'].forEach((v) {
         details.add(new Details.fromJson(v));
       });
     }
     indication = json['indication'];
     if (json['subcontractors'] != null) {
-      subcontractors = new List<Subcontractors>();
+      subcontractors = <Subcontractors>[];
       json['subcontractors'].forEach((v) {
         subcontractors.add(new Subcontractors.fromJson(v));
+      });
+    }
+    if (json['quotes'] != null) {
+      quotes = <Quotes>[];
+      json['quotes'].forEach((v) {
+        quotes.add(new Quotes.fromJson(v));
       });
     }
   }
@@ -159,6 +167,9 @@ class InterventionDetail {
     if (this.subcontractors != null) {
       data['subcontractors'] =
           this.subcontractors.map((v) => v.toJson()).toList();
+    }
+    if (this.quotes != null) {
+      data['quotes'] = this.quotes.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -774,6 +785,56 @@ class Company {
     if (this.commchannels != null) {
       data['commchannels'] = this.commchannels.map((v) => v.toJson()).toList();
     }
+    return data;
+  }
+}
+
+class Quotes {
+  num id;
+  String name;
+  String state;
+  Created created;
+
+  Quotes({this.id, this.name, this.state, this.created});
+
+  Quotes.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    state = json['state'];
+    created =
+        json['created'] != null ? new Created.fromJson(json['created']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['state'] = this.state;
+    if (this.created != null) {
+      data['created'] = this.created.toJson();
+    }
+    return data;
+  }
+}
+
+class Created {
+  String date;
+  num timezoneType;
+  String timezone;
+
+  Created({this.date, this.timezoneType, this.timezone});
+
+  Created.fromJson(Map<String, dynamic> json) {
+    date = json['date'];
+    timezoneType = json['timezone_type'];
+    timezone = json['timezone'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['date'] = this.date;
+    data['timezone_type'] = this.timezoneType;
+    data['timezone'] = this.timezone;
     return data;
   }
 }

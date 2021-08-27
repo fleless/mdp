@@ -20,7 +20,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   void _navigateTo(String route, [Object args]) {
     if (ModalRoute.of(context).settings.name != route) {
-      Modular.to.pushReplacementNamed(route, arguments: args);
+      Modular.to.pushNamed(route, arguments: args);
     }
   }
 

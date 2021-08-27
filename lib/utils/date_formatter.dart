@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class DateFormatter {
@@ -22,6 +23,9 @@ class DateFormatter {
         break;
       case "Friday":
         day = "Vendredi";
+        break;
+      case "Sunday":
+        day = "Dimanche";
         break;
     }
     day += " ";
@@ -192,5 +196,18 @@ class DateFormatter {
     day += " ";
     day += dateTime.year.toString();
     return day;
+  }
+
+  static addHoursAndMinutesPrecision(TimeOfDay time) {
+    String formattedTime = " à ";
+    if (time.hour.toString().length != 2) {
+      formattedTime += "0";
+    }
+    formattedTime += time.hour.toString() + ":";
+    if (time.minute.toString().length != 2) {
+      formattedTime += "0";
+    }
+    formattedTime += time.minute.toString();
+    return formattedTime;
   }
 }

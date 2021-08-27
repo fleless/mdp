@@ -86,7 +86,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
           left: AppConstants.default_padding,
           right: AppConstants.default_padding,
           bottom: AppConstants.default_padding,
-          top: AppConstants.default_padding * 2),
+          top: AppConstants.default_padding * 1.3),
       child: Container(
           alignment: Alignment.centerLeft,
           child: Column(

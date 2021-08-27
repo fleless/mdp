@@ -10,7 +10,8 @@ import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class InterventionApiProvider {
-  final String getInterventionsEndPoint = Endpoints.URL + "list-intervention";
+  final String getInterventionsEndPoint =
+      Endpoints.URL + "v1/list-intervention";
   final String showInterventionEndPoint =
       Endpoints.CORE_URL + "show-intervention/";
   final String refuseEndPoint = Endpoints.URL + "competition/refuse";
@@ -47,19 +48,18 @@ class InterventionApiProvider {
 
   Future<GetInterventionsResponse> getInterventions(
       String subcontractorId, String code) async {
-    var params = {
-      "subcontractorId": subcontractorId,
-      "sortField": "created",
-      "sortOrder": "DESC",
-      "filters": {"code": code}
-    };
     try {
-      Response response = await _dio.post(getInterventionsEndPoint,
+      Response response = await _dio.get(
+          getInterventionsEndPoint +
+              "?subcontractorId=" +
+              subcontractorId +
+              '&sortField=created&sortOrder=DESC&filters={"code":"' +
+              code +
+              '"}',
           options: Options(responseType: ResponseType.json, headers: {
             'Content-type': 'application/json',
             'Accept': 'application/json',
-          }),
-          data: jsonEncode(params));
+          }));
       return GetInterventionsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetInterventionsResponse();

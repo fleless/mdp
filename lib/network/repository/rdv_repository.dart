@@ -25,6 +25,17 @@ class RdvRepository {
         title, comment, orderId, subContractorId, startDate, endDate);
   }
 
+  Future<AddAppointmentResponse> addRealisationAppointment(
+      String title,
+      String comment,
+      int orderId,
+      String subContractorId,
+      String startDate,
+      String endDate) {
+    return _apiProvider.addRealisationAppointment(
+        title, comment, orderId, subContractorId, startDate, endDate);
+  }
+
   Future<AddAppointmentResponse> updateFirstAppointment(
       String title, String comment, String startDate, String endDate, String idRdv) {
     return _apiProvider.updateFirstAppointment(

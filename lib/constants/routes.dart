@@ -22,6 +22,12 @@ class Routes {
   static const String profil = '/profil';
   static const String notifications = '/notifications';
   static const String creationDesignation = '/creationDesignation';
+  static const String signatureArtisan = '/signatureArtisan';
+  static const String presentationDevis = '/presentationDevis';
+  static const String envoyerDevisMail = '/envoyerDevisMail';
+  static const String signatureClient = '/signatureClient';
+  static const String ajouterRealisationRDV = '/ajouterRealisationRDV';
+  static const String calendrierRealisationRDV = "/calendrierRealisationRDV";
 
   // Utility method used to build a dynamic route with params.
   // Example: Routes.buildRouteWithParams('/users/{id}, {'id': 1}); would generate '/users/1'

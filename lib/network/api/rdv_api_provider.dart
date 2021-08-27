@@ -103,6 +103,37 @@ class RdvApiProvider {
     }
   }
 
+  Future<AddAppointmentResponse> addRealisationAppointment(
+      String title,
+      String comment,
+      int orderId,
+      String subContractorId,
+      String startDate,
+      String endDate) async {
+    var params = {
+      "title": title,
+      "comment": comment,
+      "type_id": "2",
+      "order_id": orderId,
+      "subcontractor_id": subContractorId,
+      "start_date": startDate,
+      "end_date": endDate
+    };
+    try {
+      Response response = await _dio.post(addAppointmentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return AddAppointmentResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return AddAppointmentResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<AddAppointmentResponse> updateFirstAppointment(
       String title, String comment, String startDate, String endDate, String idRdv) async {
     var params = {

@@ -241,8 +241,8 @@ class Partner {
 class Addresses {
   num id;
   String uuid;
-  Null addressFirstname;
-  Null addressLastname;
+  String addressFirstname;
+  String addressLastname;
   String streetNumber;
   String streetName;
   num longitude;

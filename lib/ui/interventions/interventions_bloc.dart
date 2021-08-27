@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/adressResponse.dart';
 import 'package:mdp/models/responses/get_designations_name.dart';
+import 'package:mdp/models/responses/get_devis_response.dart';
+import 'package:mdp/models/responses/get_interventions.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
@@ -11,6 +14,7 @@ import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/network/repository/adress_repository.dart';
+import 'package:mdp/network/repository/document_uploader_repository.dart';
 import 'package:mdp/network/repository/intervention_repository.dart';
 import 'package:mdp/network/repository/login_repository.dart';
 import 'package:mdp/network/repository/redaction_devis_repository.dart';
@@ -27,10 +31,19 @@ class InterventionsBloc extends Disposable {
   final changesNotifier = PublishSubject<bool>();
   List<ListQuoteReference> liste_names = <ListQuoteReference>[];
   List<ListWorkload> liste_materials = <ListWorkload>[];
+  List<ListWorkload> liste_mainDeplacement = <ListWorkload>[];
   List<ListWorkloadUnits> liste_units = <ListWorkloadUnits>[];
   List<String> liste_unit_names = <String>[];
   RedactionDevisRepository _redactionDevisRepository =
       RedactionDevisRepository();
+  GetDevisResponse dernierDevis = GetDevisResponse();
+
+  Future<GetInterventionsResponse> getInterventions(
+      String subcontractorId, String code) async {
+    GetInterventionsResponse resp =
+        await _interventionRepository.getInterventions(subcontractorId, code);
+    return resp;
+  }
 
   Future<GetDesignationsNameResponse> getDesignationsName() async {
     liste_names.clear();
@@ -44,6 +57,14 @@ class InterventionsBloc extends Disposable {
     liste_materials.clear();
     GetMaterialResponse resp = await _redactionDevisRepository.getMaterials();
     liste_materials.addAll(resp.listWorkload);
+    return resp;
+  }
+
+  Future<GetMaterialResponse> getMainDeplacement() async {
+    liste_mainDeplacement.clear();
+    GetMaterialResponse resp =
+        await _redactionDevisRepository.getMainDeplacement();
+    liste_mainDeplacement.addAll(resp.listWorkload);
     return resp;
   }
 
@@ -69,7 +90,38 @@ class InterventionsBloc extends Disposable {
       String idIntervention) async {
     interventionDetail =
         await _interventionRepository.getInterventionDetail(idIntervention);
+    if (interventionDetail.interventionDetail.quotes == null) {
+      dernierDevis = null;
+    } else {
+      if (interventionDetail.interventionDetail.quotes.isEmpty) {
+        dernierDevis = null;
+      } else {
+        //we compare between dates of quotes to get the last quote(devis)
+        DateTime lastDateDevis = new DateFormat("yyyy-MM-dd hh:mm:ss").parse(
+            interventionDetail.interventionDetail.quotes.first.created.date);
+        num lastIdDevis = interventionDetail.interventionDetail.quotes.first.id;
+        interventionDetail.interventionDetail.quotes.forEach((element) {
+          DateTime tempDate =
+              new DateFormat("yyyy-MM-dd hh:mm:ss").parse(element.created.date);
+          if (tempDate.isAfter(lastDateDevis)) {
+            lastDateDevis = tempDate;
+            lastIdDevis = element.id;
+          }
+        });
+        await getDevisDetails(lastIdDevis.toString());
+      }
+    }
+    //TODO: Un print à enlever avant la prod
+    print("9olli trah " +
+        (dernierDevis == null
+            ? "rahou null "
+            : (dernierDevis.quoteData.quote.id.toString())));
+  }
+
+  Future<GetDevisResponse> getDevisDetails(String orderId) async {
+    dernierDevis = await _redactionDevisRepository.getDevis(orderId);
     notifChanges();
+    return dernierDevis;
   }
 
   Future<int> acceptIntervention(String reference, int idIntervention,

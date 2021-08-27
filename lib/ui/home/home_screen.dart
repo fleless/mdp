@@ -67,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: EdgeInsets.only(
           bottom: AppConstants.default_padding,
-          top: AppConstants.default_padding * 2),
+          top: AppConstants.default_padding * 1.3),
       child: Container(
           height: double.infinity,
           child: Row(

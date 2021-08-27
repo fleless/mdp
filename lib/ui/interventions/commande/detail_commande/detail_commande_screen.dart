@@ -7,12 +7,17 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/client/client_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_widget.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_widget.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_screen.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
 class DetailCommandeScreen extends StatefulWidget {
+  String uuid;
+
+  DetailCommandeScreen(this.uuid);
+
   @override
   State<StatefulWidget> createState() => _DetailCommandeScreenState();
 }
@@ -22,6 +27,7 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
   GlobalKey<ContainedTabBarViewState> _key = GlobalKey();
   int indexTab = 0;
   final bloc = Modular.get<InterventionsBloc>();
+  final _redactionBloc = Modular.get<RedactionDevisBloc>();
   bool _loading = false;
 
   @override
@@ -37,13 +43,13 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
     setState(() {
       _loading = true;
     });
-    //TODO: change intervention id
-    await bloc.getInterventionDetail("73467dae-df59-11eb-a612-0ace6068ba3f");
+    await bloc.getInterventionDetail(widget.uuid);
     //load all datas to use specially in designation
     await bloc.getDesignationsName();
     await bloc.getMaterials();
     await bloc.getUnits();
-    setState(() {
+    await bloc.getMainDeplacement();
+    await setState(() {
       _loading = false;
     });
   }
