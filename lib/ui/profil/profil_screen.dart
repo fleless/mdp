@@ -38,7 +38,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
     setState(() {
       _loading = true;
     });
-    profile = await bloc.getProfile(Endpoints.subcontractor_id);
+    profile = await bloc.getProfile(Endpoints.subcontractor_uuid);
     setState(() {
       _loading = false;
     });

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/adressResponse.dart';
+import 'package:mdp/models/responses/change_order_state.dart';
 import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
@@ -13,6 +14,7 @@ import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
+import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/network/repository/adress_repository.dart';
 import 'package:mdp/network/repository/document_uploader_repository.dart';
 import 'package:mdp/network/repository/intervention_repository.dart';
@@ -37,6 +39,8 @@ class InterventionsBloc extends Disposable {
   RedactionDevisRepository _redactionDevisRepository =
       RedactionDevisRepository();
   GetDevisResponse dernierDevis = GetDevisResponse();
+  DocumentUploaderRepository _documentUploaderRepository =
+      DocumentUploaderRepository();
 
   Future<GetInterventionsResponse> getInterventions(
       String subcontractorId, String code) async {
@@ -111,11 +115,7 @@ class InterventionsBloc extends Disposable {
         await getDevisDetails(lastIdDevis.toString());
       }
     }
-    //TODO: Un print à enlever avant la prod
-    print("9olli trah " +
-        (dernierDevis == null
-            ? "rahou null "
-            : (dernierDevis.quoteData.quote.id.toString())));
+    changesNotifier.add(true);
   }
 
   Future<GetDevisResponse> getDevisDetails(String orderId) async {
@@ -191,6 +191,18 @@ class InterventionsBloc extends Disposable {
         additionalAddress,
         city,
         postcode);
+  }
+
+  Future<ChangeOrderStateResponse> changeOrderState(
+      num order, num orderState, String orderUuid) async {
+    return _interventionRepository.changeOrderState(
+        order, orderState, orderUuid);
+  }
+
+  Future<UploadDocumentResponse> uploadPhotosIntervention(
+      num orderId, String documentContent) async {
+    return await _documentUploaderRepository.uploadInterventionDocument(
+        orderId, 2, documentContent);
   }
 
   notifChanges() {

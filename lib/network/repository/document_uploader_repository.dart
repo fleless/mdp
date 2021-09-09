@@ -9,4 +9,10 @@ class DocumentUploaderRepository {
     return _apiProvider.uploadQuoteDocument(
         quoteId, documentTypeId, documentContent);
   }
+
+  Future<UploadDocumentResponse> uploadInterventionDocument(
+      num orderId, int documentTypeId, String documentContent) async {
+    return _apiProvider.uploadInterventionDocument(
+        orderId, documentTypeId, documentContent);
+  }
 }

@@ -124,11 +124,14 @@ dependencies:
   # package for downloading files.
   flutter_downloader: ^1.6.1
 
-  path_provider: ^2.0.2
+  path_provider: ^2.0.3
   permission_handler: ^8.1.4+2
 
   # package for flushbar a toast with animation.
   another_flushbar: ^1.10.24
+
+  # package for compressing files flutter(used for images).
+  flutter_image_compress: ^1.1.0
 
 dev_dependencies:
   flutter_test:

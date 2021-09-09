@@ -26,10 +26,12 @@ import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_screen.dart';
 import 'package:mdp/ui/login/login_bloc.dart';
 import 'package:mdp/ui/login/login_screen.dart';
+import 'package:mdp/ui/notifications/notifications_bloc.dart';
 import 'package:mdp/ui/notifications/notifications_screen.dart';
 import 'package:mdp/ui/profil/profil_screen.dart';
 import 'package:mdp/ui/profil/profile_bloc.dart';
 import 'package:mdp/ui/splash/splash_screen.dart';
+import 'package:mdp/utils/image_compresser.dart';
 import 'package:mdp/utils/user_location.dart';
 import 'package:mdp/widgets/photo_view_screen.dart';
 import 'app_widget.dart';
@@ -42,12 +44,14 @@ class AppModule extends MainModule {
         Bind((_) => ProfileBloc()),
         Bind((_) => HomeBloc()),
         Bind((_) => CalendarBloc()),
+        Bind((_) => NotificationsBloc()),
         Bind((_) => MessagerieBloc()),
         Bind((_) => InterventionBloc()),
         Bind((_) => UserLocation()),
         Bind((_) => InterventionsBloc()),
         Bind((_) => PriseRdvBloc()),
         Bind((_) => RedactionDevisBloc()),
+        Bind((_) => ImageCompressor()),
       ];
 
   // Provide all the routes for your module

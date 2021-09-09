@@ -5,7 +5,9 @@ import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
-import 'package:mdp/models/notifications.dart';
+import 'package:mdp/models/requests/delete_notifications_request.dart';
+import 'package:mdp/models/responses/get_notifications_Response.dart';
+import 'package:mdp/ui/notifications/notifications_bloc.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
@@ -16,29 +18,24 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  List<Notifications> _notifications = <Notifications>[];
+  List<NotificationData> _notifications = <NotificationData>[];
+  final bloc = Modular.get<NotificationsBloc>();
+  bool _loading = true;
 
   @override
   void initState() {
-    _fakeList();
-    _fakeList();
-    _fakeList();
-    _fakeList();
-    _fakeList();
+    _loadNotifications();
     super.initState();
   }
 
-  _fakeList() {
-    _notifications.add(Notifications(
-        AppColors.mdAlert, "FR-Nouveau", "Vous avez une nouvelle demande"));
-    _notifications.add(Notifications(
-        AppColors.md_secondary, "FR-DE6HR", "Dans 1h intervention"));
-    _notifications.add(Notifications(AppColors.md_secondary, "FR-DE6HR",
-        "Vous avez une action à effectuer: Réaliser le devis"));
-    _notifications.add(
-        Notifications(AppColors.md_secondary, "FR-DE6HR", "Nouveau message"));
-    _notifications.add(Notifications(
-        AppColors.md_dark_blue, "Alerte", "Merci de bien vouloir XXX"));
+  _loadNotifications() async {
+    setState(() {
+      _loading = true;
+    });
+    _notifications = await bloc.getNotifications();
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -59,8 +56,36 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: _buildTitle(),
             ),
             Expanded(
-              child: _buildList(),
+              child: _loading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                          color: AppColors.md_dark_blue))
+                  : _notifications.length > 0
+                      ? _buildList()
+                      : Center(
+                          child: Text(
+                          "Vous n'avez aucune notification",
+                          style: AppStyles.bodyMdTextLight,
+                        )),
             ),
+            if (_notifications.length > 0)
+              Center(
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.all(10.0),
+                    primary: AppColors.md_dark_blue,
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
+                  child: const Text('Tout effacer',
+                      style: AppStyles.underlinedTertiaryButtonText,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2),
+                  onPressed: () {
+                    _supprimerToutesLesNotifs();
+                  },
+                ),
+              ),
+            SizedBox(height: 7),
           ],
         ),
       )),
@@ -110,7 +135,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       alignment: Alignment.center,
                       child: Icon(
                         Icons.circle,
-                        color: _notifications[index].color,
+                        color: _notifications[index].type == "NEW_MESSAGE"
+                            ? AppColors.md_secondary
+                            : _notifications[index].type == "NEW_COMMENT"
+                                ? AppColors.md_dark_blue
+                                : AppColors.mdAlert,
                       ),
                     ),
                     SizedBox(width: 20),
@@ -119,23 +148,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(_notifications[index].message,
+                          Text(_notifications[index].title,
                               style: AppStyles.bodyDefaultBlack),
                           SizedBox(height: 5),
-                          Text(_notifications[index].description,
-                              style: _notifications[index].color ==
-                                      AppColors.mdAlert
-                                  ? AppStyles.alertNotification
-                                  : AppStyles.bodyBoldMdDarkBlue),
+                          Text(_notifications[index].content,
+                              style: AppStyles.bodyBoldMdDarkBlue),
                         ],
                       ),
                     ),
                     SizedBox(width: 20),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Icon(
-                        Icons.close,
-                        size: 20,
+                    InkWell(
+                      onTap: () {
+                        _supprimerUneNotif(index);
+                      },
+                      splashColor: AppColors.md_dark_blue.withOpacity(0.2),
+                      child: Align(
+                        alignment: Alignment.topRight,
+                        child: Icon(
+                          Icons.close,
+                          size: 27,
+                        ),
                       ),
                     ),
                   ],
@@ -146,5 +178,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         },
       ),
     );
+  }
+
+  _supprimerUneNotif(num index) async {
+    List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
+    lista.add(
+        DeleteNotificationsRequest(id: num.parse(_notifications[index].id)));
+    await bloc.deleteNotifications(lista);
+    _loadNotifications();
+  }
+
+  _supprimerToutesLesNotifs() async {
+    List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
+    _notifications.forEach((element) {
+      lista.add(DeleteNotificationsRequest(id: num.parse(element.id)));
+    });
+    await bloc.deleteNotifications(lista);
+    _loadNotifications();
   }
 }

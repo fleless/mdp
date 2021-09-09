@@ -337,23 +337,30 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
                           ),*/
                         ],
                       ),
-                      //TODO; wait api changes
-                      /* _listeInterventions[index].action
-                          ? Container(
-                              padding: EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                  color: AppColors.mdAlert),
-                              child: Text(
-                                "Action requise",
-                                style: AppStyles.buttonTextWhite,
-                              ),
-                            )
-                          : SizedBox.shrink(),*/
+                      if (_listeInterventions[index].requiredAction != null)
+                        _listeInterventions[index].requiredAction.isRequired
+                            ? Container(
+                                padding: EdgeInsets.all(7),
+                                margin: EdgeInsets.only(top: 5, left: 1),
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12)),
+                                    color: AppColors.mdAlert),
+                                child: Text(
+                                  "Action requise",
+                                  style: AppStyles.buttonTextWhite,
+                                ),
+                              )
+                            : SizedBox.shrink(),
                       SizedBox(height: 20),
                       Text(
-                        _listeInterventions[index].code,
+                        _listeInterventions[index].details.length > 0
+                            ? _listeInterventions[index]
+                                .details
+                                .first
+                                .ordercase
+                                .code
+                            : "",
                         style: AppStyles.bodyDefaultBlack,
                       ),
                       Text(

@@ -23,10 +23,14 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
   final bloc = Modular.get<InterventionsBloc>();
   final _priseRdvbloc = Modular.get<PriseRdvBloc>();
   bool opened = false;
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
+    bloc.changesNotifier.listen((value) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -39,11 +43,15 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
   }
 
   _weAreBeforeThisStep() {
-    return bloc.dernierDevis.quoteData.quote.state.code != "CLIENT_SIGNED";
+    return bloc.dernierDevis.quoteData.quote.state.code != "CLIENT_SIGNED" &&
+        (bloc.interventionDetail.interventionDetail.state.name !=
+            "WAITING_FINISH");
   }
 
   _weEndedThisStep() {
-    return bloc.dernierDevis.quoteData.quote.state.code == "CLIENT_SIGNED";
+    return (bloc.dernierDevis.quoteData.quote.state.code == "CLIENT_SIGNED") &&
+        (bloc.interventionDetail.interventionDetail.state.name ==
+            "WAITING_FINISH");
   }
 
   @override
@@ -58,9 +66,11 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
           children: [
             Container(
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              color: _weAreInThisStep()
-                  ? AppColors.md_light_gray
-                  : AppColors.white,
+              color: _weEndedThisStep()
+                  ? AppColors.white
+                  : _weAreInThisStep()
+                      ? AppColors.md_light_gray
+                      : AppColors.white,
               child: _buildHeader(),
             ),
             opened ? _buildExpansion() : SizedBox.shrink()
@@ -84,19 +94,32 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
                     height: 30.0,
                     alignment: Alignment.center,
                     decoration: new BoxDecoration(
-                      color: AppColors.md_dark_blue,
+                      color: _weEndedThisStep()
+                          ? AppColors.white
+                          : AppColors.md_dark_blue,
                       shape: BoxShape.circle,
-                      border:
-                          Border.all(color: AppColors.md_dark_blue, width: 1.5),
+                      border: Border.all(
+                          color: _weEndedThisStep()
+                              ? AppColors.md_primary
+                              : _weAreInThisStep()
+                                  ? AppColors.md_dark_blue
+                                  : AppColors.md_primary,
+                          width: 1.5),
                     ),
-                    child: Transform.rotate(
-                      angle: -math.pi / 2,
-                      child: FaIcon(
-                        FontAwesomeIcons.hammer,
-                        color: AppColors.white,
-                        size: 16,
-                      ),
-                    ),
+                    child: _weEndedThisStep()
+                        ? Icon(
+                            Icons.done,
+                            color: AppColors.md_primary,
+                            size: 16,
+                          )
+                        : Transform.rotate(
+                            angle: -math.pi / 2,
+                            child: FaIcon(
+                              FontAwesomeIcons.hammer,
+                              color: AppColors.white,
+                              size: 16,
+                            ),
+                          ),
                   )
                 : Container(
                     width: 30.0,
@@ -130,10 +153,15 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
                       ? Container(
                           padding: EdgeInsets.all(7),
                           decoration: BoxDecoration(
-                            color: AppColors.mdAlert,
+                            color: _weEndedThisStep()
+                                ? AppColors.md_secondary
+                                : AppColors.mdAlert,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
                           ),
-                          child: Text("  À réaliser ",
+                          child: Text(
+                              _weEndedThisStep()
+                                  ? "  Validé "
+                                  : "  À réaliser ",
                               style: AppStyles.tinyTitleWhite,
                               textAlign: TextAlign.center,
                               maxLines: 1,
@@ -159,10 +187,10 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
                     opened
                         ? FontAwesomeIcons.chevronUp
                         : FontAwesomeIcons.chevronDown,
-                    color: _weAreInThisStep()
-                        ? AppColors.md_dark_blue
-                        : _weEndedThisStep()
-                            ? AppColors.md_primary
+                    color: _weEndedThisStep()
+                        ? AppColors.md_primary
+                        : _weAreInThisStep()
+                            ? AppColors.md_dark_blue
                             : AppColors.placeHolder,
                     size: 12),
               ),
@@ -176,21 +204,34 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
   Widget _buildExpansion() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-      color: _weAreInThisStep() ? AppColors.md_light_gray : AppColors.white,
+      color: _weEndedThisStep()
+          ? AppColors.white
+          : _weAreInThisStep()
+              ? AppColors.md_light_gray
+              : AppColors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (_priseRdvbloc.userOrderTravauxResponse != null)
             for (var i in _priseRdvbloc.userOrderTravauxResponse)
               _buildRdvBloc(i),
-          if (_priseRdvbloc.userOrderTravauxResponse != null)
-            SizedBox(height: 12),
-          _buildRealiserButton(),
-          SizedBox(height: 12),
-          _buildValidateButton(),
-          SizedBox(height: 12),
+          if (!_weEndedThisStep()) _buildButtons(),
         ],
       ),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        if (_priseRdvbloc.userOrderTravauxResponse != null)
+          SizedBox(height: 12),
+        _buildRealiserButton(),
+        SizedBox(height: 12),
+        _buildValidateButton(),
+        SizedBox(height: 12),
+      ],
     );
   }
 
@@ -201,8 +242,9 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
         width: double.infinity,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: _weEndedThisStep() ? AppColors.md_light_gray : AppColors.white,
           borderRadius: BorderRadius.circular(AppConstants.default_Radius),
+          border: Border.all(color: AppColors.md_light_gray, width: 1.5),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -276,15 +318,36 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
           alignment: Alignment.center,
           width: double.infinity,
           height: 50,
-          child: Text(
-            "TERMINER L'INTERVENTION",
-            style: AppStyles.buttonTextDarkBlue,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: _loading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.md_dark_blue,
+                  ),
+                )
+              : Text(
+                  "TERMINER L'INTERVENTION",
+                  style: AppStyles.buttonTextDarkBlue,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        if (!_loading) {
+          setState(() {
+            _loading = true;
+          });
+          await bloc.changeOrderState(
+              bloc.interventionDetail.interventionDetail.id,
+              5,
+              bloc.interventionDetail.interventionDetail.uuid);
+          await bloc.getInterventionDetail(
+              bloc.interventionDetail.interventionDetail.uuid);
+          setState(() {
+            _loading = false;
+          });
+        }
+      },
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
@@ -296,5 +359,3 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
     );
   }
 }
-
-class _rdvBloc {}

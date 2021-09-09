@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -29,8 +30,10 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/fournitures/fournitures_dialogs.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/mainDepacement/add_update_mainDeplacement.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/screens/mainDepacement/show_mainDeplacement_dialog.dart';
+import 'package:mdp/utils/image_compresser.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../../../interventions_bloc.dart';
 import 'package:collection/collection.dart';
@@ -49,6 +52,7 @@ class CreationDesignationScreen extends StatefulWidget {
 class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionsBloc>();
+  final image_compressor = Modular.get<ImageCompressor>();
   final redaction_devis_bloc = Modular.get<RedactionDevisBloc>();
   bool opened = false;
   GlobalKey<FormState> formKey = new GlobalKey();
@@ -945,7 +949,6 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
           comment: value.comment));
     });
     if ((!widget.isAdd) && (images.length == 0)) {
-      print("saving designation");
       bool response =
           await redaction_devis_bloc.updateDesignation(newDesignation);
       if (response) {
@@ -962,10 +965,11 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
     } else {
       //for saving Designation we start by uploading photos and getting their uuid in aws
       for (var element in images) {
-        print("image loading");
+        final dir = await getTemporaryDirectory();
         var path2 =
             await FlutterAbsolutePath.getAbsolutePath(element.identifier);
-        var file = File(path2);
+        var file = await image_compressor.compressAndGetFile(
+            File(path2), dir.absolute.path + "/temp.jpg");
         var base64Image = base64Encode(file.readAsBytesSync());
         UploadDocumentResponse resp = await redaction_devis_bloc.uploadPhotos(
             bloc.dernierDevis == null
@@ -977,7 +981,6 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
             newDesignation.photos.add(Photos(photoId: resp.document.uuid));
             //check if the last photo uploaded call api save the desigantion
             if (newDesignation.photos.length == images.length) {
-              print("saving designation");
               bool response;
               if (widget.isAdd)
                 response =

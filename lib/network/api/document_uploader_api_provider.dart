@@ -11,6 +11,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class DocumentUploaderApiProvider {
   final String uploadQuoteDocumentEndPoint =
       Endpoints.CORE_URL + "upload-quote-document";
+  final String uploadInterventionDocumentEndPoint =
+      Endpoints.CORE_URL + "upload-order-document";
 
   Dio _dio;
 
@@ -57,4 +59,27 @@ class DocumentUploaderApiProvider {
       throw e;
     }
   }
+
+  Future<UploadDocumentResponse> uploadInterventionDocument(
+      num orderId, int documentTypeId, String documentContent) async {
+    try {
+      var params = {
+        "orderId": orderId,
+        "documentTypeId": documentTypeId,
+        "documentContent": documentContent
+      };
+      Response response = await _dio.post(uploadInterventionDocumentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return UploadDocumentResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return UploadDocumentResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
 }

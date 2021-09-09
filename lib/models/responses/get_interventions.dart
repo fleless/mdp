@@ -55,6 +55,7 @@ class Interventions {
   List<Details> details;
   String indication;
   List<Subcontractors> subcontractors;
+  RequiredAction requiredAction;
 
   Interventions(
       {this.id,
@@ -121,6 +122,9 @@ class Interventions {
         subcontractors.add(new Subcontractors.fromJson(v));
       });
     }
+    requiredAction = json['requiredAction'] != null
+        ? new RequiredAction.fromJson(json['requiredAction'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -163,6 +167,9 @@ class Interventions {
     if (this.subcontractors != null) {
       data['subcontractors'] =
           this.subcontractors.map((v) => v.toJson()).toList();
+    }
+    if (this.requiredAction != null) {
+      data['requiredAction'] = this.requiredAction.toJson();
     }
     return data;
   }
@@ -749,6 +756,25 @@ class Subcontractors {
     if (this.company != null) {
       data['company'] = this.company.toJson();
     }
+    return data;
+  }
+}
+
+class RequiredAction {
+  bool isRequired;
+  String actionName;
+
+  RequiredAction({this.isRequired, this.actionName});
+
+  RequiredAction.fromJson(Map<String, dynamic> json) {
+    isRequired = json['isRequired'];
+    actionName = json['actionName'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['isRequired'] = this.isRequired;
+    data['actionName'] = this.actionName;
     return data;
   }
 }

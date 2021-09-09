@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
+import 'package:mdp/models/responses/change_order_state.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
@@ -23,7 +24,8 @@ class InterventionApiProvider {
       Endpoints.URL_PERSON + "/address/create-invoicing-address";
   final String modifierAdresseFacturationEndPoint =
       Endpoints.URL_PERSON + "/address/";
-
+  final String changeOrderStateEndPoint =
+      Endpoints.CORE_URL + "order-state-change/";
   Dio _dio;
 
   InterventionApiProvider() {
@@ -244,6 +246,27 @@ class InterventionApiProvider {
       return AddAdressFacturationResponse.fromJson(response.data);
     } on DioError catch (e) {
       return AddAdressFacturationResponse(result: "KO", message: "erreur");
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<ChangeOrderStateResponse> changeOrderState(
+      num order, num orderState, String orderUuid) async {
+    try {
+      var params = {
+        "order": order,
+        "orderState": orderState,
+      };
+      Response response = await _dio.put(changeOrderStateEndPoint + orderUuid,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return ChangeOrderStateResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return ChangeOrderStateResponse(orderUpdated: false);
     } catch (e) {
       throw e;
     }

@@ -63,9 +63,9 @@ class User {
   int id;
   String uuid;
   String firstName;
-  Null lastName;
-  Null mail;
-  Null myIdentity;
+  String lastName;
+  String mail;
+  String myIdentity;
 
   User(
       {this.id,
