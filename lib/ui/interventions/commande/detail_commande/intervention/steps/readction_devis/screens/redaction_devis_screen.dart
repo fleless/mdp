@@ -499,7 +499,9 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                             text: "Code promo : ",
                             style: AppStyles.bodyDefaultBlack),
                         TextSpan(
-                            text: bloc.dernierDevis.quoteData.quote.promoCode,
+                            text: bloc.dernierDevis == null
+                                ? ""
+                                : bloc.dernierDevis.quoteData.quote.promoCode,
                             style: AppStyles.bodyBold),
                       ],
                     ),
@@ -527,9 +529,11 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                             text: "Prise en charge partenaire :  ",
                             style: AppStyles.bodyDefaultBlack),
                         TextSpan(
-                            text: bloc.dernierDevis.quoteData.quote.coveredSum
-                                    .toString() +
-                                "€",
+                            text: bloc.dernierDevis == null
+                                ? ""
+                                : bloc.dernierDevis.quoteData.quote.coveredSum
+                                        .toString() +
+                                    "€",
                             style: AppStyles.bodyBold),
                       ],
                     ),

@@ -52,6 +52,7 @@ class InterventionDetail {
   String indication;
   List<Subcontractors> subcontractors;
   List<Quotes> quotes;
+  List<Documents> documents;
 
   InterventionDetail(
       {this.id,
@@ -76,7 +77,8 @@ class InterventionDetail {
       this.details,
       this.indication,
       this.subcontractors,
-      this.quotes});
+      this.quotes,
+      this.documents});
 
   InterventionDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -125,6 +127,12 @@ class InterventionDetail {
         quotes.add(new Quotes.fromJson(v));
       });
     }
+    if (json['documents'] != null) {
+      documents = new List<Documents>();
+      json['documents'].forEach((v) {
+        documents.add(new Documents.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -170,6 +178,9 @@ class InterventionDetail {
     }
     if (this.quotes != null) {
       data['quotes'] = this.quotes.map((v) => v.toJson()).toList();
+    }
+    if (this.documents != null) {
+      data['documents'] = this.documents.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -835,6 +846,28 @@ class Created {
     data['date'] = this.date;
     data['timezone_type'] = this.timezoneType;
     data['timezone'] = this.timezone;
+    return data;
+  }
+}
+
+class Documents {
+  String documentId;
+  String documentType;
+  String url;
+
+  Documents({this.documentId, this.documentType, this.url});
+
+  Documents.fromJson(Map<String, dynamic> json) {
+    documentId = json['documentId'];
+    documentType = json['documentType'];
+    url = json['url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['documentId'] = this.documentId;
+    data['documentType'] = this.documentType;
+    data['url'] = this.url;
     return data;
   }
 }

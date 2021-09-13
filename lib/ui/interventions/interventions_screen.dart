@@ -145,10 +145,10 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
       children: [
         SizedBox(height: 10),
         _buildSearchBy(),
-        SizedBox(height: 10),
+        /*SizedBox(height: 10),
         _buildSearchByStatus(),
         SizedBox(height: 10),
-        _buildSearchByActivity(),
+        _buildSearchByActivity(),*/
       ],
     );
   }

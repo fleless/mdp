@@ -7,7 +7,7 @@ class ImageCompressor {
     var result = await FlutterImageCompress.compressAndGetFile(
       file.absolute.path,
       targetPath,
-      quality: 88,
+      quality: 50,
       rotate: 0,
     );
     return result;

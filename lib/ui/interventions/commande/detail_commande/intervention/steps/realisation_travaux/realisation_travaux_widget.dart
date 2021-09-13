@@ -39,16 +39,34 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
   }
 
   _weAreInThisStep() {
+    if (bloc.dernierDevis == null) {
+      return false;
+    }
+    if (bloc.dernierDevis.quoteData == null) {
+      return false;
+    }
     return bloc.dernierDevis.quoteData.quote.state.code == "CLIENT_SIGNED";
   }
 
   _weAreBeforeThisStep() {
+    if (bloc.dernierDevis == null) {
+      return true;
+    }
+    if (bloc.dernierDevis.quoteData == null) {
+      return true;
+    }
     return bloc.dernierDevis.quoteData.quote.state.code != "CLIENT_SIGNED" &&
         (bloc.interventionDetail.interventionDetail.state.name !=
             "WAITING_FINISH");
   }
 
   _weEndedThisStep() {
+    if (bloc.dernierDevis == null) {
+      return false;
+    }
+    if (bloc.dernierDevis.quoteData == null) {
+      return false;
+    }
     return (bloc.dernierDevis.quoteData.quote.state.code == "CLIENT_SIGNED") &&
         (bloc.interventionDetail.interventionDetail.state.name ==
             "WAITING_FINISH");

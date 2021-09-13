@@ -1,3 +1,4 @@
+import 'package:mdp/models/responses/add_type_document_response.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/network/api/document_uploader_api_provider.dart';
 
@@ -14,5 +15,9 @@ class DocumentUploaderRepository {
       num orderId, int documentTypeId, String documentContent) async {
     return _apiProvider.uploadInterventionDocument(
         orderId, documentTypeId, documentContent);
+  }
+
+  Future<AddTypeDocumentResponse> addTypeDocument(String name) async {
+    return _apiProvider.addTypeDocument(name);
   }
 }

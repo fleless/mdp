@@ -1,6 +1,7 @@
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/change_order_state.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
+import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -89,5 +90,9 @@ class InterventionRepository {
   Future<ChangeOrderStateResponse> changeOrderState(
       num order, num orderState, String orderUuid) async {
     return _apiProvider.changeOrderState(order, orderState, orderUuid);
+  }
+
+  Future<GetTypesDocumentsResponse> getListesTypesDocuments() async {
+    return _apiProvider.getListesTypesDocuments();
   }
 }

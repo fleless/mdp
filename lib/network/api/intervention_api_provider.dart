@@ -5,6 +5,7 @@ import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/change_order_state.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
+import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
@@ -26,6 +27,8 @@ class InterventionApiProvider {
       Endpoints.URL_PERSON + "/address/";
   final String changeOrderStateEndPoint =
       Endpoints.CORE_URL + "order-state-change/";
+  final String getListeTyesDocumentsEndPoint = Endpoints.CORE_URL +
+      "list-order-document?sortField=id&sortOrder=DESC&filters=%7B%22enabled%22:1%7D";
   Dio _dio;
 
   InterventionApiProvider() {
@@ -267,6 +270,21 @@ class InterventionApiProvider {
       return ChangeOrderStateResponse.fromJson(response.data);
     } on DioError catch (e) {
       return ChangeOrderStateResponse(orderUpdated: false);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<GetTypesDocumentsResponse> getListesTypesDocuments() async {
+    try {
+      Response response = await _dio.get(getListeTyesDocumentsEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }));
+      return GetTypesDocumentsResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return GetTypesDocumentsResponse();
     } catch (e) {
       throw e;
     }

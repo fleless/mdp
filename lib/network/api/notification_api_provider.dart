@@ -37,12 +37,12 @@ class NotificationsApiProvider {
 
   Future<GetNotificationsResponse> getNotifications() async {
     try {
-      Response response =
-          await _dio.get(getNotificationsEndPoint + Endpoints.subcontractor_id,
-              options: Options(responseType: ResponseType.json, headers: {
-                'Content-type': 'application/json',
-                'Accept': 'application/json',
-              }));
+      Response response = await _dio.get(
+          getNotificationsEndPoint + Endpoints.subcontractor_uuid,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }));
       return GetNotificationsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetNotificationsResponse();

@@ -10,6 +10,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/intervention_detail_response.dart'
+    as DetailResponse;
 import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/utils/image_compresser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -30,13 +32,27 @@ class _FinalisationInterventionWidgetState
   final image_compressor = Modular.get<ImageCompressor>();
 
   //les listes pour les photos
-  List<String> imagesAlreadyUploaded = <String>[];
+  List<DetailResponse.Documents> imagesAlreadyUploaded =
+      <DetailResponse.Documents>[];
 
   @override
   void initState() {
     super.initState();
+    _loadImages();
     bloc.changesNotifier.listen((value) {
-      if (mounted) setState(() {});
+      if (mounted)
+        setState(() {
+          _loadImages();
+        });
+    });
+  }
+
+  _loadImages() {
+    setState(() {
+      imagesAlreadyUploaded = bloc
+          .interventionDetail.interventionDetail.documents
+          .where((element) => element.documentType == "Photo apr\u00e8s")
+          .toList();
     });
   }
 
@@ -74,7 +90,9 @@ class _FinalisationInterventionWidgetState
           children: [
             Container(
               padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              color: AppColors.white,
+              color: _weAreInThisStep()
+                  ? AppColors.md_light_gray
+                  : AppColors.white,
               child: _buildHeader(),
             ),
             opened ? _buildExpansion() : SizedBox.shrink()
@@ -188,11 +206,14 @@ class _FinalisationInterventionWidgetState
   Widget _buildExpansion() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      color: AppColors.white,
+      color: _weAreInThisStep() ? AppColors.md_light_gray : AppColors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _buildPhotos(),
+          SizedBox(height: 30),
+          _buildDocuments(),
+          SizedBox(height: 30),
         ],
       ),
     );
@@ -227,7 +248,7 @@ class _FinalisationInterventionWidgetState
                     return InkWell(
                         onTap: () async {
                           Modular.to.pushNamed(Routes.photoView, arguments: {
-                            'image': imagesAlreadyUploaded[index],
+                            'image': imagesAlreadyUploaded[index].url,
                             'path': ""
                           });
                         },
@@ -241,8 +262,8 @@ class _FinalisationInterventionWidgetState
                                 child: Container(
                                   width: 150,
                                   child: Image.network(
-                                      imagesAlreadyUploaded[index],
-                                      fit: BoxFit.fill),
+                                      imagesAlreadyUploaded[index].url,
+                                      fit: BoxFit.cover),
                                 ),
                               )
                             : GestureDetector(
@@ -315,7 +336,74 @@ class _FinalisationInterventionWidgetState
       var base64Image = base64Encode(file.readAsBytesSync());
       UploadDocumentResponse resp = await bloc.uploadPhotosIntervention(
           bloc.interventionDetail.interventionDetail.id, base64Image);
+      bloc.getInterventionDetail(
+          bloc.interventionDetail.interventionDetail.uuid);
       if ((resp.documentUploaded != null) && (resp.documentUploaded)) {}
     });
+  }
+
+  Widget _buildDocuments() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Ajouter les documents de fin d'intervention (optionnel) :",
+            style: AppStyles.bodyDefaultBlack,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 3),
+        SizedBox(height: 15),
+        ElevatedButton(
+          child: Ink(
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.all(
+                Radius.circular(12),
+              ),
+            ),
+            child: Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              height: 55,
+              child: DottedBorder(
+                borderType: BorderType.RRect,
+                radius: Radius.circular(12),
+                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                color: AppColors.md_tertiary,
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.add_circle_outline_outlined,
+                        color: AppColors.md_tertiary,
+                      ),
+                    ),
+                    Center(
+                      child: Text(
+                        "AJOUTER UN DOCUMENT",
+                        style: AppStyles.buttonTextTertiary,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          onPressed: () {
+            Modular.to.pushNamed(Routes.documentTypeSelector);
+          },
+          style: ElevatedButton.styleFrom(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              onPrimary: AppColors.md_tertiary,
+              primary: Colors.transparent,
+              padding: EdgeInsets.zero,
+              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
   }
 }

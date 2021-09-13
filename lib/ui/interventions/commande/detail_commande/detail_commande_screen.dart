@@ -49,6 +49,7 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
     await bloc.getMaterials();
     await bloc.getUnits();
     await bloc.getMainDeplacement();
+    await bloc.getTypesDocuments();
     await setState(() {
       _loading = false;
     });

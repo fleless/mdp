@@ -9,6 +9,7 @@ import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
+import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
@@ -33,6 +34,7 @@ class InterventionsBloc extends Disposable {
   final changesNotifier = PublishSubject<bool>();
   List<ListQuoteReference> liste_names = <ListQuoteReference>[];
   List<ListWorkload> liste_materials = <ListWorkload>[];
+  List<OrderDocumentTypes> liste_documents = <OrderDocumentTypes>[];
   List<ListWorkload> liste_mainDeplacement = <ListWorkload>[];
   List<ListWorkloadUnits> liste_units = <ListWorkloadUnits>[];
   List<String> liste_unit_names = <String>[];
@@ -61,6 +63,14 @@ class InterventionsBloc extends Disposable {
     liste_materials.clear();
     GetMaterialResponse resp = await _redactionDevisRepository.getMaterials();
     liste_materials.addAll(resp.listWorkload);
+    return resp;
+  }
+
+  Future<GetTypesDocumentsResponse> getTypesDocuments() async {
+    liste_documents.clear();
+    GetTypesDocumentsResponse resp =
+        await _interventionRepository.getListesTypesDocuments();
+    liste_documents.addAll(resp.orderDocumentTypes);
     return resp;
   }
 

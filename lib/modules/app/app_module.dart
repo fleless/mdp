@@ -8,6 +8,8 @@ import 'package:mdp/ui/home/home_bloc.dart';
 import 'package:mdp/ui/home/home_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/detail_commande_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/document_type_selector.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/ajouter_rdv.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/calendrier_prise_rdv_screen.dart';
@@ -52,6 +54,7 @@ class AppModule extends MainModule {
         Bind((_) => PriseRdvBloc()),
         Bind((_) => RedactionDevisBloc()),
         Bind((_) => ImageCompressor()),
+        Bind((_) => FinalisationInterventionBloc()),
       ];
 
   // Provide all the routes for your module
@@ -109,6 +112,8 @@ class AppModule extends MainModule {
                 child: (_, args) => CalendrierRealisationRdvWidget()),
             ModularRouter(Routes.ajouterRealisationRDV,
                 child: (_, args) => AjouterRealisationRDVScreen()),
+            ModularRouter(Routes.documentTypeSelector,
+                child: (_, args) => DocumentTypeSelectorScreen()),
           ],
         ),
       ];

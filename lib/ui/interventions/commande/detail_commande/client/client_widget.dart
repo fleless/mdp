@@ -177,9 +177,18 @@ class _ClientWidgetState extends State<ClientWidget> {
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 5),
             child: Text(
-                bloc.interventionDetail.interventionDetail.clients.firstname +
-                    " " +
-                    bloc.interventionDetail.interventionDetail.clients.lastname,
+                (bloc.interventionDetail.interventionDetail.invoicingAddress ==
+                        null)
+                    ? (bloc.interventionDetail.interventionDetail.clients
+                            .firstname +
+                        " " +
+                        bloc.interventionDetail.interventionDetail.clients
+                            .lastname)
+                    : (bloc.interventionDetail.interventionDetail
+                            .invoicingAddress.addressFirstname +
+                        " " +
+                        bloc.interventionDetail.interventionDetail
+                            .invoicingAddress.addressLastname),
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),

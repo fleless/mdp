@@ -41,7 +41,7 @@ class _RedactionDevisWidgetState
   void initState() {
     super.initState();
     bloc.changesNotifier.listen((value) {
-      setState(() {});
+      if (mounted) setState(() {});
     });
     if (bloc.dernierDevis != null) _getPhotosOfQuote();
     IsolateNameServer.registerPortWithName(
@@ -58,9 +58,10 @@ class _RedactionDevisWidgetState
   _getPhotosOfQuote() {
     listePhotos.clear();
     setState(() {
-      bloc.dernierDevis.quoteData.designations.forEach((element) {
-        if (element.photos != null) listePhotos.addAll(element.photos);
-      });
+      if (bloc.dernierDevis != null)
+        bloc.dernierDevis.quoteData.designations.forEach((element) {
+          if (element.photos != null) listePhotos.addAll(element.photos);
+        });
     });
   }
 
