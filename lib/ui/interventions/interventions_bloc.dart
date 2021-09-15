@@ -215,6 +215,14 @@ class InterventionsBloc extends Disposable {
         orderId, 2, documentContent);
   }
 
+  Future<UploadDocumentResponse> uploadDocsIntervention(
+      String documentContent, num documentTypeId) async {
+    return await _documentUploaderRepository.uploadInterventionDocument(
+        interventionDetail.interventionDetail.id,
+        documentTypeId,
+        documentContent);
+  }
+
   notifChanges() {
     changesNotifier.add(true);
   }

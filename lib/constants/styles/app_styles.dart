@@ -230,7 +230,7 @@ class AppStyles {
     fontFamily: 'roboto',
     color: AppColors.default_black,
     fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: 15,
   );
 
   static const bodyMdDarkBlue = TextStyle(

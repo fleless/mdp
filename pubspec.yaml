@@ -115,6 +115,9 @@ dependencies:
   # package for picking multiple images or picture from camera.
   multi_image_picker: ^4.8.1
 
+  # package for picking files from device.
+  file_picker: ^4.0.2
+
   # package for autocomplete textfield.
   flutter_typeahead: ^3.2.0
 
@@ -123,6 +126,9 @@ dependencies:
 
   # package for downloading files.
   flutter_downloader: ^1.6.1
+
+  # package for uploading files.
+  flutter_uploader: 1.2.1
 
   path_provider: ^2.0.3
   permission_handler: ^8.1.4+2

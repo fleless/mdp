@@ -576,6 +576,7 @@ class Addresses {
   num longitude;
   num latitude;
   Type type;
+  City city;
 
   Addresses(
       {this.id,
@@ -583,7 +584,8 @@ class Addresses {
       this.streetName,
       this.longitude,
       this.latitude,
-      this.type});
+      this.type,
+      this.city});
 
   Addresses.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -592,6 +594,7 @@ class Addresses {
     longitude = json['longitude'];
     latitude = json['latitude'];
     type = json['type'] != null ? new Type.fromJson(json['type']) : null;
+    city = json['city'] != null ? new City.fromJson(json['city']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -603,6 +606,9 @@ class Addresses {
     data['latitude'] = this.latitude;
     if (this.type != null) {
       data['type'] = this.type.toJson();
+    }
+    if (this.city != null) {
+      data['city'] = this.city.toJson();
     }
     return data;
   }

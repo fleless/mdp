@@ -11,6 +11,8 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/add_type_dialog.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/show_document_uploader_widget.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/show_pv_finTravaux.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
 import '../../../../../../interventions_bloc.dart';
@@ -27,6 +29,10 @@ class _DocumentTypeSelectorScreenState
   final bloc = Modular.get<InterventionsBloc>();
   final _finalisationInterventionBloc =
       Modular.get<FinalisationInterventionBloc>();
+  String _searchText = "";
+
+  // if 0 don't show any interface; 1 show for upload PV fin de travaux; 2 show for other docs
+  int showSelectedType = 0;
 
   @override
   void initState() {
@@ -49,7 +55,7 @@ class _DocumentTypeSelectorScreenState
   Widget _buildContent() {
     return Scaffold(
       key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.white,
       //drawer: DrawerWidget(),
       body: GestureDetector(
@@ -74,7 +80,13 @@ class _DocumentTypeSelectorScreenState
                   alignment: Alignment.center,
                   child: _buildBloc(),
                 ),
-                SizedBox(height: 80),
+                SizedBox(height: 5),
+                showSelectedType == 0
+                    ? Container()
+                    : showSelectedType == 1
+                        ? ShowPvFinTravauxWidget()
+                        : ShowDocumentUploaderWidget(_searchText),
+                SizedBox(height: 30),
               ],
             ),
           ),
@@ -204,8 +216,8 @@ class _DocumentTypeSelectorScreenState
                 primarySwatch: AppColors.defaultColorMaterial,
               ),
               child: DropdownSearch<String>(
+                  popupBackgroundColor: AppColors.white,
                   searchBoxDecoration: null,
-                  //dropdownBuilder: _customDropDownExample,
                   popupItemBuilder: _customDropDown,
                   dropdownSearchDecoration: null,
                   mode: Mode.MENU,
@@ -214,7 +226,11 @@ class _DocumentTypeSelectorScreenState
                   items: _filterDocumentTypes(),
                   label: "Type de documents",
                   onChanged: (value) {
+                    _searchText = value;
                     if (value == " ") {
+                      setState(() {
+                        showSelectedType = 0;
+                      });
                       showDialog(
                           context: context,
                           builder: (context) {
@@ -229,6 +245,16 @@ class _DocumentTypeSelectorScreenState
                               );
                             });
                           });
+                    } else if (value == "PV fin de travaux") {
+                      setState(() {
+                        showSelectedType = 0;
+                        showSelectedType = 1;
+                      });
+                    } else {
+                      setState(() {
+                        showSelectedType = 0;
+                        showSelectedType = 2;
+                      });
                     }
                   },
                   selectedItem: ""),

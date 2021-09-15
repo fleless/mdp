@@ -28,6 +28,9 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
   @override
   void initState() {
     super.initState();
+    bloc.changesNotifier.listen((value) {
+      setState(() {});
+    });
   }
 
   @override

@@ -91,7 +91,7 @@ class _InterventionWidgetState extends State<InterventionWidget> {
                     RealisationTravauxWidget(),
                     Container(height: 1, color: AppColors.md_gray),
                     FinalisationInterventionWidget(),
-                    SizedBox(height: 60),
+                    SizedBox(height: 150),
                   ]),
                 ),
               ),

@@ -381,7 +381,7 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
                       child: Container(
                         width: 180,
                         child: Image.network(imagesAlreadyUploaded[index],
-                            fit: BoxFit.fill),
+                            fit: BoxFit.cover),
                       ),
                     )
                   : (((images.length + imagesAlreadyUploaded.length != 9) &&

@@ -198,6 +198,12 @@ class DateFormatter {
     return day;
   }
 
+  static formatDateToDDMMYYYY(String date) {
+    DateTime dateTime = DateTime.parse(date);
+    String day = DateFormat('dd/MM/yyyy').format(dateTime);
+    return day;
+  }
+
   static addHoursAndMinutesPrecision(TimeOfDay time) {
     String formattedTime = " à ";
     if (time.hour.toString().length != 2) {

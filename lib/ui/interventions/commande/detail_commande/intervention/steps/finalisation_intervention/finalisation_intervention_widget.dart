@@ -240,7 +240,7 @@ class _FinalisationInterventionWidgetState
               height: 200,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: (imagesAlreadyUploaded.length) == 9
+                  itemCount: (imagesAlreadyUploaded.length) >= 9
                       ? imagesAlreadyUploaded.length
                       : imagesAlreadyUploaded.length + 1,
                   shrinkWrap: true,
@@ -352,6 +352,10 @@ class _FinalisationInterventionWidgetState
             overflow: TextOverflow.ellipsis,
             maxLines: 3),
         SizedBox(height: 15),
+        for (var element
+            in bloc.interventionDetail.interventionDetail.documents)
+          _buildDocsBloc(element),
+        SizedBox(height: 15),
         ElevatedButton(
           child: Ink(
             decoration: BoxDecoration(
@@ -405,5 +409,38 @@ class _FinalisationInterventionWidgetState
         ),
       ],
     );
+  }
+
+  Widget _buildDocsBloc(DetailResponse.Documents element) {
+    return ((element.documentType == "Photo après") ||
+            (element.documentType == "Photo avant") ||
+            (element.documentType == "Photo client"))
+        ? SizedBox.shrink()
+        : Padding(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+                border:
+                    Border.all(color: AppColors.closeDialogColor, width: 1.1),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    color: AppColors.closeDialogColor,
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: Text(
+                      element.documentType,
+                      style: AppStyles.bodyBold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
   }
 }
