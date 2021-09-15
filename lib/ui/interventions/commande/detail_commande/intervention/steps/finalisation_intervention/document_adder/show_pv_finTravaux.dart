@@ -4,6 +4,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:collection/collection.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/utils/date_formatter.dart';
 import 'package:signature/signature.dart';
@@ -19,6 +20,8 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionsBloc>();
   final _priseRdvbloc = Modular.get<PriseRdvBloc>();
+  final _finalisationInterventionbloc =
+      Modular.get<FinalisationInterventionBloc>();
   bool _checkBoxFirst = false;
   bool _checkBoxSecond = false;
   final TextEditingController _messageController = TextEditingController();
@@ -32,6 +35,7 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
     penColor: AppColors.default_black,
     exportBackgroundColor: AppColors.white,
   );
+  bool _loading = false;
 
   @override
   void initState() {
@@ -557,31 +561,41 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
       child: ElevatedButton(
         child: Ink(
           decoration: BoxDecoration(
-            color: _validButton() ? AppColors.inactive : AppColors.md_dark_blue,
+            color: _validButton() ? AppColors.md_dark_blue : AppColors.inactive,
             borderRadius: BorderRadius.all(
               Radius.circular(12),
             ),
             border: Border.all(
                 color: _validButton()
-                    ? AppColors.inactive
-                    : AppColors.md_dark_blue),
+                    ? AppColors.md_dark_blue
+                    : AppColors.inactive),
           ),
           child: Container(
             alignment: Alignment.center,
             width: double.infinity,
             height: 55,
-            child: Text(
-              "AJOUTER",
-              style: _validButton()
-                  ? AppStyles.buttonInactiveText
-                  : AppStyles.buttonTextWhite,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: _loading
+                ? Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.white,
+                    ),
+                  )
+                : Text(
+                    "AJOUTER",
+                    style: _validButton()
+                        ? AppStyles.buttonTextWhite
+                        : AppStyles.buttonInactiveText,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
           ),
         ),
         onPressed: () {
-          _validButton() ? null : null;
+          _loading
+              ? null
+              : _validButton()
+                  ? _generateDoc()
+                  : null;
         },
         style: ElevatedButton.styleFrom(
             elevation: 5,
@@ -596,9 +610,25 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
   }
 
   bool _validButton() {
-    return ((!_checkBoxFirst) ||
-        (_controllerArtisan.isEmpty) ||
-        (!_checkBoxSecond) ||
-        (_controllerClient.isEmpty));
+    return ((_checkBoxFirst) &&
+        (_controllerArtisan.isNotEmpty) &&
+        (_checkBoxSecond) &&
+        (_controllerClient.isNotEmpty));
+  }
+
+  _generateDoc() async {
+    setState(() {
+      _loading = true;
+    });
+    bool valid = await _finalisationInterventionbloc
+        .generatePVDocument(bloc.interventionDetail.interventionDetail.id);
+    setState(() {
+      _loading = false;
+    });
+    if (valid) {
+      Modular.to.pop();
+      await bloc.getInterventionDetail(
+          bloc.interventionDetail.interventionDetail.uuid);
+    } else {}
   }
 }

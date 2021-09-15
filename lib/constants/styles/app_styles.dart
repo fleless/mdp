@@ -148,6 +148,18 @@ class AppStyles {
     fontWeight: FontWeight.w700,
     fontSize: 16,
   );
+
+  static const underlinedBodyBold = TextStyle(
+    shadows: [Shadow(color: AppColors.default_black, offset: Offset(0, -1))],
+    fontFamily: 'roboto',
+    color: Colors.transparent,
+    fontWeight: FontWeight.w800,
+    fontSize: 16,
+    decoration: TextDecoration.underline,
+    decorationColor: AppColors.default_black,
+    decorationThickness: 2,
+  );
+
   static const bodyBoldWhite = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.white,

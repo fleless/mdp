@@ -7,6 +7,40 @@ PODS:
   - BSImageView (1.0.3)
   - device_calendar (0.0.1):
     - Flutter
+  - DKImagePickerController/Core (4.3.2):
+    - DKImagePickerController/ImageDataManager
+    - DKImagePickerController/Resource
+  - DKImagePickerController/ImageDataManager (4.3.2)
+  - DKImagePickerController/PhotoGallery (4.3.2):
+    - DKImagePickerController/Core
+    - DKPhotoGallery
+  - DKImagePickerController/Resource (4.3.2)
+  - DKPhotoGallery (0.0.17):
+    - DKPhotoGallery/Core (= 0.0.17)
+    - DKPhotoGallery/Model (= 0.0.17)
+    - DKPhotoGallery/Preview (= 0.0.17)
+    - DKPhotoGallery/Resource (= 0.0.17)
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Core (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Preview
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Model (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Preview (0.0.17):
+    - DKPhotoGallery/Model
+    - DKPhotoGallery/Resource
+    - SDWebImage
+    - SwiftyGif
+  - DKPhotoGallery/Resource (0.0.17):
+    - SDWebImage
+    - SwiftyGif
+  - file_picker (0.0.1):
+    - DKImagePickerController/PhotoGallery
+    - Flutter
   - Flutter (1.0.0)
   - flutter_absolute_path (0.0.1):
     - Flutter
@@ -58,12 +92,14 @@ PODS:
     - SDWebImage/Core (~> 5.10)
   - shared_preferences (0.0.1):
     - Flutter
+  - SwiftyGif (5.4.0)
   - Toast (4.0.0)
   - url_launcher (0.0.1):
     - Flutter
 
 DEPENDENCIES:
   - device_calendar (from `.symlinks/plugins/device_calendar/ios`)
+  - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - flutter_absolute_path (from `.symlinks/plugins/flutter_absolute_path/ios`)
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
@@ -86,15 +122,20 @@ SPEC REPOS:
     - BSGridCollectionViewLayout
     - BSImagePicker
     - BSImageView
+    - DKImagePickerController
+    - DKPhotoGallery
     - libwebp
     - Mantle
     - SDWebImage
     - SDWebImageWebPCoder
+    - SwiftyGif
     - Toast
 
 EXTERNAL SOURCES:
   device_calendar:
     :path: ".symlinks/plugins/device_calendar/ios"
+  file_picker:
+    :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
     :path: Flutter
   flutter_absolute_path:
@@ -132,6 +173,9 @@ SPEC CHECKSUMS:
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
   device_calendar: 23b28a5f1ab3bf77e34542fb1167e1b8b29a98f5
+  DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
+  DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
+  file_picker: 3e6c3790de664ccf9b882732d9db5eaf6b8d4eb1
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_absolute_path: 5adb13678c88f0bdfba527f3851f9543d01dde66
   flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
@@ -150,6 +194,7 @@ SPEC CHECKSUMS:
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
   shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
+  SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
 

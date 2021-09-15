@@ -6,7 +6,7 @@ class AppImages {
   static String get logo => 'assets/images/logo.png';
   static String get sky => 'assets/images/dashboard_sky.png';
   static String get printemps => 'assets/images/printemps.jpeg';
-  static String get succes => 'assets/images/succès.svg';
+  static String get succes => 'assets/images/succes.svg';
   static String get message => 'assets/images/message.png';
   static String get rdv => 'assets/images/rdv.svg';
   static String get refus => 'assets/images/refus.svg';

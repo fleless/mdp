@@ -29,6 +29,9 @@ class Routes {
   static const String ajouterRealisationRDV = '/ajouterRealisationRDV';
   static const String calendrierRealisationRDV = "/calendrierRealisationRDV";
   static const String documentTypeSelector = "/documentTypeSelector";
+  static const String paymentMessage = "/paymentMessage";
+  static const String paymentPrincipalOptionsScreen = "/paymentPrincipalOptionsScreen";
+  static const String paymentEmailScreen = "/paymentEmailScreen";
 
   // Utility method used to build a dynamic route with params.
   // Example: Routes.buildRouteWithParams('/users/{id}, {'id': 1}); would generate '/users/1'

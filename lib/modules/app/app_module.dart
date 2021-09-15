@@ -10,6 +10,9 @@ import 'package:mdp/ui/interventions/commande/detail_commande/detail_commande_sc
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/document_type_selector.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/payment_email_screen.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/payment_message_screen.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/payment_principal_options_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/ajouter_rdv.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/screens/calendrier_prise_rdv_screen.dart';
@@ -114,6 +117,13 @@ class AppModule extends MainModule {
                 child: (_, args) => AjouterRealisationRDVScreen()),
             ModularRouter(Routes.documentTypeSelector,
                 child: (_, args) => DocumentTypeSelectorScreen()),
+            ModularRouter(Routes.paymentMessage,
+                child: (_, args) => PaymentMessageScreen(
+                    args.data['status'], args.data['message'])),
+            ModularRouter(Routes.paymentPrincipalOptionsScreen,
+                child: (_, args) => PaymentPrincipalOptionsScreen()),
+            ModularRouter(Routes.paymentEmailScreen,
+                child: (_, args) => PaymentEmailScreen()),
           ],
         ),
       ];

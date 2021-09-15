@@ -16,6 +16,9 @@ class DocumentUploaderApiProvider {
       Endpoints.CORE_URL + "upload-order-document";
   final String ajoutTypeDocumentEndPoint =
       Endpoints.CORE_URL + "add-order-document-type";
+  final String generateeDocumentEndPoint =
+      "https://order.mesdepanneurs.wtf/api/v1/order/generate-document";
+
   Dio _dio;
 
   DocumentUploaderApiProvider() {
@@ -96,6 +99,23 @@ class DocumentUploaderApiProvider {
       return AddTypeDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
       return AddTypeDocumentResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<bool> generatePVDocument(num orderIdentifier) async {
+    try {
+      var params = {"orderIdentifier": orderIdentifier, "documentType": 5};
+      Response response = await _dio.post(generateeDocumentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return true;
+    } on DioError catch (e) {
+      return false;
     } catch (e) {
       throw e;
     }

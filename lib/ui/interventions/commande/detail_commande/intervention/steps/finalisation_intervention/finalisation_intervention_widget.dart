@@ -12,7 +12,9 @@ import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart'
     as DetailResponse;
+import 'package:mdp/models/responses/payment/start_payment_response.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
 import 'package:mdp/utils/image_compresser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -30,6 +32,9 @@ class _FinalisationInterventionWidgetState
   bool opened = false;
   final bloc = Modular.get<InterventionsBloc>();
   final image_compressor = Modular.get<ImageCompressor>();
+  final _finalisationInterventionBloc =
+      Modular.get<FinalisationInterventionBloc>();
+  bool _paymentButtonLoading = false;
 
   //les listes pour les photos
   List<DetailResponse.Documents> imagesAlreadyUploaded =
@@ -213,6 +218,13 @@ class _FinalisationInterventionWidgetState
           _buildPhotos(),
           SizedBox(height: 30),
           _buildDocuments(),
+          SizedBox(height: 15),
+          Divider(
+            color: AppColors.md_gray,
+            thickness: 1.5,
+          ),
+          SizedBox(height: 15),
+          _builPayment(),
           SizedBox(height: 30),
         ],
       ),
@@ -442,5 +454,177 @@ class _FinalisationInterventionWidgetState
               ),
             ),
           );
+  }
+
+  Widget _builPayment() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.solidCreditCard,
+              color: AppColors.default_black,
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Paiement',
+                style: AppStyles.header3,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 30),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    width: 30.0,
+                    height: 30.0,
+                    alignment: Alignment.center,
+                    decoration: new BoxDecoration(
+                      color: AppColors.md_dark_blue,
+                      shape: BoxShape.circle,
+                      border:
+                          Border.all(color: AppColors.md_dark_blue, width: 1.5),
+                    ),
+                    child: Text(
+                      "1",
+                      style: AppStyles.buttonTextWhite,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Déclencher le paiement",
+                    style: AppStyles.body,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    width: 30.0,
+                    height: 30.0,
+                    alignment: Alignment.center,
+                    decoration: new BoxDecoration(
+                      color: AppColors.md_gray,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.md_gray, width: 1.5),
+                    ),
+                    child: Text(
+                      "2",
+                      style: AppStyles.buttonInactiveText,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Paiement en cours",
+                    style: AppStyles.body,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    width: 30.0,
+                    height: 30.0,
+                    alignment: Alignment.center,
+                    decoration: new BoxDecoration(
+                      color: AppColors.md_gray,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.md_gray, width: 1.5),
+                    ),
+                    child: Text(
+                      "3",
+                      style: AppStyles.buttonInactiveText,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Paiement  validé",
+                    style: AppStyles.body,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 30),
+        ElevatedButton(
+          child: Ink(
+            decoration: BoxDecoration(
+              color: AppColors.md_dark_blue,
+              borderRadius: BorderRadius.all(
+                Radius.circular(12),
+              ),
+              border: Border.all(color: AppColors.md_dark_blue),
+            ),
+            child: Container(
+              alignment: Alignment.center,
+              width: double.infinity,
+              height: 55,
+              child: _paymentButtonLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.white,
+                      ),
+                    )
+                  : Text(
+                      "DÉCLENCHER LE PAIEMENT",
+                      style: AppStyles.buttonTextWhite,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+            ),
+          ),
+          onPressed: () {
+            _paymentButtonLoading ? null : _startPayment();
+          },
+          style: ElevatedButton.styleFrom(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              onPrimary: AppColors.white,
+              primary: Colors.transparent,
+              padding: EdgeInsets.zero,
+              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  }
+
+  _startPayment() async {
+    setState(() {
+      _paymentButtonLoading = true;
+    });
+    StartPaymentResponse resp = await _finalisationInterventionBloc
+        .startPayment(bloc.interventionDetail.interventionDetail.code);
+    setState(() {
+      _paymentButtonLoading = false;
+    });
+    if (resp.paymentStatus == "PAYMENT_OK") {
+      //payment done
+      Modular.to.pushNamed(Routes.paymentMessage, arguments: {
+        "status": true,
+        "message":
+            "Le prélèvement va être réalisé sur la carte bleue renseignée par le client"
+      });
+    } else {
+      //payment to do
+      Modular.to.pushNamed(Routes.paymentPrincipalOptionsScreen);
+    }
   }
 }

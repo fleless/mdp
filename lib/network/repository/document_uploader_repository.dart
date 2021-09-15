@@ -20,4 +20,8 @@ class DocumentUploaderRepository {
   Future<AddTypeDocumentResponse> addTypeDocument(String name) async {
     return _apiProvider.addTypeDocument(name);
   }
+
+  Future<bool> generatePVDocument(num orderIdentifier) async {
+    return _apiProvider.generatePVDocument(orderIdentifier);
+  }
 }
