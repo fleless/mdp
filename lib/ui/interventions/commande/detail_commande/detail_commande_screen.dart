@@ -33,6 +33,13 @@ class _DetailCommandeScreenState extends State<DetailCommandeScreen> {
   @override
   Future<void> initState() {
     _getDetails();
+    bloc.changeIndexNotifier.listen((value) {
+      if (mounted)
+        setState(() {
+          indexTab = value;
+        });
+      _key.currentState.animateTo(2);
+    });
     setState(() {
       indexTab = 1;
     });

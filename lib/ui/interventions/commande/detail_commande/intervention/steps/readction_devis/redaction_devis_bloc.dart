@@ -6,6 +6,7 @@ import 'package:mdp/models/responses/add_designation_response.dart';
 import 'package:mdp/models/responses/add_new_material_response.dart';
 import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
+import 'package:mdp/models/responses/get_notif_refus_response.dart';
 import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
@@ -87,6 +88,10 @@ class RedactionDevisBloc extends Disposable {
     } else {
       return false;
     }
+  }
+
+  Future<GetNotifRefusResponse> notifierRefus(num quoteId) async {
+    return _repository.notifierRefus(quoteId);
   }
 
   dispose() {

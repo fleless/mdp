@@ -4,6 +4,7 @@ import 'package:mdp/models/responses/add_new_material_response.dart';
 import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
+import 'package:mdp/models/responses/get_notif_refus_response.dart';
 import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
@@ -54,5 +55,9 @@ class RedactionDevisRepository {
 
   Future<SendMailDevisResponse> sendMailDevis(num quoteId, String email) async {
     return _apiProvider.sendMailDevis(quoteId, email);
+  }
+
+  Future<GetNotifRefusResponse> notifierRefus(num quoteId) async {
+    return _apiProvider.notifierRefus(quoteId);
   }
 }

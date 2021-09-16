@@ -32,6 +32,7 @@ class InterventionsBloc extends Disposable {
   final SharedPref sharedPref = SharedPref();
   InterventionDetailResponse interventionDetail = InterventionDetailResponse();
   final changesNotifier = PublishSubject<bool>();
+  final changeIndexNotifier = PublishSubject<int>();
   List<ListQuoteReference> liste_names = <ListQuoteReference>[];
   List<ListWorkload> liste_materials = <ListWorkload>[];
   List<OrderDocumentTypes> liste_documents = <OrderDocumentTypes>[];
@@ -227,8 +228,13 @@ class InterventionsBloc extends Disposable {
     changesNotifier.add(true);
   }
 
+  changeIndex(int index) {
+    changeIndexNotifier.add(index);
+  }
+
   dispose() {
     controller.close();
     changesNotifier.close();
+    changeIndexNotifier.close();
   }
 }

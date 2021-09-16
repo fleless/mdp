@@ -8,6 +8,7 @@ import 'package:mdp/models/message.dart';
 import 'package:mdp/models/responses/messagerie_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/send_message_dialog.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'messagerie_bloc.dart';
 
@@ -229,12 +230,15 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
                     style: AppStyles.bodyBold,
                   ),
                   SizedBox(height: 10),
-                  Text(
-                    "Tél : 01 39 48 74 36",
-                    textAlign: TextAlign.start,
-                    maxLines: 5,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppStyles.largeTextBoldDarkBlue,
+                  GestureDetector(
+                    onTap: () => _callPhone("0975187496"),
+                    child: Text(
+                      "Tél : 09 75 18 74 96",
+                      textAlign: TextAlign.start,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyles.largeTextBoldDarkBlue,
+                    ),
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -252,4 +256,8 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
       ),
     );
   }
+
+  void _callPhone(String numero) async => await canLaunch("tel:" + numero)
+      ? await launch("tel:" + numero)
+      : throw 'Could not launch';
 }

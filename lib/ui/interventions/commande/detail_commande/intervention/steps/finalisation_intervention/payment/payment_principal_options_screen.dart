@@ -43,6 +43,7 @@ class _PaymentPrincipalOptionsScreenState
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
+      backgroundColor: AppColors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Container(
@@ -107,8 +108,7 @@ class _PaymentPrincipalOptionsScreenState
                 onPressed: () {
                   _smsButtonLoading
                       ? null
-                      : Modular.to
-                          .pushNamed(Routes.paymentEmailScreen);
+                      : Modular.to.pushNamed(Routes.paymentEmailScreen);
                 },
                 style: ElevatedButton.styleFrom(
                     elevation: 5,
@@ -165,7 +165,7 @@ class _PaymentPrincipalOptionsScreenState
               InkWell(
                 splashColor: AppColors.md_dark_blue,
                 onTap: () {
-                  print("hel");
+                  Modular.to.pushNamed(Routes.paymentOtherOptionsScreen);
                 },
                 child: Center(
                   child: RichText(

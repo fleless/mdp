@@ -649,7 +649,7 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: popUpNotifier(
-                      "Rdv planifée à la date du " +
+                      "La modification a bien été prise en compte à la date du " +
                           DateFormatter.formatDateDMY(_startDate.toString()) +
                           DateFormatter.addHoursAndMinutesPrecision(
                               _startTime) +

@@ -2,6 +2,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/endpoints.dart';
@@ -311,30 +312,48 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           )),
-                          //TODo: wait api change for stats
-                          /*Container(
+                          Container(
                             padding: EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10)),
-                                color: _listeInterventions[index]
-                                        .statut
-                                        .contains("gence")
-                                    ? AppColors.mdAlert
-                                    : _interventions[index]
-                                            .statut
-                                            .contains("nage")
-                                        ? AppColors.travaux
-                                        : _interventions[index]
-                                                .statut
-                                                .contains("vaux")
-                                            ? AppColors.amenagement
-                                            : AppColors.plomberie),
-                            child: Text(
-                              _interventions[index].statut,
-                              style: AppStyles.buttonTextWhite,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              color: _listeInterventions[index]
+                                          .details
+                                          .first
+                                          .ordercase
+                                          .activity ==
+                                      null
+                                  ? AppColors.closeDialogColor
+                                  : HexColor(
+                                      "#" +
+                                          _listeInterventions[index]
+                                              .details
+                                              .first
+                                              .ordercase
+                                              .activity
+                                              .color
+                                              .toString(),
+                                    ),
                             ),
-                          ),*/
+                            child: Text(
+                              _listeInterventions[index]
+                                          .details
+                                          .first
+                                          .ordercase
+                                          .activity ==
+                                      null
+                                  ? "non défini"
+                                  : _listeInterventions[index]
+                                      .details
+                                      .first
+                                      .ordercase
+                                      .activity
+                                      .name,
+                              style: AppStyles.buttonTextWhite,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                          ),
                         ],
                       ),
                       if (_listeInterventions[index].requiredAction != null)

@@ -4,6 +4,7 @@ class AppImages {
   AppImages._();
 
   static String get logo => 'assets/images/logo.png';
+  static String get appLogo => 'assets/images/app_logo.png';
   static String get sky => 'assets/images/dashboard_sky.png';
   static String get printemps => 'assets/images/printemps.jpeg';
   static String get succes => 'assets/images/succes.svg';

@@ -28,9 +28,10 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
   @override
   void initState() {
     super.initState();
-    bloc.changesNotifier.listen((value) {
-      setState(() {});
-    });
+      bloc.changesNotifier.listen((value) {
+        if (mounted)
+          setState(() {});
+      });
   }
 
   @override
@@ -182,7 +183,7 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
                       : (bloc.interventionDetail.interventionDetail
                                   .preferredVisitDate ==
                               null
-                          ? "Pas de date préférée"
+                          ? "Non renseignée"
                           : (DateFormatter.formatDate(bloc.interventionDetail
                               .interventionDetail.preferredVisitDate.date))),
                   style: AppStyles.header2,

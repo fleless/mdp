@@ -8,6 +8,7 @@ import 'package:mdp/models/responses/add_new_material_response.dart';
 import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
+import 'package:mdp/models/responses/get_notif_refus_response.dart';
 import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
@@ -27,6 +28,7 @@ class RedactionDevisApiProvider {
       Endpoints.CORE_URL + "quote/details/edit";
   final String updateQuoteEndPoint = Endpoints.CORE_URL + "quote/edit";
   final String sendDevisMailEndPoint = Endpoints.CORE_URL + "quote/send/email";
+  final String notifierRefusEndPoint = Endpoints.CORE_URL + "quote/";
 
   Dio _dio;
 
@@ -210,10 +212,7 @@ class RedactionDevisApiProvider {
   }
 
   Future<SendMailDevisResponse> sendMailDevis(num quoteId, String email) async {
-    var params = {
-      "quote_id": quoteId,
-      "email": email
-    };
+    var params = {"quote_id": quoteId, "email": email};
     try {
       Response response = await _dio.post(sendDevisMailEndPoint,
           options: Options(responseType: ResponseType.json, headers: {
@@ -224,6 +223,28 @@ class RedactionDevisApiProvider {
       return SendMailDevisResponse.fromJson(response.data);
     } on DioError catch (e) {
       return SendMailDevisResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<GetNotifRefusResponse> notifierRefus(num quoteId) async {
+    var params = {
+      "type_id": 1,
+      "subject": "Notifier Refus Devis",
+      "body": "Le client a refusé la signature du devis "
+    };
+    try {
+      Response response = await _dio.post(
+          notifierRefusEndPoint + quoteId.toString() + "/messages",
+          options: Options(responseType: ResponseType.json, headers: {
+            'Content-type': 'application/json',
+            'Accept': 'application/json',
+          }),
+          data: jsonEncode(params));
+      return GetNotifRefusResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return GetNotifRefusResponse();
     } catch (e) {
       throw e;
     }

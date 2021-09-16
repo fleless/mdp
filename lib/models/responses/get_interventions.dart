@@ -59,27 +59,27 @@ class Interventions {
 
   Interventions(
       {this.id,
-        this.uuid,
-        this.code,
-        this.amountInitial,
-        this.amountFinal,
-        this.amountToBlock,
-        this.amountToPay,
-        this.franchiseSum,
-        this.coveredSum,
-        this.totalMinPrice,
-        this.totalMaxPrice,
-        this.preferredVisitDate,
-        this.state,
-        this.partner,
-        this.interventionAddress,
-        this.invoicingAddress,
-        this.clients,
-        this.description,
-        this.clientPhotos,
-        this.details,
-        this.indication,
-        this.subcontractors});
+      this.uuid,
+      this.code,
+      this.amountInitial,
+      this.amountFinal,
+      this.amountToBlock,
+      this.amountToPay,
+      this.franchiseSum,
+      this.coveredSum,
+      this.totalMinPrice,
+      this.totalMaxPrice,
+      this.preferredVisitDate,
+      this.state,
+      this.partner,
+      this.interventionAddress,
+      this.invoicingAddress,
+      this.clients,
+      this.description,
+      this.clientPhotos,
+      this.details,
+      this.indication,
+      this.subcontractors});
 
   Interventions.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -98,7 +98,7 @@ class Interventions {
         : null;
     state = json['state'] != null ? new State.fromJson(json['state']) : null;
     partner =
-    json['partner'] != null ? new Partner.fromJson(json['partner']) : null;
+        json['partner'] != null ? new Partner.fromJson(json['partner']) : null;
     interventionAddress = json['interventionAddress'] != null
         ? new Addresses.fromJson(json['interventionAddress'])
         : null;
@@ -106,7 +106,7 @@ class Interventions {
         ? new InvoicingAddress.fromJson(json['invoicingAddress'])
         : null;
     clients =
-    json['clients'] != null ? new Clients.fromJson(json['clients']) : null;
+        json['clients'] != null ? new Clients.fromJson(json['clients']) : null;
     description = json['description'];
     clientPhotos = json['clientPhotos'].cast<String>();
     if (json['details'] != null) {
@@ -259,15 +259,15 @@ class Addresses {
 
   Addresses(
       {this.id,
-        this.uuid,
-        this.addressFirstname,
-        this.addressLastname,
-        this.streetNumber,
-        this.streetName,
-        this.longitude,
-        this.latitude,
-        this.city,
-        this.type});
+      this.uuid,
+      this.addressFirstname,
+      this.addressLastname,
+      this.streetNumber,
+      this.streetName,
+      this.longitude,
+      this.latitude,
+      this.city,
+      this.type});
 
   Addresses.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -313,12 +313,12 @@ class City {
 
   City(
       {this.id,
-        this.name,
-        this.inseeCode,
-        this.postcode,
-        this.latitude,
-        this.longitude,
-        this.department});
+      this.name,
+      this.inseeCode,
+      this.postcode,
+      this.latitude,
+      this.longitude,
+      this.department});
 
   City.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -360,7 +360,7 @@ class Department {
     name = json['name'];
     code = json['code'];
     region =
-    json['region'] != null ? new Region.fromJson(json['region']) : null;
+        json['region'] != null ? new Region.fromJson(json['region']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -388,7 +388,7 @@ class Region {
     name = json['name'];
     code = json['code'];
     country =
-    json['country'] != null ? new Country.fromJson(json['country']) : null;
+        json['country'] != null ? new Country.fromJson(json['country']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -439,15 +439,15 @@ class InvoicingAddress {
 
   InvoicingAddress(
       {this.id,
-        this.uuid,
-        this.addressFirstname,
-        this.addressLastname,
-        this.streetNumber,
-        this.streetName,
-        this.longitude,
-        this.latitude,
-        this.city,
-        this.type});
+      this.uuid,
+      this.addressFirstname,
+      this.addressLastname,
+      this.streetNumber,
+      this.streetName,
+      this.longitude,
+      this.latitude,
+      this.city,
+      this.type});
 
   InvoicingAddress.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -494,13 +494,13 @@ class Clients {
 
   Clients(
       {this.id,
-        this.uuid,
-        this.civility,
-        this.firstname,
-        this.lastname,
-        this.nameOld,
-        this.commchannels,
-        this.addresses});
+      this.uuid,
+      this.civility,
+      this.firstname,
+      this.lastname,
+      this.nameOld,
+      this.commchannels,
+      this.addresses});
 
   Clients.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -551,11 +551,11 @@ class Commchannels {
 
   Commchannels(
       {this.id,
-        this.name,
-        this.type,
-        this.enabled,
-        this.password,
-        this.preferred});
+      this.name,
+      this.type,
+      this.enabled,
+      this.password,
+      this.preferred});
 
   Commchannels.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -640,16 +640,18 @@ class Ordercase {
   State type;
   num minprice;
   num maxprice;
+  Activity activity;
 
   Ordercase(
       {this.name,
-        this.code,
-        this.description,
-        this.category,
-        this.domain,
-        this.type,
-        this.minprice,
-        this.maxprice});
+      this.code,
+      this.description,
+      this.category,
+      this.domain,
+      this.type,
+      this.minprice,
+      this.maxprice,
+      this.activity});
 
   Ordercase.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -659,10 +661,13 @@ class Ordercase {
         ? new Category.fromJson(json['category'])
         : null;
     domain =
-    json['domain'] != null ? new Domain.fromJson(json['domain']) : null;
+        json['domain'] != null ? new Domain.fromJson(json['domain']) : null;
     type = json['type'] != null ? new State.fromJson(json['type']) : null;
     minprice = json['minprice'];
     maxprice = json['maxprice'];
+    activity = json['activity'] != null
+        ? new Activity.fromJson(json['activity'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -678,6 +683,9 @@ class Ordercase {
     }
     if (this.type != null) {
       data['type'] = this.type.toJson();
+    }
+    if (this.activity != null) {
+      data['activity'] = this.activity.toJson();
     }
     data['minprice'] = this.minprice;
     data['maxprice'] = this.maxprice;
@@ -746,7 +754,7 @@ class Subcontractors {
     id = json['id'];
     uuid = json['uuid'];
     company =
-    json['company'] != null ? new Partner.fromJson(json['company']) : null;
+        json['company'] != null ? new Partner.fromJson(json['company']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -775,6 +783,31 @@ class RequiredAction {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['isRequired'] = this.isRequired;
     data['actionName'] = this.actionName;
+    return data;
+  }
+}
+
+class Activity {
+  num id;
+  String name;
+  String color;
+  bool enabled;
+
+  Activity({this.id, this.name, this.color, this.enabled});
+
+  Activity.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    color = json['color'];
+    enabled = json['enabled'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['color'] = this.color;
+    data['enabled'] = this.enabled;
     return data;
   }
 }

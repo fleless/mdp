@@ -64,7 +64,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ? _buildList()
                       : Center(
                           child: Text(
-                          "Vous n'avez aucune notification",
+                          "Aucune notification",
                           style: AppStyles.bodyMdTextLight,
                         )),
             ),

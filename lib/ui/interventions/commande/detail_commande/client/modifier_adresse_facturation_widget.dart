@@ -39,7 +39,7 @@ class _ModifierAdresseFacturationWidgetState
     super.initState();
   }
 
-  _initValues() {
+  _initValues() async {
     _firstNameController.text = bloc.interventionDetail.interventionDetail
             .invoicingAddress.addressFirstname ??
         "";
@@ -61,6 +61,10 @@ class _ModifierAdresseFacturationWidgetState
     _communityController.text =
         bloc.interventionDetail.interventionDetail.invoicingAddress.city.name ??
             "";
+    List<AdressResponse> resp = await bloc.getCommunity(_zipController.text);
+    setState(() {
+      listeCommunites.addAll(resp);
+    });
   }
 
   @override
@@ -325,9 +329,9 @@ class _ModifierAdresseFacturationWidgetState
           listeCommunites = resp;
         });
         if ((resp == null) || (resp.length < 1)) {
-          print("community not found");
+          //print("community not found");
         } else {
-          print("community is " + resp[0].nom);
+          //print("community is " + resp[0].nom);
         }
       },
       keyboardType: TextInputType.number,
@@ -388,8 +392,8 @@ class _ModifierAdresseFacturationWidgetState
               showSelectedItem: true,
               popupSafeArea: PopupSafeArea(top: false),
               popupBackgroundColor: AppColors.white,
-              items: _getCommunities(),
-              label: "Communité",
+              items: listeCommunites.map((e) => e.nom).toList(),
+              label: "Ville",
               hint: "Sélectionner une communité",
               onChanged: (value) {
                 setState(() {

@@ -487,14 +487,21 @@ class _FinalisationInterventionWidgetState
                     height: 30.0,
                     alignment: Alignment.center,
                     decoration: new BoxDecoration(
-                      color: AppColors.md_dark_blue,
+                      color: imagesAlreadyUploaded.isEmpty
+                          ? AppColors.inactive
+                          : AppColors.md_dark_blue,
                       shape: BoxShape.circle,
-                      border:
-                          Border.all(color: AppColors.md_dark_blue, width: 1.5),
+                      border: Border.all(
+                          color: imagesAlreadyUploaded.isEmpty
+                              ? AppColors.inactive
+                              : AppColors.md_dark_blue,
+                          width: 1.5),
                     ),
                     child: Text(
                       "1",
-                      style: AppStyles.buttonTextWhite,
+                      style: imagesAlreadyUploaded.isEmpty
+                          ? AppStyles.buttonInactiveText
+                          : AppStyles.buttonTextWhite,
                     ),
                   ),
                   SizedBox(height: 10),
@@ -566,11 +573,16 @@ class _FinalisationInterventionWidgetState
         ElevatedButton(
           child: Ink(
             decoration: BoxDecoration(
-              color: AppColors.md_dark_blue,
+              color: imagesAlreadyUploaded.isEmpty
+                  ? AppColors.inactive
+                  : AppColors.md_dark_blue,
               borderRadius: BorderRadius.all(
                 Radius.circular(12),
               ),
-              border: Border.all(color: AppColors.md_dark_blue),
+              border: Border.all(
+                  color: imagesAlreadyUploaded.isEmpty
+                      ? AppColors.inactive
+                      : AppColors.md_dark_blue),
             ),
             child: Container(
               alignment: Alignment.center,
@@ -584,7 +596,9 @@ class _FinalisationInterventionWidgetState
                     )
                   : Text(
                       "DÉCLENCHER LE PAIEMENT",
-                      style: AppStyles.buttonTextWhite,
+                      style: imagesAlreadyUploaded.isEmpty
+                          ? AppStyles.buttonInactiveText
+                          : AppStyles.buttonTextWhite,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),

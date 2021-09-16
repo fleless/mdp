@@ -729,7 +729,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
     setState(() {
       _saveButtonLoading = true;
     });
-    await _updateQuote();
+    if (!(bloc.dernierDevis == null)) await _updateQuote();
     setState(() {
       _saveButtonLoading = false;
     });

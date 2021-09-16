@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mdp/constants/app_colors.dart';
+import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/ui/home/home_screen.dart';
 import 'package:mdp/ui/login/login_screen.dart';
 import 'package:splashscreen/splashscreen.dart';
@@ -17,17 +18,13 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget> {
     return SplashScreen(
         seconds: 2,
         navigateAfterSeconds: LoginScreenWidget(),
-        title: new Text('Welcome In SplashScreen',
-          style: new TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20.0
-          ),),
-        image: new Image.network('https://i.imgur.com/TyCSG9A.png'),
+        //title: ,
+        image: Image.asset(AppImages.appLogo),
         backgroundColor: Colors.white,
         styleTextUnderTheLoader: new TextStyle(),
         photoSize: 100.0,
         onClick: () => print("Flutter Egypt"),
-        loaderColor: AppColors.defaultColor
+        loaderColor: AppColors.md_dark_blue
     );
   }
 

@@ -8,6 +8,7 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
+import 'package:mdp/models/responses/get_notif_refus_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
@@ -32,10 +33,11 @@ class _RedactionDevisWidgetState
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionsBloc>();
   final _rdvBloc = Modular.get<PriseRdvBloc>();
-  final _RedactionDevisBloc = Modular.get<RedactionDevisBloc>();
+  final _redactionDevisBloc = Modular.get<RedactionDevisBloc>();
   bool opened = false;
   List<Photos> listePhotos = <Photos>[];
   ReceivePort _port = ReceivePort();
+  bool _notifierRefusButtonLoading = false;
 
   @override
   void initState() {
@@ -203,7 +205,7 @@ class _RedactionDevisWidgetState
                                   ? "  À réaliser "
                                   : bloc.dernierDevis.quoteData.quote.state
                                               .code ==
-                                          "PARTNER_REFUSED"
+                                          "CLIENT_REFUSED"
                                       ? "  Devis refusé "
                                       : bloc.dernierDevis.quoteData.quote.state
                                                   .code ==
@@ -286,7 +288,7 @@ class _RedactionDevisWidgetState
                           "SUBCONTRACTOR_SIGNED"
                       ? _buildSubcontractorSignedStateButtons()
                       : bloc.dernierDevis.quoteData.quote.state.code ==
-                              "PARTNER_REFUSED"
+                              "CLIENT_REFUSED"
                           ? _buildRefusedStateButtons()
                           : bloc.dernierDevis.quoteData.quote.state.code ==
                                   "CLIENT_SIGNED"
@@ -561,15 +563,32 @@ class _RedactionDevisWidgetState
           alignment: Alignment.center,
           width: double.infinity,
           height: 50,
-          child: Text(
-            "NOTIFIER UN REFUS",
-            style: AppStyles.buttonTextWhite,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: _notifierRefusButtonLoading
+              ? Center(
+                  child: CircularProgressIndicator(color: AppColors.white),
+                )
+              : Text(
+                  "NOTIFIER UN REFUS",
+                  style: AppStyles.buttonTextWhite,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
         ),
       ),
-      onPressed: () {},
+      onPressed: () async {
+        if (!_notifierRefusButtonLoading) {
+          setState(() {
+            _notifierRefusButtonLoading = true;
+          });
+          GetNotifRefusResponse resp = await _redactionDevisBloc
+              .notifierRefus(bloc.dernierDevis.quoteData.quote.id);
+          await bloc
+              .getDevisDetails(bloc.dernierDevis.quoteData.quote.id.toString());
+          setState(() {
+            _notifierRefusButtonLoading = false;
+          });
+        }
+      },
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
@@ -603,7 +622,9 @@ class _RedactionDevisWidgetState
           ),
         ),
       ),
-      onPressed: () {},
+      onPressed: () {
+        bloc.changeIndex(2);
+      },
       style: ElevatedButton.styleFrom(
           elevation: 5,
           shape:
