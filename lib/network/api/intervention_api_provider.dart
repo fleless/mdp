@@ -1,17 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/change_order_state.dart';
+import 'package:mdp/models/responses/creation_nouvelle_commande_response.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
+import 'package:mdp/models/responses/get_types_commandes_response.dart';
 import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
+import 'package:mdp/utils/header_formatter.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class InterventionApiProvider {
+  final sharedPref = Modular.get<SharedPref>();
+  final headerFormatter = Modular.get<HeaderFormatter>();
   final String getInterventionsEndPoint =
       Endpoints.URL + "v1/list-intervention";
   final String showInterventionEndPoint =
@@ -29,6 +36,11 @@ class InterventionApiProvider {
       Endpoints.CORE_URL + "order-state-change/";
   final String getListeTyesDocumentsEndPoint = Endpoints.CORE_URL +
       "list-order-document?sortField=id&sortOrder=DESC&filters=%7B%22enabled%22:1%7D";
+  final String getListeTypesCommandesEndPoint = Endpoints.CORE_URL +
+      "order-case/list-order-case?lazyEvent=%20{%20%22filters%22:%20{%20%22name%22:%20{%22value%22:%20%22Plomberie%22,%20%22matchMode%22:%20%22contains%22}}}";
+  final String creationNouvelleCommandeEndPoint =
+      Endpoints.CORE_URL + "order/create-additional-order";
+
   Dio _dio;
 
   InterventionApiProvider() {
@@ -53,6 +65,7 @@ class InterventionApiProvider {
 
   Future<GetInterventionsResponse> getInterventions(
       String subcontractorId, String code) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(
           getInterventionsEndPoint +
@@ -61,10 +74,7 @@ class InterventionApiProvider {
               '&sortField=created&sortOrder=DESC&filters={"code":"' +
               code +
               '"}',
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetInterventionsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetInterventionsResponse();
@@ -75,13 +85,11 @@ class InterventionApiProvider {
 
   Future<ShowInterventionResponse> showIntervention(
       String idIntervention) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
-      Response response =
-          await _dio.get(showInterventionEndPoint + idIntervention,
-              options: Options(responseType: ResponseType.json, headers: {
-                'Content-type': 'application/json',
-                'Accept': 'application/json',
-              }));
+      Response response = await _dio.get(
+          showInterventionEndPoint + idIntervention,
+          options: Options(responseType: ResponseType.json, headers: header));
       return ShowInterventionResponse.fromJson(response.data);
     } on DioError catch (e) {
       return ShowInterventionResponse();
@@ -92,13 +100,11 @@ class InterventionApiProvider {
 
   Future<InterventionDetailResponse> getInterventionDetail(
       String idIntervention) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
-      Response response =
-          await _dio.get(getInterventionDetailEndPoint + idIntervention,
-              options: Options(responseType: ResponseType.json, headers: {
-                'Content-type': 'application/json',
-                'Accept': 'application/json',
-              }));
+      Response response = await _dio.get(
+          getInterventionDetailEndPoint + idIntervention,
+          options: Options(responseType: ResponseType.json, headers: header));
       return InterventionDetailResponse.fromJson(response.data);
     } on DioError catch (e) {
       return InterventionDetailResponse();
@@ -109,6 +115,7 @@ class InterventionApiProvider {
 
   Future<int> refuseCompetition(String reference, String commentaire,
       int idIntervention, String uuidIntervention, String idUser) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "order": reference,
@@ -118,10 +125,7 @@ class InterventionApiProvider {
         "uuid": uuidIntervention
       };
       Response response = await _dio.put(refuseEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return response.statusCode;
     } on DioError catch (e) {
@@ -133,6 +137,7 @@ class InterventionApiProvider {
 
   Future<int> acceptIntervention(String reference, int idIntervention,
       String uuidIntervention, String idUser) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "order": reference,
@@ -141,10 +146,7 @@ class InterventionApiProvider {
         "uuid": uuidIntervention
       };
       Response response = await _dio.put(acceptEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return response.statusCode;
     } on DioError catch (e) {
@@ -161,6 +163,7 @@ class InterventionApiProvider {
       String phonenumber,
       String mail,
       String uuidClient) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "civility": civility,
@@ -171,10 +174,7 @@ class InterventionApiProvider {
       };
       Response response = await _dio.put(
           modifierCoordClientEndPoint + uuidClient + "/update-info",
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return ResultMessageResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -193,6 +193,7 @@ class InterventionApiProvider {
       String additionalAddress,
       String city,
       String postcode) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "order": order,
@@ -205,10 +206,7 @@ class InterventionApiProvider {
         "postcode": postcode
       };
       Response response = await _dio.post(ajouterAdresseFacturationEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddAdressFacturationResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -227,6 +225,7 @@ class InterventionApiProvider {
       String additionalAddress,
       String city,
       String postcode) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "addressFirstname": adressFirstname,
@@ -241,10 +240,7 @@ class InterventionApiProvider {
           modifierAdresseFacturationEndPoint +
               order +
               "/update-invoicing-address",
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddAdressFacturationResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -256,16 +252,14 @@ class InterventionApiProvider {
 
   Future<ChangeOrderStateResponse> changeOrderState(
       num order, num orderState, String orderUuid) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "order": order,
         "orderState": orderState,
       };
       Response response = await _dio.put(changeOrderStateEndPoint + orderUuid,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return ChangeOrderStateResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -276,15 +270,47 @@ class InterventionApiProvider {
   }
 
   Future<GetTypesDocumentsResponse> getListesTypesDocuments() async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getListeTyesDocumentsEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetTypesDocumentsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetTypesDocumentsResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<GetTypesCommandesResponse> getListesTypesCommandes() async {
+    Map<String, String> header = await headerFormatter.getHeader();
+    try {
+      Response response = await _dio.get(getListeTypesCommandesEndPoint,
+          options: Options(responseType: ResponseType.json, headers: header));
+      return GetTypesCommandesResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return GetTypesCommandesResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<CreationNouvelleCommandeResponse> creationNouvelleCommande(
+      String originalOrderUuid, String orderCaseUuid) async {
+    Map<String, String> header = await headerFormatter.getHeader();
+    try {
+      var params = {
+        "originalOrderUuid": originalOrderUuid,
+        "orderCaseUuid": orderCaseUuid,
+        "stateCode": "SCHEDULED", //optional
+        "enabled": true //optional
+      };
+      Response response = await _dio.post(creationNouvelleCommandeEndPoint,
+          options: Options(responseType: ResponseType.json, headers: header),
+          data: jsonEncode(params));
+      return CreationNouvelleCommandeResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return CreationNouvelleCommandeResponse(orderCreated: false);
     } catch (e) {
       throw e;
     }

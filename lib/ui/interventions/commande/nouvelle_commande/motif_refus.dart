@@ -12,6 +12,7 @@ import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/gradients/md_gradient.dart';
 
 import '../../interventions_bloc.dart';
@@ -27,6 +28,7 @@ class MotifRefusWidget extends StatefulWidget {
 
 class _MotifRefusWidgetState extends State<MotifRefusWidget> {
   final bloc = Modular.get<InterventionsBloc>();
+  final sharedPref = Modular.get<SharedPref>();
   bool loading = false;
   String _refusText = " ";
 
@@ -147,8 +149,10 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
     setState(() {
       loading = true;
     });
+    String _subcontractorId =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
     int response = await bloc.refuseIntervention(_intervention.code, _refusText,
-        _intervention.id, _intervention.uuid, Endpoints.subcontractor_id);
+        _intervention.id, _intervention.uuid, _subcontractorId);
     setState(() {
       loading = false;
     });

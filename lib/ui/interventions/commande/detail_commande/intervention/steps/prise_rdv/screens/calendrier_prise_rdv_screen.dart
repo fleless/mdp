@@ -13,6 +13,7 @@ import 'package:mdp/models/responses/user_appointments_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/gradients/dark_gradient.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
@@ -32,6 +33,7 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionsBloc>();
   final _priseRdvBloc = Modular.get<PriseRdvBloc>();
+  final sharedPref = Modular.get<SharedPref>();
   final List<Meeting> meetings = <Meeting>[];
   CalendarController _controller;
   UserAppointmentsResponse _userAppointmentsResponse =
@@ -48,9 +50,10 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   }
 
   _getAppointments() async {
-    //TODO: change user ID
+    String _subcontractorId =
+    await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
     _userAppointmentsResponse =
-        await _priseRdvBloc.getUserAppointments(Endpoints.subcontractor_id);
+        await _priseRdvBloc.getUserAppointments(_subcontractorId);
     _convertAppointmentsToMeetings();
   }
 

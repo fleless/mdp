@@ -5,10 +5,12 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/adressResponse.dart';
 import 'package:mdp/models/responses/change_order_state.dart';
+import 'package:mdp/models/responses/creation_nouvelle_commande_response.dart';
 import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
+import 'package:mdp/models/responses/get_types_commandes_response.dart';
 import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
@@ -222,6 +224,19 @@ class InterventionsBloc extends Disposable {
         interventionDetail.interventionDetail.id,
         documentTypeId,
         documentContent);
+  }
+
+  Future<GetTypesCommandesResponse> getListesTypesCommandes() async {
+    GetTypesCommandesResponse resp =
+        await _interventionRepository.getListesTypesCommandes();
+    return resp;
+  }
+
+  Future<CreationNouvelleCommandeResponse> creationNouvelleCommande(
+      String originalOrderUuid, String orderCaseUuid) async {
+    CreationNouvelleCommandeResponse resp = await _interventionRepository
+        .creationNouvelleCommande(originalOrderUuid, orderCaseUuid);
+    return resp;
   }
 
   notifChanges() {

@@ -10,6 +10,7 @@ import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/get_interventions.dart' as interventions;
 import 'package:mdp/ui/interventions/commande/nouvelle_commande/proposition_comande.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -28,6 +29,7 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
   final bloc = Modular.get<InterventionsBloc>();
   List<interventions.Interventions> _listeInterventions =
       <interventions.Interventions>[];
+  final sharedPref = Modular.get<SharedPref>();
 
   @override
   Future<void> initState() {
@@ -39,8 +41,10 @@ class _InterventionsScreenState extends State<InterventionsScreen> {
     setState(() {
       _loading = true;
     });
+    String _subcontractorUUId =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
     interventions.GetInterventionsResponse resp = await bloc.getInterventions(
-        Endpoints.subcontractor_uuid,
+        _subcontractorUUId,
         _searchController.text == null ? "" : _searchController.text);
     if (resp.interventions == null) {
       setState(() {

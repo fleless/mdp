@@ -1,6 +1,8 @@
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
 import 'package:mdp/models/responses/change_order_state.dart';
+import 'package:mdp/models/responses/creation_nouvelle_commande_response.dart';
 import 'package:mdp/models/responses/get_interventions.dart';
+import 'package:mdp/models/responses/get_types_commandes_response.dart';
 import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
@@ -95,4 +97,13 @@ class InterventionRepository {
   Future<GetTypesDocumentsResponse> getListesTypesDocuments() async {
     return _apiProvider.getListesTypesDocuments();
   }
-}
+
+  Future<GetTypesCommandesResponse> getListesTypesCommandes() async {
+    return _apiProvider.getListesTypesCommandes();
+  }
+
+  Future<CreationNouvelleCommandeResponse> creationNouvelleCommande(
+      String originalOrderUuid, String orderCaseUuid) async {
+    return _apiProvider.creationNouvelleCommande(originalOrderUuid, orderCaseUuid);
+  }
+  }

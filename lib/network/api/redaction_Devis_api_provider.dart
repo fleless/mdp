@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/requests/ajout_designation_request.dart';
 import 'package:mdp/models/responses/add_designation_response.dart';
@@ -12,9 +13,13 @@ import 'package:mdp/models/responses/get_notif_refus_response.dart';
 import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
+import 'package:mdp/utils/header_formatter.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class RedactionDevisApiProvider {
+  final sharedPref = Modular.get<SharedPref>();
+  final headerFormatter = Modular.get<HeaderFormatter>();
   final String getDesignationsNameURL = Endpoints.CORE_URL + "quote/reference";
   final String addNewMaterialEndPoint = Endpoints.CORE_URL + "workload";
   final String getMaterialsEndPoint =
@@ -53,12 +58,10 @@ class RedactionDevisApiProvider {
   }
 
   Future<GetDesignationsNameResponse> getDesignationsName() async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getDesignationsNameURL,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetDesignationsNameResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetDesignationsNameResponse();
@@ -68,12 +71,10 @@ class RedactionDevisApiProvider {
   }
 
   Future<GetMaterialResponse> getMaterials() async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getMaterialsEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetMaterialResponse();
@@ -84,6 +85,7 @@ class RedactionDevisApiProvider {
 
   Future<AddNewMaterialResponse> addNewMaterial(String name, String comment,
       int unit, int quantity, double unit_price) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {
       "name": name,
       "type": 2,
@@ -94,10 +96,7 @@ class RedactionDevisApiProvider {
     };
     try {
       Response response = await _dio.post(addNewMaterialEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddNewMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -108,12 +107,10 @@ class RedactionDevisApiProvider {
   }
 
   Future<GetUnitsResponse> getUnits() async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getUnitsEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetUnitsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetUnitsResponse();
@@ -123,12 +120,10 @@ class RedactionDevisApiProvider {
   }
 
   Future<GetMaterialResponse> getMainDeplacement() async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getMainDeplacementsEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetMaterialResponse();
@@ -139,12 +134,10 @@ class RedactionDevisApiProvider {
 
   Future<AddDesignationResponse> addDesignation(
       AddDesignationRequest request) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.post(addDesignationEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(request));
       return AddDesignationResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -155,12 +148,10 @@ class RedactionDevisApiProvider {
   }
 
   Future<GetDevisResponse> getDevis(String orderId) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getDevisEndPoint + orderId,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return GetDevisResponse.fromJson(response.data);
     } on DioError catch (e) {
       return GetDevisResponse();
@@ -171,12 +162,10 @@ class RedactionDevisApiProvider {
 
   Future<AddDesignationResponse> updateDesignation(
       AddDesignationRequest request) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.put(updateDesignationEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(request));
       return AddDesignationResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -188,6 +177,7 @@ class RedactionDevisApiProvider {
 
   Future<UpdateQuoteResponse> updateQuote(
       num quoteId, num tva, num remise, num franchise, num accompte) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {
       "quote": quoteId,
       "vat": tva,
@@ -198,10 +188,7 @@ class RedactionDevisApiProvider {
     };
     try {
       Response response = await _dio.put(updateQuoteEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return UpdateQuoteResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -212,13 +199,11 @@ class RedactionDevisApiProvider {
   }
 
   Future<SendMailDevisResponse> sendMailDevis(num quoteId, String email) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {"quote_id": quoteId, "email": email};
     try {
       Response response = await _dio.post(sendDevisMailEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return SendMailDevisResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -229,6 +214,7 @@ class RedactionDevisApiProvider {
   }
 
   Future<GetNotifRefusResponse> notifierRefus(num quoteId) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {
       "type_id": 1,
       "subject": "Notifier Refus Devis",
@@ -237,10 +223,7 @@ class RedactionDevisApiProvider {
     try {
       Response response = await _dio.post(
           notifierRefusEndPoint + quoteId.toString() + "/messages",
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return GetNotifRefusResponse.fromJson(response.data);
     } on DioError catch (e) {

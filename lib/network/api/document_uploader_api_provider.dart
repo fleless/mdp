@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_type_document_response.dart';
-import 'package:mdp/models/responses/adressResponse.dart';
-import 'package:mdp/models/responses/login_response.dart';
-import 'package:mdp/models/responses/profile_response.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
+import 'package:mdp/utils/header_formatter.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DocumentUploaderApiProvider {
@@ -18,6 +18,8 @@ class DocumentUploaderApiProvider {
       Endpoints.CORE_URL + "add-order-document-type";
   final String generateeDocumentEndPoint =
       "https://order.mesdepanneurs.wtf/api/v1/order/generate-document";
+  final sharedPref = Modular.get<SharedPref>();
+  final headerFormatter = Modular.get<HeaderFormatter>();
 
   Dio _dio;
 
@@ -43,6 +45,7 @@ class DocumentUploaderApiProvider {
 
   Future<UploadDocumentResponse> uploadQuoteDocument(
       String quoteId, int documentTypeId, String documentContent) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "quoteId": quoteId == null ? null : int.parse(quoteId),
@@ -52,10 +55,7 @@ class DocumentUploaderApiProvider {
         "documentContent": documentContent
       };
       Response response = await _dio.post(uploadQuoteDocumentEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return UploadDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -67,6 +67,7 @@ class DocumentUploaderApiProvider {
 
   Future<UploadDocumentResponse> uploadInterventionDocument(
       num orderId, int documentTypeId, String documentContent) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
         "orderId": orderId,
@@ -74,10 +75,7 @@ class DocumentUploaderApiProvider {
         "documentContent": documentContent
       };
       Response response = await _dio.post(uploadInterventionDocumentEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return UploadDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -89,12 +87,10 @@ class DocumentUploaderApiProvider {
 
   Future<AddTypeDocumentResponse> addTypeDocument(String name) async {
     try {
+      Map<String, String> header = await headerFormatter.getHeader();
       var params = {"name": name};
       Response response = await _dio.post(ajoutTypeDocumentEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddTypeDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -105,13 +101,11 @@ class DocumentUploaderApiProvider {
   }
 
   Future<bool> generatePVDocument(num orderIdentifier) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {"orderIdentifier": orderIdentifier, "documentType": 5};
       Response response = await _dio.post(generateeDocumentEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return true;
     } on DioError catch (e) {

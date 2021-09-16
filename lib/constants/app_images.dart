@@ -13,4 +13,5 @@ class AppImages {
   static String get refus => 'assets/images/refus.svg';
   static String get termine => 'assets/images/terminé.svg';
   static String get warning => 'assets/images/warning.svg';
+  static String get workEnded => 'assets/images/workended.png';
 }

@@ -1,16 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/endpoints.dart';
+import 'package:mdp/models/responses/get_account_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/models/responses/profile_response.dart';
+import 'package:mdp/utils/header_formatter.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class LoginApiProvider {
   final String getTokenEndPoint = Endpoints.AUTH_URL + "token";
   final String getProfilEndPoint =
       Endpoints.AUTH_URL + "subcontractor/profile/";
-
+  final String getAccountEndPoint = Endpoints.AUTH_URL + "users/account";
+  final sharedPref = Modular.get<SharedPref>();
+  final headerFormatter = Modular.get<HeaderFormatter>();
   Dio _dio;
 
   LoginApiProvider() {
@@ -38,11 +45,7 @@ class LoginApiProvider {
       var params = {
         "username": username,
         "password": password,
-        "host": "ios-app"
-      };
-      const Map<String, String> header = {
-        'Content-type': 'application/json',
-        'Accept': 'application/json',
+        "host": Platform.isAndroid ? "android-app" : "ios-app"
       };
       Response response = await _dio.post(getTokenEndPoint,
           options: Options(responseType: ResponseType.json, headers: {
@@ -59,15 +62,28 @@ class LoginApiProvider {
   }
 
   Future<ProfileResponse> getProfile(String uuidUser) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(getProfilEndPoint + uuidUser,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return ProfileResponse.fromJson(response.data);
     } on DioError catch (e) {
       return ProfileResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<GetAccountResponse> getAccount(String username) async {
+    Map<String, String> header = await headerFormatter.getHeader();
+    var params = {"username": username};
+    try {
+      Response response = await _dio.post(getAccountEndPoint,
+          options: Options(responseType: ResponseType.json, headers: header),
+          data: jsonEncode(params));
+      return GetAccountResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return GetAccountResponse();
     } catch (e) {
       throw e;
     }

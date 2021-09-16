@@ -11,6 +11,7 @@ import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/models/responses/profile_response.dart';
 import 'package:mdp/ui/home/home_screen.dart';
 import 'package:mdp/ui/profil/profile_bloc.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:splashscreen/splashscreen.dart';
@@ -26,6 +27,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
   GlobalKey<FormState> formKey = new GlobalKey();
   bool _loading = false;
   final bloc = Modular.get<ProfileBloc>();
+  final sharedPref = Modular.get<SharedPref>();
   ProfileResponse profile;
 
   @override
@@ -38,7 +40,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
     setState(() {
       _loading = true;
     });
-    profile = await bloc.getProfile(Endpoints.subcontractor_uuid);
+    String _subcontractorUuid =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
+    profile = await bloc.getProfile(_subcontractorUuid);
     setState(() {
       _loading = false;
     });

@@ -7,8 +7,10 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/get_account_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/ui/home/home_screen.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:splashscreen/splashscreen.dart';
 
@@ -25,12 +27,15 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
   TextEditingController _userNameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final bloc = Modular.get<LoginBloc>();
+  final sharedPref = Modular.get<SharedPref>();
   bool loading = false;
 
   @override
   void initState() {
-    _userNameController.text = "mobile-app";
-    _passwordController.text = "jSth&n5*tMRu";
+    _userNameController.text = "md3-test";
+    _passwordController.text = "md3-test";
+    /*_userNameController.text = "mobile-app";
+    _passwordController.text = "jSth&n5*tMRu";*/
     super.initState();
   }
 
@@ -205,8 +210,16 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
               loading = false;
             });
             if ((response.token != null) && (response.token != "")) {
-              Modular.to.pushNamedAndRemoveUntil(
-                  Routes.home, (Route<dynamic> route) => false);
+              GetAccountResponse resp =
+                  await bloc.getAccount(_userNameController.text);
+              if (resp != null) {
+                sharedPref.save(AppConstants.SUBCONTRACTOR_UUID_KEY,
+                    resp.profile.subcontractor.uuid.toString());
+                sharedPref.save(AppConstants.SUBCONTRACTOR_ID_KEY,
+                    resp.profile.subcontractor.id.toString());
+                Modular.to.pushNamedAndRemoveUntil(
+                    Routes.home, (Route<dynamic> route) => false);
+              }
             } else {
               Fluttertoast.showToast(
                   msg: "Utilisateur introuvable",

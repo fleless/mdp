@@ -329,6 +329,13 @@ class AppStyles {
     fontSize: 18,
   );
 
+  static const header2White = TextStyle(
+    fontFamily: 'roboto',
+    color: AppColors.white,
+    fontWeight: FontWeight.w700,
+    fontSize: 18,
+  );
+
   static const header2DarkBlue = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.md_dark_blue,

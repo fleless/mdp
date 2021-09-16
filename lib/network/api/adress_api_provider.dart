@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/adressResponse.dart';
 import 'package:mdp/models/responses/login_response.dart';
 import 'package:mdp/models/responses/profile_response.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class AdressApiProvider {
@@ -12,6 +14,7 @@ class AdressApiProvider {
       "https://geo.api.gouv.fr/communes?codePostal=";
   final String getCommunityNameFromZIPEndPoint2 =
       "&fields=nom&format=json&geometry=centre";
+  final sharedPref = Modular.get<SharedPref>();
 
   Dio _dio;
 

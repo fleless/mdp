@@ -18,6 +18,7 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/utils/date_formatter.dart';
 import 'package:collection/collection.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 
 class AjouterRDVScreen extends StatefulWidget {
   @override
@@ -29,6 +30,7 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
   TextEditingController _commentaireController = TextEditingController();
   final bloc = Modular.get<InterventionsBloc>();
   final _rdvBloc = Modular.get<PriseRdvBloc>();
+  final sharedPref = Modular.get<SharedPref>();
   DateTime _startDate;
   DateTime _endDate;
   TimeOfDay _startTime;
@@ -615,11 +617,13 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
     DateTime _end = DateTime(_endDate.year, _endDate.month, _endDate.day,
         _endTime.hour, _endTime.minute);
     if (_start.isBefore(_end)) {
+      String _subcontractorId =
+          await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
       AddAppointmentResponse response = await _rdvBloc.addAppointment(
           title,
           _commentaireController.text,
           bloc.interventionDetail.interventionDetail.id,
-          Endpoints.subcontractor_id,
+          _subcontractorId,
           DateFormat('yyyy-MM-dd HH:mm:ss').format(_start),
           DateFormat('yyyy-MM-dd HH:mm:ss').format(_end));
       if (response != null) {

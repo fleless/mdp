@@ -7,6 +7,7 @@ import 'package:mdp/ui/calendar/calendar_screen.dart';
 import 'package:mdp/ui/home/home_bloc.dart';
 import 'package:mdp/ui/home/home_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/detail_commande_screen.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/creation_nouvelle_commande/creation_nouvelle_commande_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/document_type_selector.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
@@ -37,7 +38,9 @@ import 'package:mdp/ui/notifications/notifications_screen.dart';
 import 'package:mdp/ui/profil/profil_screen.dart';
 import 'package:mdp/ui/profil/profile_bloc.dart';
 import 'package:mdp/ui/splash/splash_screen.dart';
+import 'package:mdp/utils/header_formatter.dart';
 import 'package:mdp/utils/image_compresser.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/utils/user_location.dart';
 import 'package:mdp/widgets/photo_view_screen.dart';
 import 'app_widget.dart';
@@ -59,6 +62,8 @@ class AppModule extends MainModule {
         Bind((_) => RedactionDevisBloc()),
         Bind((_) => ImageCompressor()),
         Bind((_) => FinalisationInterventionBloc()),
+        Bind((_) => SharedPref()),
+        Bind((_) => HeaderFormatter()),
       ];
 
   // Provide all the routes for your module
@@ -127,6 +132,8 @@ class AppModule extends MainModule {
                 child: (_, args) => PaymentEmailScreen()),
             ModularRouter(Routes.paymentOtherOptionsScreen,
                 child: (_, args) => PaymentOtherOptionsScreen()),
+            ModularRouter(Routes.creationNouvelleCommande,
+                child: (_, args) => CreationNouvelleCommandeScreen()),
           ],
         ),
       ];

@@ -34,6 +34,7 @@ class Routes {
       "/paymentPrincipalOptionsScreen";
   static const String paymentEmailScreen = "/paymentEmailScreen";
   static const String paymentOtherOptionsScreen = "/paymentOtherOptionsScreen";
+  static const String creationNouvelleCommande = "/creationNouvelleCommande";
 
   // Utility method used to build a dynamic route with params.
   // Example: Routes.buildRouteWithParams('/users/{id}, {'id': 1}); would generate '/users/1'

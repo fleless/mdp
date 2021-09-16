@@ -14,6 +14,7 @@ import 'package:mdp/ui/calendar/calendar_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/dark_gradient.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
@@ -29,6 +30,7 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<CalendarBloc>();
+  final sharedPref = Modular.get<SharedPref>();
   final List<Meeting> meetings = <Meeting>[];
   CalendarController _controller;
   UserAppointmentsResponse _userAppointmentsResponse =
@@ -45,9 +47,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   _getAppointments() async {
-    //TODO: change user ID
+    String _subcontractorId =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
     _userAppointmentsResponse =
-        await bloc.getUserAppointments(Endpoints.subcontractor_id);
+        await bloc.getUserAppointments(_subcontractorId);
     _convertAppointmentsToMeetings();
   }
 

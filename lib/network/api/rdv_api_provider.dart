@@ -1,12 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_appointment_response.dart';
 import 'package:mdp/models/responses/user_appointments_response.dart';
+import 'package:mdp/utils/header_formatter.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class RdvApiProvider {
+  final sharedPref = Modular.get<SharedPref>();
+  final headerFormatter = Modular.get<HeaderFormatter>();
   final String getUserAppointmentsURL = Endpoints.CORE_URL + "visits";
   final String addAppointmentEndPoint = Endpoints.CORE_URL + "visits";
   final String updateAppointmentEndPoint = Endpoints.CORE_URL + "visits/";
@@ -34,15 +39,13 @@ class RdvApiProvider {
   }
 
   Future<UserAppointmentsResponse> getUserAppointments(String idUser) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(
           getUserAppointmentsURL +
               "?start_date=2021-01-01&end_date=2050-08-31&subcontractor_id=" +
               idUser,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return UserAppointmentsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return UserAppointmentsResponse();
@@ -53,6 +56,7 @@ class RdvApiProvider {
 
   Future<UserAppointmentsResponse> getUserAppointmentsForSpecificOrder(
       String idUser, String orderId) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(
           getUserAppointmentsURL +
@@ -60,10 +64,7 @@ class RdvApiProvider {
               orderId +
               "&start_date=2021-01-01&end_date=2050-08-31&subcontractor_id=" +
               idUser,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }));
+          options: Options(responseType: ResponseType.json, headers: header));
       return UserAppointmentsResponse.fromJson(response.data);
     } on DioError catch (e) {
       return UserAppointmentsResponse();
@@ -79,6 +80,7 @@ class RdvApiProvider {
       String subContractorId,
       String startDate,
       String endDate) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {
       "title": title,
       "comment": comment,
@@ -90,10 +92,7 @@ class RdvApiProvider {
     };
     try {
       Response response = await _dio.post(addAppointmentEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddAppointmentResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -110,6 +109,7 @@ class RdvApiProvider {
       String subContractorId,
       String startDate,
       String endDate) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {
       "title": title,
       "comment": comment,
@@ -121,10 +121,7 @@ class RdvApiProvider {
     };
     try {
       Response response = await _dio.post(addAppointmentEndPoint,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddAppointmentResponse.fromJson(response.data);
     } on DioError catch (e) {
@@ -134,8 +131,9 @@ class RdvApiProvider {
     }
   }
 
-  Future<AddAppointmentResponse> updateFirstAppointment(
-      String title, String comment, String startDate, String endDate, String idRdv) async {
+  Future<AddAppointmentResponse> updateFirstAppointment(String title,
+      String comment, String startDate, String endDate, String idRdv) async {
+    Map<String, String> header = await headerFormatter.getHeader();
     var params = {
       "title": title,
       "comment": comment,
@@ -143,11 +141,8 @@ class RdvApiProvider {
       "end_date": endDate
     };
     try {
-      Response response = await _dio.put(updateAppointmentEndPoint+idRdv,
-          options: Options(responseType: ResponseType.json, headers: {
-            'Content-type': 'application/json',
-            'Accept': 'application/json',
-          }),
+      Response response = await _dio.put(updateAppointmentEndPoint + idRdv,
+          options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
       return AddAppointmentResponse.fromJson(response.data);
     } on DioError catch (e) {

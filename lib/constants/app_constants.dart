@@ -16,4 +16,6 @@ class AppConstants {
   static const int TIMER_DIALOG = 5000;
 
   static const TOKEN_KEY = "token";
+  static const SUBCONTRACTOR_UUID_KEY = "subcontractorUUID";
+  static const SUBCONTRACTOR_ID_KEY = "subcontractorID";
 }
