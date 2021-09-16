@@ -353,7 +353,7 @@ class _ShowDocumentUploaderWidgetState
       lista.add(base64Image);
     }
     //convert docs to base64
-    if (documentsList != null)
+    if ((documentsList != null) && (documentsList.length > 0)) {
       documentsList.forEach((element) async {
         final dir = await getTemporaryDirectory();
         var path2 = await FlutterAbsolutePath.getAbsolutePath(element.path);
@@ -383,5 +383,14 @@ class _ShowDocumentUploaderWidgetState
           });
         }
       });
+    } else {
+      await bloc.uploadDocsIntervention(lista[0], id);
+      setState(() {
+        _loading = false;
+      });
+      Modular.to.pop();
+      await bloc.getInterventionDetail(
+          bloc.interventionDetail.interventionDetail.uuid);
+    }
   }
 }

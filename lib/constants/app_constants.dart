@@ -18,4 +18,6 @@ class AppConstants {
   static const TOKEN_KEY = "token";
   static const SUBCONTRACTOR_UUID_KEY = "subcontractorUUID";
   static const SUBCONTRACTOR_ID_KEY = "subcontractorID";
+  static const USERNAME_KEY = "username";
+  static const PASSWORD_KEY = "password";
 }

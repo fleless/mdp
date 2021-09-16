@@ -32,11 +32,19 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
 
   @override
   void initState() {
-    _userNameController.text = "md3-test";
-    _passwordController.text = "md3-test";
-    /*_userNameController.text = "mobile-app";
-    _passwordController.text = "jSth&n5*tMRu";*/
+    // find if there is a user connected before and reconnect him
+    _loadDatas();
     super.initState();
+  }
+
+  _loadDatas() async {
+    String username = await sharedPref.read(AppConstants.USERNAME_KEY);
+    String password = await sharedPref.read(AppConstants.PASSWORD_KEY);
+    if ((username != null) && (password != null)) {
+      _userNameController.text = username;
+      _passwordController.text = password;
+      _goConnect();
+    }
   }
 
   @override
@@ -196,40 +204,11 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                 ),
         ),
       ),
-      onPressed: () async {
-        LoginResponse response;
+      onPressed: () {
         if (!loading) {
           final formState = formKey.currentState;
           if (formState.validate()) {
-            setState(() {
-              loading = true;
-            });
-            response = await bloc.getToken(
-                _userNameController.text, _passwordController.text);
-            setState(() {
-              loading = false;
-            });
-            if ((response.token != null) && (response.token != "")) {
-              GetAccountResponse resp =
-                  await bloc.getAccount(_userNameController.text);
-              if (resp != null) {
-                sharedPref.save(AppConstants.SUBCONTRACTOR_UUID_KEY,
-                    resp.profile.subcontractor.uuid.toString());
-                sharedPref.save(AppConstants.SUBCONTRACTOR_ID_KEY,
-                    resp.profile.subcontractor.id.toString());
-                Modular.to.pushNamedAndRemoveUntil(
-                    Routes.home, (Route<dynamic> route) => false);
-              }
-            } else {
-              Fluttertoast.showToast(
-                  msg: "Utilisateur introuvable",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: AppColors.mdAlert,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
-            }
+            _goConnect();
           }
         }
       },
@@ -242,5 +221,39 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
           padding: EdgeInsets.zero,
           textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     );
+  }
+
+  _goConnect() async {
+    LoginResponse response;
+    setState(() {
+      loading = true;
+    });
+    response =
+        await bloc.getToken(_userNameController.text, _passwordController.text);
+    setState(() {
+      loading = false;
+    });
+    if ((response.token != null) && (response.token != "")) {
+      GetAccountResponse resp = await bloc.getAccount(_userNameController.text);
+      if (resp != null) {
+        sharedPref.save(AppConstants.SUBCONTRACTOR_UUID_KEY,
+            resp.profile.subcontractor.uuid.toString());
+        sharedPref.save(AppConstants.SUBCONTRACTOR_ID_KEY,
+            resp.profile.subcontractor.id.toString());
+        sharedPref.save(AppConstants.USERNAME_KEY, _userNameController.text);
+        sharedPref.save(AppConstants.PASSWORD_KEY, _passwordController.text);
+        Modular.to.pushNamedAndRemoveUntil(
+            Routes.home, (Route<dynamic> route) => false);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "Utilisateur introuvable",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: AppColors.mdAlert,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
   }
 }

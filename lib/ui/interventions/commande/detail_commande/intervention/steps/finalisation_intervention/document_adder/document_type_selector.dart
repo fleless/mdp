@@ -272,6 +272,13 @@ class _DocumentTypeSelectorScreenState
             (element != "Photo après") &&
             (element != "Photo avant")))
         .toList();
+    //remove redundant types (types that already exist in intervention)
+    lista.removeWhere((element) =>
+        bloc.interventionDetail.interventionDetail.documents
+            .where((el) => el.documentType == element)
+            .toList()
+            .length >
+        0);
     // We add a space to show the button of adding a new type in the dropDown Search PopUp
     lista.add(" ");
     return lista;

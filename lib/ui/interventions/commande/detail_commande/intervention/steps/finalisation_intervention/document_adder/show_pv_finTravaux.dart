@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:collection/collection.dart';
+import 'package:mdp/models/requests/generation_pv_request.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/utils/date_formatter.dart';
@@ -620,8 +624,21 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
     setState(() {
       _loading = true;
     });
-    bool valid = await _finalisationInterventionbloc
-        .generatePVDocument(bloc.interventionDetail.interventionDetail.id);
+    final Uint8List dataArtisan = await _controllerArtisan.toPngBytes();
+    final imageEncodedArtisan = base64.encode(dataArtisan);
+    final Uint8List dataClient = await _controllerClient.toPngBytes();
+    final imageEncodedClient = base64.encode(dataClient);
+    bool valid = await _finalisationInterventionbloc.generatePVDocument(
+        bloc.interventionDetail.interventionDetail.id,
+        GenerationPVFinTravauxRequest(
+          orderIdentifier: bloc.interventionDetail.interventionDetail.id,
+          documentType: "27228468-83e5-11ea-a36f-0242ac170002",
+          data: Dataa(
+            comments: _messageController.text,
+            subcontractorSignature: imageEncodedArtisan,
+            clientSignature: imageEncodedClient,
+          ),
+        ));
     setState(() {
       _loading = false;
     });

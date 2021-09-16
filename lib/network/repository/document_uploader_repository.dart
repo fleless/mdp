@@ -1,3 +1,4 @@
+import 'package:mdp/models/requests/generation_pv_request.dart';
 import 'package:mdp/models/responses/add_type_document_response.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/network/api/document_uploader_api_provider.dart';
@@ -21,7 +22,7 @@ class DocumentUploaderRepository {
     return _apiProvider.addTypeDocument(name);
   }
 
-  Future<bool> generatePVDocument(num orderIdentifier) async {
-    return _apiProvider.generatePVDocument(orderIdentifier);
+  Future<bool> generatePVDocument(num orderIdentifier, GenerationPVFinTravauxRequest request) async {
+    return _apiProvider.generatePVDocument(orderIdentifier, request);
   }
 }

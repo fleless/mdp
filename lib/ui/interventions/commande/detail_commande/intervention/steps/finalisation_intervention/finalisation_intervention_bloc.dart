@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:mdp/models/requests/generation_pv_request.dart';
 import 'package:mdp/models/responses/add_type_document_response.dart';
 import 'package:mdp/models/responses/payment/send_sms_payment_response.dart';
 import 'package:mdp/models/responses/payment/start_payment_response.dart';
@@ -20,8 +21,9 @@ class FinalisationInterventionBloc extends Disposable {
     return resp.orderDocumentTypeCreated ? true : false;
   }
 
-  Future<bool> generatePVDocument(num orderIdentifier) async {
-    return _documentRepository.generatePVDocument(orderIdentifier);
+  Future<bool> generatePVDocument(
+      num orderIdentifier, GenerationPVFinTravauxRequest request) async {
+    return _documentRepository.generatePVDocument(orderIdentifier, request);
   }
 
   Future<StartPaymentResponse> startPayment(String orderCode) async {

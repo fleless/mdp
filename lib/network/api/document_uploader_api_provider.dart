@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
+import 'package:mdp/models/requests/generation_pv_request.dart';
 import 'package:mdp/models/responses/add_type_document_response.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/utils/header_formatter.dart';
@@ -100,13 +101,13 @@ class DocumentUploaderApiProvider {
     }
   }
 
-  Future<bool> generatePVDocument(num orderIdentifier) async {
+  Future<bool> generatePVDocument(
+      num orderIdentifier, GenerationPVFinTravauxRequest request) async {
     Map<String, String> header = await headerFormatter.getHeader();
     try {
-      var params = {"orderIdentifier": orderIdentifier, "documentType": 5};
       Response response = await _dio.post(generateeDocumentEndPoint,
           options: Options(responseType: ResponseType.json, headers: header),
-          data: jsonEncode(params));
+          data: jsonEncode(request));
       return true;
     } on DioError catch (e) {
       return false;

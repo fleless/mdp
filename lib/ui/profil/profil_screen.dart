@@ -277,7 +277,13 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () async {
+                await sharedPref.remove(AppConstants.USERNAME_KEY);
+                await sharedPref.remove(AppConstants.PASSWORD_KEY);
+                await sharedPref.remove(AppConstants.TOKEN_KEY);
+                Modular.to.pushNamedAndRemoveUntil(
+                    Routes.login, (Route<dynamic> route) => false);
+              },
               style: ElevatedButton.styleFrom(
                   elevation: 5,
                   shape: RoundedRectangleBorder(

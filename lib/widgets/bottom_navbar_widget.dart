@@ -121,7 +121,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
         icon: ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 50.0),
           child: FaIcon(
-            FontAwesomeIcons.handsHelping,
+            FontAwesomeIcons.hammer,
             color: AppColors.md_text_white,
             size: iconSize,
           ),
