@@ -1,21 +1,22 @@
 class UploadDocumentResponse {
   bool documentUploaded;
   Document document;
-  List<Null> errors;
 
-  UploadDocumentResponse({this.documentUploaded, this.document, this.errors});
+  //List<Null> errors;
+
+  UploadDocumentResponse({this.documentUploaded, this.document});
 
   UploadDocumentResponse.fromJson(Map<String, dynamic> json) {
     documentUploaded = json['documentUploaded'];
     document = json['document'] != null
         ? new Document.fromJson(json['document'])
         : null;
-    if (json['errors'] != null) {
-      errors = new List<Null>();
+    /*if (json['errors'] != null) {
+      /*errors = new List<Null>();
       json['errors'].forEach((v) {
         //errors.add(new Null.fromJson(v));
-      });
-    }
+      });*/
+    }*/
   }
 
   Map<String, dynamic> toJson() {
@@ -24,9 +25,9 @@ class UploadDocumentResponse {
     if (this.document != null) {
       data['document'] = this.document.toJson();
     }
-    if (this.errors != null) {
+    /*if (this.errors != null) {
       //data['errors'] = this.errors.map((v) => v.toJson()).toList();
-    }
+    }*/
     return data;
   }
 }

@@ -19,6 +19,8 @@ class DocumentUploaderApiProvider {
       Endpoints.CORE_URL + "add-order-document-type";
   final String generateeDocumentEndPoint =
       "https://order.mesdepanneurs.wtf/api/v1/order/generate-document";
+  final String uploadPaymentDocumentEndPoint =
+      "https://order.mesdepanneurs.wtf/api/v1/upload-payment-document";
   final sharedPref = Modular.get<SharedPref>();
   final headerFormatter = Modular.get<HeaderFormatter>();
 
@@ -111,6 +113,26 @@ class DocumentUploaderApiProvider {
       return true;
     } on DioError catch (e) {
       return false;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<UploadDocumentResponse> uploadPaymentDocument(
+      num paymentId, num documentTypeId, String documentString) async {
+    var params = {
+      "paymentId": paymentId,
+      "PaymentDocumentType": documentTypeId,
+      "documentContent": "string"
+    };
+    Map<String, String> header = await headerFormatter.getHeader();
+    try {
+      Response response = await _dio.post(uploadPaymentDocumentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: header),
+          data: jsonEncode(params));
+      return UploadDocumentResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return UploadDocumentResponse();
     } catch (e) {
       throw e;
     }

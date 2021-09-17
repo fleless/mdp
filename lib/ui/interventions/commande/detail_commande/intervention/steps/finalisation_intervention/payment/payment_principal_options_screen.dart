@@ -303,7 +303,8 @@ class _PaymentPrincipalOptionsScreenState
             bloc.interventionDetail.interventionDetail.clients.commchannels
                 .firstWhere((element) =>
                     (element.preferred) && (element.type.name == "Phone"))
-                .name
+                .name,
+        "otherOptions": false
       });
     } else {
       showErrorToast(context, "Une erreur est survenue");

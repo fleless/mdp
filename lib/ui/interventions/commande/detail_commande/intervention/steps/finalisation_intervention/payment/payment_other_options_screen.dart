@@ -7,7 +7,10 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
+import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/finish_payment_response.dart';
+import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
 import '../../../../../../interventions_bloc.dart';
@@ -32,6 +35,7 @@ class _PaymentOtherOptionsScreenState extends State<PaymentOtherOptionsScreen> {
     "Aucun paiement possible",
     "Donner la main au service client"
   ];
+  bool _loading = false;
 
   @override
   void initState() {
@@ -76,9 +80,11 @@ class _PaymentOtherOptionsScreenState extends State<PaymentOtherOptionsScreen> {
                   child: _buildBloc(),
                 ),
                 SizedBox(height: 5),
-                _searchText == listePaiements[0]
-                    ? ShowChequePaymentWidget()
-                    : Container(),
+                _searchText.isEmpty
+                    ? Container()
+                    : _searchText == listePaiements[0]
+                        ? ShowChequePaymentWidget()
+                        : _showButton(),
                 SizedBox(height: 30),
               ],
             ),
@@ -228,5 +234,81 @@ class _PaymentOtherOptionsScreenState extends State<PaymentOtherOptionsScreen> {
         ],
       ),
     );
+  }
+
+  Widget _showButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: ElevatedButton(
+        child: Ink(
+          decoration: BoxDecoration(
+            color: AppColors.md_dark_blue,
+            borderRadius: BorderRadius.all(
+              Radius.circular(12),
+            ),
+            border: Border.all(color: AppColors.md_dark_blue),
+          ),
+          child: Container(
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: 55,
+            child: _loading
+                ? Center(
+                    child: CircularProgressIndicator(color: AppColors.white),
+                  )
+                : Text(
+                    "POURSUIVRE",
+                    style: AppStyles.buttonTextWhite,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+          ),
+        ),
+        onPressed: () {
+          _loading ? null : _goAction();
+        },
+        style: ElevatedButton.styleFrom(
+            elevation: 5,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            onPrimary: AppColors.white,
+            primary: Colors.transparent,
+            padding: EdgeInsets.zero,
+            textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+
+  _goAction() {
+    setState(() {
+      _loading = true;
+    });
+    if (_searchText == listePaiements[1]) {
+      _finishPayment(2);
+    } else if (_searchText == listePaiements[2]) {
+      _finishPayment(8);
+    } else if (_searchText == listePaiements[3]) {
+      _finishPayment(9);
+    } else if (_searchText == listePaiements[4]) {
+      _finishPayment(10);
+    }
+  }
+
+  _finishPayment(num docType) async {
+    FinishPaymentResponse responsePayment =
+        await _finalisationInterventionBloc.finishPayment(
+            bloc.interventionDetail.interventionDetail.code, docType);
+    setState(() {
+      _loading = false;
+    });
+    if (responsePayment.processOk) {
+      Modular.to.pushReplacementNamed(Routes.paymentMessage, arguments: {
+        "status": true,
+        "message": "Une notification a bien été envoyé à MesDépanneurs.fr.",
+        "otherOptions": true
+      });
+    } else {
+      showErrorToast(context, "Une erreur est survenue");
+    }
   }
 }

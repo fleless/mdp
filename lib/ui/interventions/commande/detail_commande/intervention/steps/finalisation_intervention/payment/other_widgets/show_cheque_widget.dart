@@ -11,6 +11,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/finish_payment_response.dart';
+import 'package:mdp/models/responses/upload_document_response.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
+import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/utils/image_compresser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,6 +29,8 @@ class ShowChequePaymentWidget extends StatefulWidget {
 class _ShowChequePaymentWidgetState extends State<ShowChequePaymentWidget> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final bloc = Modular.get<InterventionsBloc>();
+  final _finalisationInterventionBloc =
+      Modular.get<FinalisationInterventionBloc>();
   Asset image;
   final image_compressor = Modular.get<ImageCompressor>();
   bool _loading = false;
@@ -217,7 +223,30 @@ class _ShowChequePaymentWidgetState extends State<ShowChequePaymentWidget> {
       var file = await image_compressor.compressAndGetFile(
           File(path2), dir.absolute.path + "/temp.jpg");
       var base64Image = base64Encode(file.readAsBytesSync());
-      //await bloc.uploadDocsIntervention(element, id);
+      UploadDocumentResponse resp =
+          await _finalisationInterventionBloc.uploadPaymentDocument(
+              _finalisationInterventionBloc.paymentId, 5, base64Image);
+      if (resp.documentUploaded == null) {
+        setState(() {
+          _loading = false;
+        });
+        showErrorToast(context, "Une erreur est survenue");
+      } else if (resp.documentUploaded) {
+        FinishPaymentResponse responsePayment =
+            await _finalisationInterventionBloc.finishPayment(
+                bloc.interventionDetail.interventionDetail.code, 5);
+        if (responsePayment.processOk) {
+          Modular.to.pushReplacementNamed(Routes.paymentMessage, arguments: {
+            "status": true,
+            "message": "Une notification a bien été envoyé à MesDépanneurs.fr.",
+            "otherOptions": true
+          });
+        } else {
+          showErrorToast(context, "Une erreur est survenue");
+        }
+      } else {
+        showErrorToast(context, "Une erreur est survenue");
+      }
       setState(() {
         _loading = false;
       });

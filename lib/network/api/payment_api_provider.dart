@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
+import 'package:mdp/models/responses/finish_payment_response.dart';
 import 'package:mdp/models/responses/payment/send_sms_payment_response.dart';
 import 'package:mdp/models/responses/payment/start_payment_response.dart';
 import 'package:mdp/utils/header_formatter.dart';
@@ -18,6 +19,7 @@ class PaymentApiProvider {
       "https://api-communication.mesdepanneurs.wtf/api/payment/sms/payment-link";
   final String sendEmailPaymentEndPoint =
       "https://communication.mesdepanneurs.wtf/api/payment/email/payment-link";
+  final String finishPaymentEndPoint = Endpoints.PAYMENT_URL + "finish-payment";
 
   PaymentApiProvider() {
     if (_dio == null) {
@@ -91,6 +93,22 @@ class PaymentApiProvider {
       return SendSmsPaymentResponse.fromJson(response.data);
     } on DioError catch (e) {
       return SendSmsPaymentResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<FinishPaymentResponse> finishPayment(
+      String orderCode, num paymentType) async {
+    Map<String, String> header = await headerFormatter.getHeader();
+    try {
+      var params = {"orderCode": orderCode, "paymentType": paymentType};
+      Response response = await _dio.post(finishPaymentEndPoint,
+          options: Options(responseType: ResponseType.json, headers: header),
+          data: jsonEncode(params));
+      return FinishPaymentResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      return FinishPaymentResponse();
     } catch (e) {
       throw e;
     }

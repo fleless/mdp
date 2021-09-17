@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/models/requests/generation_pv_request.dart';
 import 'package:mdp/models/responses/add_type_document_response.dart';
+import 'package:mdp/models/responses/finish_payment_response.dart';
 import 'package:mdp/models/responses/payment/send_sms_payment_response.dart';
 import 'package:mdp/models/responses/payment/start_payment_response.dart';
+import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/network/repository/document_uploader_repository.dart';
 import 'package:mdp/network/repository/payment_repository.dart';
 import 'package:rxdart/rxdart.dart';
@@ -14,6 +16,7 @@ class FinalisationInterventionBloc extends Disposable {
   final DocumentUploaderRepository _documentRepository =
       DocumentUploaderRepository();
   final PaymentRepository _paymentRepository = PaymentRepository();
+  num paymentId;
 
   Future<bool> addTypeDocument(String name) async {
     AddTypeDocumentResponse resp =
@@ -38,6 +41,17 @@ class FinalisationInterventionBloc extends Disposable {
   Future<SendSmsPaymentResponse> sendEmailPayment(
       String email, String orderCode, String user) async {
     return await _paymentRepository.sendEmailPayment(email, orderCode, user);
+  }
+
+  Future<UploadDocumentResponse> uploadPaymentDocument(
+      num paymentId, num documentTypeId, String documentString) async {
+    return _documentRepository.uploadPaymentDocument(
+        paymentId, documentTypeId, documentString);
+  }
+
+  Future<FinishPaymentResponse> finishPayment(
+      String orderCode, num paymentType) async {
+    return await _paymentRepository.finishPayment(orderCode, paymentType);
   }
 
   @override

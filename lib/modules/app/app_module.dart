@@ -125,7 +125,7 @@ class AppModule extends MainModule {
                 child: (_, args) => DocumentTypeSelectorScreen()),
             ModularRouter(Routes.paymentMessage,
                 child: (_, args) => PaymentMessageScreen(
-                    args.data['status'], args.data['message'])),
+                    args.data['status'], args.data['message'], args.data['otherOptions'])),
             ModularRouter(Routes.paymentPrincipalOptionsScreen,
                 child: (_, args) => PaymentPrincipalOptionsScreen()),
             ModularRouter(Routes.paymentEmailScreen,

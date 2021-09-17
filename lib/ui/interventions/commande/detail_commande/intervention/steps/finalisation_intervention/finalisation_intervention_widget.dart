@@ -15,6 +15,7 @@ import 'package:mdp/models/responses/intervention_detail_response.dart'
 import 'package:mdp/models/responses/payment/start_payment_response.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
+import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/utils/image_compresser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -605,7 +606,11 @@ class _FinalisationInterventionWidgetState
             ),
           ),
           onPressed: () {
-            _paymentButtonLoading ? null : _startPayment();
+            _paymentButtonLoading
+                ? null
+                : imagesAlreadyUploaded.isEmpty
+                    ? null
+                    : _startPayment();
           },
           style: ElevatedButton.styleFrom(
               elevation: 5,
@@ -636,9 +641,12 @@ class _FinalisationInterventionWidgetState
         "message":
             "Le prélèvement va être réalisé sur la carte bleue renseignée par le client"
       });
-    } else {
-      //payment to do
+    } else if ((resp.paymentStatus == "PAYMENT_TODO") &&
+        (resp.paymentId != null)) {
+      _finalisationInterventionBloc.paymentId = resp.paymentId;
       Modular.to.pushNamed(Routes.paymentPrincipalOptionsScreen);
+    } else {
+      showErrorToast(context, "Une erreur est survenue");
     }
   }
 }

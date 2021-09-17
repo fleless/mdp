@@ -22,7 +22,14 @@ class DocumentUploaderRepository {
     return _apiProvider.addTypeDocument(name);
   }
 
-  Future<bool> generatePVDocument(num orderIdentifier, GenerationPVFinTravauxRequest request) async {
+  Future<bool> generatePVDocument(
+      num orderIdentifier, GenerationPVFinTravauxRequest request) async {
     return _apiProvider.generatePVDocument(orderIdentifier, request);
+  }
+
+  Future<UploadDocumentResponse> uploadPaymentDocument(
+      num paymentId, num documentTypeId, String documentString) async {
+    return _apiProvider.uploadPaymentDocument(
+        paymentId, documentTypeId, documentString);
   }
 }

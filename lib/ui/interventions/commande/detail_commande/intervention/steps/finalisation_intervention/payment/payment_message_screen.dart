@@ -1,4 +1,3 @@
-import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
@@ -7,12 +6,7 @@ import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/client/client_widget.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_widget.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_widget.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
-import 'package:mdp/ui/interventions/interventions_screen.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
 class PaymentMessageScreen extends StatefulWidget {
@@ -20,7 +14,10 @@ class PaymentMessageScreen extends StatefulWidget {
   bool status;
   String message;
 
-  PaymentMessageScreen(this.status, this.message);
+  //check if we need to pop twice or once to return to intervention detail screen
+  bool otherOptions;
+
+  PaymentMessageScreen(this.status, this.message, this.otherOptions);
 
   @override
   State<StatefulWidget> createState() => _PaymentMessageScreenState();
@@ -35,16 +32,27 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
     super.initState();
   }
 
+  Future<bool> _onWillPop() async {
+    Modular.to.pop();
+    if (widget.otherOptions) Modular.to.pop();
+    await bloc
+        .getInterventionDetail(bloc.interventionDetail.interventionDetail.uuid);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Container(
-          color: AppColors.white,
-          height: double.infinity,
-          child: _buildContent(),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        key: _scaffoldKey,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          child: Container(
+            color: AppColors.white,
+            height: double.infinity,
+            child: _buildContent(),
+          ),
         ),
       ),
     );
@@ -102,7 +110,7 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
                     ),
                   ),
                   onPressed: () {
-                    Modular.to.pop();
+                    _onWillPop();
                   },
                   style: ElevatedButton.styleFrom(
                       elevation: 5,
@@ -111,7 +119,8 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
                       onPrimary: AppColors.white,
                       primary: Colors.transparent,
                       padding: EdgeInsets.zero,
-                      textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                      textStyle:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),
@@ -150,7 +159,7 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
           ),
           InkWell(
             onTap: () {
-              Modular.to.pop();
+              _onWillPop();
             },
             child: Icon(
               Icons.close_outlined,

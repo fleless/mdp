@@ -297,7 +297,8 @@ class _PaymentEmailScreenState extends State<PaymentEmailScreen> {
             Modular.to.pushReplacementNamed(Routes.paymentMessage, arguments: {
               "status": true,
               "message": "Merci, un e-mail à bien été envoyé à l’adresse : " +
-                  _emailController.text
+                  _emailController.text,
+              "otherOptions": true
             });
           } else {
             showErrorToast(context, "Une erreur est survenue");

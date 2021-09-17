@@ -100,9 +100,9 @@ class _InterventionWidgetState extends State<InterventionWidget> {
                     Container(height: 1, color: AppColors.md_gray),
                     FinalisationInterventionWidget(),
                     Container(height: 1, color: AppColors.md_gray),
-                    /*if (bloc.interventionDetail.interventionDetail.state.name ==
-                        "WORK_FINISHED")*/
-                    _InterventionTermineWidget(),
+                    if (bloc.interventionDetail.interventionDetail.state.name ==
+                        "WORK_FINISHED")
+                      _InterventionTermineWidget(),
                     SizedBox(height: 150),
                   ]),
                 ),
@@ -314,42 +314,52 @@ class _InterventionWidgetState extends State<InterventionWidget> {
           Text("Photos du client",
               style: AppStyles.header2, overflow: TextOverflow.ellipsis),
           SizedBox(height: 10),
-          Container(
-            height: 250,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: bloc
-                    .interventionDetail.interventionDetail.clientPhotos.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () => {
-                      Modular.to.pushNamed(Routes.photoView, arguments: {
-                        'image': bloc.interventionDetail.interventionDetail
-                            .clientPhotos[index],
-                        'path': ""
-                      })
-                    },
-                    child: Card(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      elevation: 4,
-                      child: Container(
-                        width: 180,
-                        child: Hero(
-                          tag: AppConstants.IMAGE_VIEWER_TAG,
-                          child: Image.network(
-                              bloc.interventionDetail.interventionDetail
-                                  .clientPhotos[index],
-                              fit: BoxFit.cover),
-                        ),
-                      ),
+          bloc.interventionDetail.interventionDetail.clientPhotos.length == 0
+              ? Padding(
+                  padding: EdgeInsets.all(AppConstants.default_padding * 2),
+                  child: Center(
+                    child: Text(
+                      "Aucune photo",
+                      style: AppStyles.bodyMdTextLight,
                     ),
-                  );
-                }),
-          )
+                  ),
+                )
+              : Container(
+                  height: 250,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: bloc.interventionDetail.interventionDetail
+                          .clientPhotos.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () => {
+                            Modular.to.pushNamed(Routes.photoView, arguments: {
+                              'image': bloc.interventionDetail
+                                  .interventionDetail.clientPhotos[index],
+                              'path': ""
+                            })
+                          },
+                          child: Card(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 4,
+                            child: Container(
+                              width: 180,
+                              child: Hero(
+                                tag: AppConstants.IMAGE_VIEWER_TAG,
+                                child: Image.network(
+                                    bloc.interventionDetail.interventionDetail
+                                        .clientPhotos[index],
+                                    fit: BoxFit.cover),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                )
         ]),
       ),
     );
