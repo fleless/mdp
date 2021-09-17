@@ -122,7 +122,7 @@ class DocumentUploaderApiProvider {
       num paymentId, num documentTypeId, String documentString) async {
     var params = {
       "paymentId": paymentId,
-      "PaymentDocumentType": documentTypeId,
+      "documentTypeId": documentTypeId,
       "documentContent": "string"
     };
     Map<String, String> header = await headerFormatter.getHeader();

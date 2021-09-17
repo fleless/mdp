@@ -19,6 +19,7 @@ import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/utils/image_compresser.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'dart:math' as math;
 
 import '../../../../../interventions_bloc.dart';
 
@@ -77,16 +78,10 @@ class _FinalisationInterventionWidgetState
         "WAITING_FINISH");
   }
 
-  _weAreBeforeThisStep() {
-    //TODO: ajouter le check de paiement pas fait
-    return (bloc.interventionDetail.interventionDetail.state.name !=
-        "WAITING_FINISH");
-  }
 
   _weEndedThisStep() {
-    //TODO: ajouter le check de paiement fait
     return (bloc.interventionDetail.interventionDetail.state.name ==
-        "WAITING_FINISH");
+        "WORK_FINISHED");
   }
 
   Widget _buildContent() {
@@ -116,41 +111,58 @@ class _FinalisationInterventionWidgetState
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _weAreInThisStep()
+            _weEndedThisStep()
                 ? Container(
                     width: 30.0,
                     height: 30.0,
                     alignment: Alignment.center,
                     decoration: new BoxDecoration(
-                      color: AppColors.md_dark_blue,
+                      color: AppColors.white,
                       shape: BoxShape.circle,
-                      border: Border.all(
-                          color: _weAreInThisStep()
-                              ? AppColors.md_dark_blue
-                              : AppColors.md_primary,
-                          width: 1.5),
+                      border:
+                          Border.all(color: AppColors.md_primary, width: 1.5),
                     ),
-                    child: FaIcon(
-                      FontAwesomeIcons.handsHelping,
-                      color: AppColors.md_text_white,
+                    child: Icon(
+                      Icons.done,
+                      color: AppColors.md_primary,
                       size: 16,
                     ),
                   )
-                : Container(
-                    width: 30.0,
-                    height: 30.0,
-                    alignment: Alignment.center,
-                    decoration: new BoxDecoration(
-                      color: Colors.transparent,
-                      shape: BoxShape.circle,
-                      border:
-                          Border.all(color: AppColors.placeHolder, width: 1.5),
-                    ),
-                    child: Text(
-                      "4",
-                      style: AppStyles.header2Gray,
-                    ),
-                  ),
+                : _weAreInThisStep()
+                    ? Container(
+                        width: 30.0,
+                        height: 30.0,
+                        alignment: Alignment.center,
+                        decoration: new BoxDecoration(
+                          color: AppColors.md_dark_blue,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: _weAreInThisStep()
+                                  ? AppColors.md_dark_blue
+                                  : AppColors.md_primary,
+                              width: 1.5),
+                        ),
+                        child: FaIcon(
+                          FontAwesomeIcons.handsHelping,
+                          color: AppColors.md_text_white,
+                          size: 16,
+                        ),
+                      )
+                    : Container(
+                        width: 30.0,
+                        height: 30.0,
+                        alignment: Alignment.center,
+                        decoration: new BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              color: AppColors.placeHolder, width: 1.5),
+                        ),
+                        child: Text(
+                          "4",
+                          style: AppStyles.header2Gray,
+                        ),
+                      ),
             SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -162,7 +174,9 @@ class _FinalisationInterventionWidgetState
                   Text("Finalisation de l'intervention",
                       style: _weAreInThisStep()
                           ? AppStyles.header2DarkBlue
-                          : AppStyles.header2Gray),
+                          : _weEndedThisStep()
+                              ? AppStyles.header2DarkBlue
+                              : AppStyles.header2Gray),
                   _weAreInThisStep() ? SizedBox(height: 5) : SizedBox.shrink(),
                   _weAreInThisStep()
                       ? Container(
@@ -177,7 +191,21 @@ class _FinalisationInterventionWidgetState
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis),
                         )
-                      : SizedBox.shrink(),
+                      : _weEndedThisStep()
+                          ? Container(
+                              padding: EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: AppColors.md_primary,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                              ),
+                              child: Text("  Commande finalisé ",
+                                  style: AppStyles.tinyTitleWhite,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis),
+                            )
+                          : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -189,7 +217,11 @@ class _FinalisationInterventionWidgetState
                       ? setState(() {
                           opened = !opened;
                         })
-                      : null;
+                      : _weEndedThisStep()
+                          ? setState(() {
+                              opened = !opened;
+                            })
+                          : null;
                 },
                 iconSize: 12,
                 alignment: Alignment.topCenter,
@@ -199,7 +231,9 @@ class _FinalisationInterventionWidgetState
                         : FontAwesomeIcons.chevronDown,
                     color: _weAreInThisStep()
                         ? AppColors.md_dark_blue
-                        : AppColors.placeHolder,
+                        : _weEndedThisStep()
+                            ? AppColors.md_primary
+                            : AppColors.placeHolder,
                     size: 12),
               ),
             ),
@@ -279,47 +313,50 @@ class _FinalisationInterventionWidgetState
                                       fit: BoxFit.cover),
                                 ),
                               )
-                            : GestureDetector(
-                                onTap: () {
-                                  loadAssets();
-                                },
-                                child: DottedBorder(
-                                  borderType: BorderType.RRect,
-                                  color: AppColors.md_tertiary,
-                                  radius: Radius.circular(12),
-                                  padding: EdgeInsets.all(6),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12)),
-                                    child: Container(
-                                        width: 150,
-                                        padding: EdgeInsets.all(40),
-                                        alignment: Alignment.center,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              Icons.photo_camera,
-                                              color: AppColors.md_tertiary,
-                                            ),
-                                            SizedBox(height: 12),
-                                            Text(
-                                              "PRENDRE UNE PHOTO",
-                                              style:
-                                                  AppStyles.buttonTextTertiary,
-                                              maxLines: 4,
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
-                                            )
-                                          ],
-                                        )),
-                                  ),
-                                ),
-                              ));
+                            : _weEndedThisStep()
+                                ? Container()
+                                : GestureDetector(
+                                    onTap: () {
+                                      loadAssets();
+                                    },
+                                    child: DottedBorder(
+                                      borderType: BorderType.RRect,
+                                      color: AppColors.md_tertiary,
+                                      radius: Radius.circular(12),
+                                      padding: EdgeInsets.all(6),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(12)),
+                                        child: Container(
+                                            width: 150,
+                                            padding: EdgeInsets.all(40),
+                                            alignment: Alignment.center,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.photo_camera,
+                                                  color: AppColors.md_tertiary,
+                                                ),
+                                                SizedBox(height: 12),
+                                                Text(
+                                                  "PRENDRE UNE PHOTO",
+                                                  style: AppStyles
+                                                      .buttonTextTertiary,
+                                                  maxLines: 4,
+                                                  textAlign: TextAlign.center,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                )
+                                              ],
+                                            )),
+                                      ),
+                                    ),
+                                  ));
                   }),
             )
           ]),
@@ -369,57 +406,61 @@ class _FinalisationInterventionWidgetState
             in bloc.interventionDetail.interventionDetail.documents)
           _buildDocsBloc(element),
         SizedBox(height: 15),
-        ElevatedButton(
-          child: Ink(
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(12),
-              ),
-            ),
-            child: Container(
-              alignment: Alignment.center,
-              width: double.infinity,
-              height: 55,
-              child: DottedBorder(
-                borderType: BorderType.RRect,
-                radius: Radius.circular(12),
-                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 20),
-                color: AppColors.md_tertiary,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Icon(
-                        Icons.add_circle_outline_outlined,
-                        color: AppColors.md_tertiary,
+        _weEndedThisStep()
+            ? SizedBox.shrink()
+            : ElevatedButton(
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    height: 55,
+                    child: DottedBorder(
+                      borderType: BorderType.RRect,
+                      radius: Radius.circular(12),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 6, horizontal: 20),
+                      color: AppColors.md_tertiary,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Icon(
+                              Icons.add_circle_outline_outlined,
+                              color: AppColors.md_tertiary,
+                            ),
+                          ),
+                          Center(
+                            child: Text(
+                              "AJOUTER UN DOCUMENT",
+                              style: AppStyles.buttonTextTertiary,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Center(
-                      child: Text(
-                        "AJOUTER UN DOCUMENT",
-                        style: AppStyles.buttonTextTertiary,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+                onPressed: () {
+                  Modular.to.pushNamed(Routes.documentTypeSelector);
+                },
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    onPrimary: AppColors.md_tertiary,
+                    primary: Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    textStyle:
+                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
               ),
-            ),
-          ),
-          onPressed: () {
-            Modular.to.pushNamed(Routes.documentTypeSelector);
-          },
-          style: ElevatedButton.styleFrom(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              onPrimary: AppColors.md_tertiary,
-              primary: Colors.transparent,
-              padding: EdgeInsets.zero,
-              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        ),
       ],
     );
   }
@@ -488,15 +529,12 @@ class _FinalisationInterventionWidgetState
                     height: 30.0,
                     alignment: Alignment.center,
                     decoration: new BoxDecoration(
-                      color: imagesAlreadyUploaded.isEmpty
-                          ? AppColors.inactive
-                          : AppColors.md_dark_blue,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                          color: imagesAlreadyUploaded.isEmpty
+                      color: _weEndedThisStep()
+                          ? AppColors.md_primary
+                          : imagesAlreadyUploaded.isEmpty
                               ? AppColors.inactive
                               : AppColors.md_dark_blue,
-                          width: 1.5),
+                      shape: BoxShape.circle,
                     ),
                     child: Text(
                       "1",
@@ -523,13 +561,16 @@ class _FinalisationInterventionWidgetState
                     height: 30.0,
                     alignment: Alignment.center,
                     decoration: new BoxDecoration(
-                      color: AppColors.md_gray,
+                      color: _weEndedThisStep()
+                          ? AppColors.md_primary
+                          : AppColors.md_gray,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.md_gray, width: 1.5),
                     ),
                     child: Text(
                       "2",
-                      style: AppStyles.buttonInactiveText,
+                      style: _weEndedThisStep()
+                          ? AppStyles.buttonTextWhite
+                          : AppStyles.buttonInactiveText,
                     ),
                   ),
                   SizedBox(height: 10),
@@ -550,13 +591,16 @@ class _FinalisationInterventionWidgetState
                     height: 30.0,
                     alignment: Alignment.center,
                     decoration: new BoxDecoration(
-                      color: AppColors.md_gray,
+                      color: _weEndedThisStep()
+                          ? AppColors.md_primary
+                          : AppColors.md_gray,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.md_gray, width: 1.5),
                     ),
                     child: Text(
                       "3",
-                      style: AppStyles.buttonInactiveText,
+                      style: _weEndedThisStep()
+                          ? AppStyles.buttonTextWhite
+                          : AppStyles.buttonInactiveText,
                     ),
                   ),
                   SizedBox(height: 10),
@@ -571,56 +615,59 @@ class _FinalisationInterventionWidgetState
           ],
         ),
         SizedBox(height: 30),
-        ElevatedButton(
-          child: Ink(
-            decoration: BoxDecoration(
-              color: imagesAlreadyUploaded.isEmpty
-                  ? AppColors.inactive
-                  : AppColors.md_dark_blue,
-              borderRadius: BorderRadius.all(
-                Radius.circular(12),
-              ),
-              border: Border.all(
-                  color: imagesAlreadyUploaded.isEmpty
-                      ? AppColors.inactive
-                      : AppColors.md_dark_blue),
-            ),
-            child: Container(
-              alignment: Alignment.center,
-              width: double.infinity,
-              height: 55,
-              child: _paymentButtonLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.white,
-                      ),
-                    )
-                  : Text(
-                      "DÉCLENCHER LE PAIEMENT",
-                      style: imagesAlreadyUploaded.isEmpty
-                          ? AppStyles.buttonInactiveText
-                          : AppStyles.buttonTextWhite,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+        _weEndedThisStep()
+            ? SizedBox.shrink()
+            : ElevatedButton(
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: imagesAlreadyUploaded.isEmpty
+                        ? AppColors.inactive
+                        : AppColors.md_dark_blue,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
                     ),
-            ),
-          ),
-          onPressed: () {
-            _paymentButtonLoading
-                ? null
-                : imagesAlreadyUploaded.isEmpty
-                    ? null
-                    : _startPayment();
-          },
-          style: ElevatedButton.styleFrom(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              onPrimary: AppColors.white,
-              primary: Colors.transparent,
-              padding: EdgeInsets.zero,
-              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-        ),
+                    border: Border.all(
+                        color: imagesAlreadyUploaded.isEmpty
+                            ? AppColors.inactive
+                            : AppColors.md_dark_blue),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: double.infinity,
+                    height: 55,
+                    child: _paymentButtonLoading
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.white,
+                            ),
+                          )
+                        : Text(
+                            "DÉCLENCHER LE PAIEMENT",
+                            style: imagesAlreadyUploaded.isEmpty
+                                ? AppStyles.buttonInactiveText
+                                : AppStyles.buttonTextWhite,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                  ),
+                ),
+                onPressed: () {
+                  _paymentButtonLoading
+                      ? null
+                      : imagesAlreadyUploaded.isEmpty
+                          ? null
+                          : _startPayment();
+                },
+                style: ElevatedButton.styleFrom(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    onPrimary: AppColors.white,
+                    primary: Colors.transparent,
+                    padding: EdgeInsets.zero,
+                    textStyle:
+                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+              ),
       ],
     );
   }

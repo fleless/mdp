@@ -225,7 +225,7 @@ class _ShowChequePaymentWidgetState extends State<ShowChequePaymentWidget> {
       var base64Image = base64Encode(file.readAsBytesSync());
       UploadDocumentResponse resp =
           await _finalisationInterventionBloc.uploadPaymentDocument(
-              _finalisationInterventionBloc.paymentId, 5, base64Image);
+              _finalisationInterventionBloc.paymentId, 1, base64Image);
       if (resp.documentUploaded == null) {
         setState(() {
           _loading = false;

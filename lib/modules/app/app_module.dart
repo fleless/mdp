@@ -11,6 +11,7 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/creat
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/document_adder/document_type_selector.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/other_widgets/show_aucun_paiement_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/payment_email_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/payment_message_screen.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/payment_other_options_screen.dart';
@@ -134,6 +135,8 @@ class AppModule extends MainModule {
                 child: (_, args) => PaymentOtherOptionsScreen()),
             ModularRouter(Routes.creationNouvelleCommande,
                 child: (_, args) => CreationNouvelleCommandeScreen()),
+            ModularRouter(Routes.showAucunPaiementScreen,
+                child: (_, args) => ShowAucunPaiementScreen()),
           ],
         ),
       ];

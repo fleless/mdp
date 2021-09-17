@@ -107,7 +107,9 @@ class _InterventionWidgetState extends State<InterventionWidget> {
                   ]),
                 ),
               ),
-        _buildBottomRecap()
+        if (!(bloc.interventionDetail.interventionDetail.state.name ==
+            "WORK_FINISHED"))
+          _buildBottomRecap()
       ],
     );
   }

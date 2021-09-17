@@ -76,6 +76,7 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
                 vertical: AppConstants.default_padding * 2),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   widget.message,

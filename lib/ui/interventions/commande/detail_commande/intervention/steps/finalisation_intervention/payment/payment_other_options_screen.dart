@@ -10,6 +10,7 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/finish_payment_response.dart';
+import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/payment/other_widgets/show_aucun_paiement_screen.dart';
 import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
@@ -284,17 +285,20 @@ class _PaymentOtherOptionsScreenState extends State<PaymentOtherOptionsScreen> {
       _loading = true;
     });
     if (_searchText == listePaiements[1]) {
-      _finishPayment(2);
+      _finishPayment(
+          2, "Une notification à bien été envoyé à MesDépanneurs.fr.");
     } else if (_searchText == listePaiements[2]) {
-      _finishPayment(8);
+      _finishPayment(8,
+          "Vous avez déclaré encaisser le paiement via votre TPE. \n\nUne notification à bien été envoyé à  MesDépanneurs.fr.");
     } else if (_searchText == listePaiements[3]) {
-      _finishPayment(9);
+      Modular.to.popAndPushNamed(Routes.showAucunPaiementScreen);
     } else if (_searchText == listePaiements[4]) {
-      _finishPayment(10);
+      _finishPayment(
+          10, "Une notification à bien été envoyé à MesDépanneurs.fr.");
     }
   }
 
-  _finishPayment(num docType) async {
+  _finishPayment(num docType, String text) async {
     FinishPaymentResponse responsePayment =
         await _finalisationInterventionBloc.finishPayment(
             bloc.interventionDetail.interventionDetail.code, docType);
@@ -302,11 +306,8 @@ class _PaymentOtherOptionsScreenState extends State<PaymentOtherOptionsScreen> {
       _loading = false;
     });
     if (responsePayment.processOk) {
-      Modular.to.pushReplacementNamed(Routes.paymentMessage, arguments: {
-        "status": true,
-        "message": "Une notification a bien été envoyé à MesDépanneurs.fr.",
-        "otherOptions": true
-      });
+      Modular.to.pushReplacementNamed(Routes.paymentMessage,
+          arguments: {"status": true, "message": text, "otherOptions": true});
     } else {
       showErrorToast(context, "Une erreur est survenue");
     }

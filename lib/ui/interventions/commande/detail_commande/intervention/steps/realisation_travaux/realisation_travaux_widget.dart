@@ -68,8 +68,10 @@ class _RealisationTravauxWidgetState extends State<RealisationTravauxWidget> {
       return false;
     }
     return (bloc.dernierDevis.quoteData.quote.state.code == "CLIENT_SIGNED") &&
-        (bloc.interventionDetail.interventionDetail.state.name ==
-            "WAITING_FINISH");
+        ((bloc.interventionDetail.interventionDetail.state.name ==
+                "WAITING_FINISH") ||
+            (bloc.interventionDetail.interventionDetail.state.name ==
+                "WORK_FINISHED"));
   }
 
   @override
