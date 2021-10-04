@@ -31,9 +31,9 @@ class PaymentApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: true,
+          requestHeader: false,
           requestBody: false,
-          responseBody: true,
+          responseBody: false,
           responseHeader: false,
           error: true,
           compact: true,

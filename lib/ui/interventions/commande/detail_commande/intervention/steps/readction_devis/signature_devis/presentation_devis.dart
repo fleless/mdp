@@ -9,10 +9,12 @@ import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/utils/document_uploader.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:collection/collection.dart';
 
 import '../../../../../../interventions_bloc.dart';
 
@@ -205,11 +207,22 @@ class _PresentationDevisScreenState extends State<PresentationDevisScreen> {
                   splashColor: AppColors.md_light_gray,
                   onTap: () async {
                     final status = await Permission.storage.request();
-                    final externalDir = await getExternalStorageDirectory();
+                    final externalDir = await getTemporaryDirectory();
+                    Documents doc = bloc.dernierDevis.quoteData.documents
+                        .firstWhereOrNull(
+                            (element) => element.documentType == "quote_pdf");
+                    String url;
+                    if (doc == null) {
+                      url = "http://www.africau.edu/images/default/sample.pdf";
+                    } else {
+                      url = doc.url;
+                    }
+                    setState(() {
+                      _loadedDocument = true;
+                    });
                     if (status.isGranted) {
                       final id = await FlutterDownloader.enqueue(
-                          url:
-                              "http://www.africau.edu/images/default/sample.pdf",
+                          url: url,
                           savedDir: externalDir.path,
                           fileName: "Devis n°" +
                               bloc.dernierDevis.quoteData.quote.id.toString(),

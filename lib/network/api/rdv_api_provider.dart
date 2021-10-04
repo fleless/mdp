@@ -28,10 +28,10 @@ class RdvApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: true,
+          requestHeader: false,
+          requestBody: false,
+          responseBody: false,
+          responseHeader: false,
           error: true,
           compact: true,
           maxWidth: 90));

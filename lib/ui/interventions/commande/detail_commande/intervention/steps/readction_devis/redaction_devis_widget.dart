@@ -20,6 +20,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:isolate';
 import 'dart:ui'; // You need to import these 2 libraries besides another libraries to work with this code
+import 'package:collection/collection.dart';
 
 import '../../../../../interventions_bloc.dart';
 
@@ -344,10 +345,19 @@ class _RedactionDevisWidgetState
           splashColor: AppColors.md_light_gray,
           onTap: () async {
             final status = await Permission.storage.request();
-            final externalDir = await getExternalStorageDirectory();
+            final externalDir = await getTemporaryDirectory();
+            Documents doc = bloc.dernierDevis.quoteData.documents
+                .firstWhereOrNull(
+                    (element) => element.documentType == "quote_pdf");
+            String url;
+            if (doc == null) {
+              url = "http://www.africau.edu/images/default/sample.pdf";
+            } else {
+              url = doc.url;
+            }
             if (status.isGranted) {
               final id = await FlutterDownloader.enqueue(
-                  url: "http://www.africau.edu/images/default/sample.pdf",
+                  url: url,
                   savedDir: externalDir.path,
                   fileName: "Devis n°" +
                       bloc.dernierDevis.quoteData.quote.id.toString(),

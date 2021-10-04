@@ -31,8 +31,9 @@ class GetDevisResponse {
 class QuoteData {
   Quote quote;
   List<Designations> designations;
+  List<Documents> documents;
 
-  QuoteData({this.quote, this.designations});
+  QuoteData({this.quote, this.designations, this.documents});
 
   QuoteData.fromJson(Map<String, dynamic> json) {
     quote = json['quote'] != null ? new Quote.fromJson(json['quote']) : null;
@@ -40,6 +41,12 @@ class QuoteData {
       designations = new List<Designations>();
       json['designations'].forEach((v) {
         designations.add(new Designations.fromJson(v));
+      });
+    }
+    if (json['documents'] != null) {
+      documents = new List<Documents>();
+      json['documents'].forEach((v) {
+        documents.add(new Documents.fromJson(v));
       });
     }
   }
@@ -51,6 +58,9 @@ class QuoteData {
     }
     if (this.designations != null) {
       data['designations'] = this.designations.map((v) => v.toJson()).toList();
+    }
+    if (this.documents != null) {
+      data['documents'] = this.documents.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -269,6 +279,31 @@ class StateDevis {
     data['id'] = this.id;
     data['name'] = this.name;
     data['code'] = this.code;
+    return data;
+  }
+}
+
+class Documents {
+  num id;
+  String documentType;
+  String document;
+  String url;
+
+  Documents({this.id, this.documentType, this.document, this.url});
+
+  Documents.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    documentType = json['document_type'];
+    document = json['document'];
+    url = json['url'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['document_type'] = this.documentType;
+    data['document'] = this.document;
+    data['url'] = this.url;
     return data;
   }
 }

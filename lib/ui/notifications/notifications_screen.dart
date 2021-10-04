@@ -60,13 +60,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ? Center(
                       child: CircularProgressIndicator(
                           color: AppColors.md_dark_blue))
-                  : _notifications.length > 0
-                      ? _buildList()
-                      : Center(
+                  : _notifications == null
+                      ? Center(
                           child: Text(
                           "Aucune notification",
                           style: AppStyles.bodyMdTextLight,
-                        )),
+                        ))
+                      : _notifications.length > 0
+                          ? _buildList()
+                          : Center(
+                              child: Text(
+                              "Aucune notification",
+                              style: AppStyles.bodyMdTextLight,
+                            )),
             ),
             if (_notifications.length > 0)
               Center(

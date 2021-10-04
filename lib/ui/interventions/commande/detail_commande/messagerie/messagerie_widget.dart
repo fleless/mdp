@@ -97,10 +97,13 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                message.user,
-                style: AppStyles.header2DarkBlue,
+              Expanded(
+                child: Text(
+                  message.user,
+                  style: AppStyles.header2DarkBlue,
+                ),
               ),
+              SizedBox(width: 30),
               RichText(
                 textAlign: TextAlign.left,
                 maxLines: 10,
@@ -112,7 +115,9 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
                           size: 16, color: AppColors.md_text_light),
                     ),
                     TextSpan(
-                        text: "  " + message.created,
+                        text: "  " +
+                            message.created
+                                .substring(0, message.created.length - 3),
                         style: AppStyles.smallGray),
                   ],
                 ),

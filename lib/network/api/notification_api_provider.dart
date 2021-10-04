@@ -31,9 +31,9 @@ class NotificationsApiProvider {
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
           requestHeader: true,
-          requestBody: false,
+          requestBody: true,
           responseBody: true,
-          responseHeader: false,
+          responseHeader: true,
           error: true,
           compact: true,
           maxWidth: 90));
