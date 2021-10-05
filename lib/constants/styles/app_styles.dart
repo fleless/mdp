@@ -19,14 +19,14 @@ class AppStyles {
     fontFamily: 'UniformRounded',
     color: AppColors.white,
     fontWeight: FontWeight.w700,
-    fontSize: 34,
+    fontSize: 30,
   );
 
   static const headerMdDarkBlue = TextStyle(
     fontFamily: 'roboto',
     color: AppColors.md_dark_blue,
     fontWeight: FontWeight.w700,
-    fontSize: 34,
+    fontSize: 75,
   );
 
   static const headerSecondary = TextStyle(
@@ -219,7 +219,7 @@ class AppStyles {
     fontFamily: 'roboto',
     color: AppColors.md_text_white,
     fontWeight: FontWeight.w400,
-    fontSize: 11,
+    fontSize: 12,
   );
 
   static const textNormal = TextStyle(

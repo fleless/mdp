@@ -50,10 +50,10 @@ class _CalendrierPriseRdvWidgetState extends State<CalendrierPriseRdvWidget> {
   }
 
   _getAppointments() async {
-    String _subcontractorId =
-    await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
+    String _subcontractorUuid =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
     _userAppointmentsResponse =
-        await _priseRdvBloc.getUserAppointments(_subcontractorId);
+        await _priseRdvBloc.getUserAppointments(_subcontractorUuid);
     _convertAppointmentsToMeetings();
   }
 

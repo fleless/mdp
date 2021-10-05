@@ -500,7 +500,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                             style: AppStyles.bodyDefaultBlack),
                         TextSpan(
                             text: bloc.dernierDevis == null
-                                ? ""
+                                ? "N/A"
                                 : bloc.dernierDevis.quoteData.quote.promoCode,
                             style: AppStyles.bodyBold),
                       ],
@@ -509,9 +509,11 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                   SizedBox(height: 10),
                   Row(
                     children: [
-                      Text(
-                        "Remise du professionnel (€ HT) :",
-                        style: AppStyles.bodyDefaultBlack,
+                      Expanded(
+                        child: Text(
+                          "Remise du professionnel (€ HT) :",
+                          style: AppStyles.bodyDefaultBlack,
+                        ),
                       ),
                       SizedBox(width: 10),
                       _remiseEditText(),
@@ -530,7 +532,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                             style: AppStyles.bodyDefaultBlack),
                         TextSpan(
                             text: bloc.dernierDevis == null
-                                ? ""
+                                ? "0"
                                 : bloc.dernierDevis.quoteData.quote.coveredSum
                                         .toString() +
                                     "€",

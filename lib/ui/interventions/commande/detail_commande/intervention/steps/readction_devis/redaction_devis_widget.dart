@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
@@ -274,10 +275,17 @@ class _RedactionDevisWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ((bloc.dernierDevis != null) &&
-                  bloc.dernierDevis.quoteData.quote.id != null)
-              ? _buildPDF()
-              : SizedBox.shrink(),
+          (bloc.dernierDevis == null)
+                  ? SizedBox.shrink()
+                  : bloc.dernierDevis.quoteData.quote.id == null
+              ? SizedBox.shrink()
+              : (bloc.dernierDevis.quoteData.documents
+                      .where((element) =>
+                          element.documentType == "signature_artisan")
+                      .toList()
+                      .isNotEmpty)
+                  ? _buildPDF()
+                  : SizedBox.shrink(),
           SizedBox(height: 10),
           if ((bloc.dernierDevis != null) && (listePhotos.length != 0))
             _buildPhotos(),
@@ -506,11 +514,13 @@ class _RedactionDevisWidgetState
             )),
       ),
       onPressed: () {
-        _callPhone(bloc
+        dynamic phone = bloc
             .interventionDetail.interventionDetail.clients.commchannels
-            .firstWhere((element) =>
-                (element.preferred) && (element.type.name == "Phone"))
-            .name);
+            .firstWhereOrNull((element) =>
+                (element.preferred) && (element.type.name == "Phone"));
+        phone == null
+            ? Fluttertoast.showToast(msg: "Aucun numéro indiqué")
+            : _callPhone(phone.name);
       },
       style: ElevatedButton.styleFrom(
           elevation: 5,

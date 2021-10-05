@@ -45,6 +45,9 @@ class MessagerieApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return MessageResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return MessageResponse();
     } catch (e) {
       throw e;
@@ -61,6 +64,9 @@ class MessagerieApiProvider {
           data: jsonEncode(params));
       return AddMessageResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddMessageResponse();
     } catch (e) {
       throw e;

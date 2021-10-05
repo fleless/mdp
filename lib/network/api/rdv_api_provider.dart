@@ -38,16 +38,19 @@ class RdvApiProvider {
     }
   }
 
-  Future<UserAppointmentsResponse> getUserAppointments(String idUser) async {
+  Future<UserAppointmentsResponse> getUserAppointments(String uuidUser) async {
     Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(
           getUserAppointmentsURL +
               "?start_date=2021-01-01&end_date=2050-08-31&subcontractor_id=" +
-              idUser,
+              uuidUser,
           options: Options(responseType: ResponseType.json, headers: header));
       return UserAppointmentsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return UserAppointmentsResponse();
     } catch (e) {
       throw e;
@@ -55,7 +58,7 @@ class RdvApiProvider {
   }
 
   Future<UserAppointmentsResponse> getUserAppointmentsForSpecificOrder(
-      String idUser, String orderId) async {
+      String uuidUser, String orderId) async {
     Map<String, String> header = await headerFormatter.getHeader();
     try {
       Response response = await _dio.get(
@@ -63,10 +66,13 @@ class RdvApiProvider {
               "?order_id=" +
               orderId +
               "&start_date=2021-01-01&end_date=2050-08-31&subcontractor_id=" +
-              idUser,
+              uuidUser,
           options: Options(responseType: ResponseType.json, headers: header));
       return UserAppointmentsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return UserAppointmentsResponse();
     } catch (e) {
       throw e;
@@ -77,7 +83,7 @@ class RdvApiProvider {
       String title,
       String comment,
       int orderId,
-      String subContractorId,
+      String subContractorUuid,
       String startDate,
       String endDate) async {
     Map<String, String> header = await headerFormatter.getHeader();
@@ -86,7 +92,7 @@ class RdvApiProvider {
       "comment": comment,
       "type_id": "1",
       "order_id": orderId,
-      "subcontractor_id": subContractorId,
+      "subcontractor_id": subContractorUuid,
       "start_date": startDate,
       "end_date": endDate
     };
@@ -96,6 +102,9 @@ class RdvApiProvider {
           data: jsonEncode(params));
       return AddAppointmentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddAppointmentResponse();
     } catch (e) {
       throw e;
@@ -125,6 +134,9 @@ class RdvApiProvider {
           data: jsonEncode(params));
       return AddAppointmentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddAppointmentResponse();
     } catch (e) {
       throw e;
@@ -146,6 +158,9 @@ class RdvApiProvider {
           data: jsonEncode(params));
       return AddAppointmentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddAppointmentResponse();
     } catch (e) {
       throw e;

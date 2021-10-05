@@ -49,9 +49,9 @@ class _InterventionWidgetState extends State<InterventionWidget> {
     setState(() {
       _loading = true;
     });
-    String _subcontractorId =
-        await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
-    await _rdvBloc.getUserAppointmentsForSpecificOrder(_subcontractorId,
+    String _subcontractorUuid =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
+    await _rdvBloc.getUserAppointmentsForSpecificOrder(_subcontractorUuid,
         bloc.interventionDetail.interventionDetail.id.toString());
     setState(() {
       _loading = false;

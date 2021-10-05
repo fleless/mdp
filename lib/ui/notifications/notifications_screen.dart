@@ -125,58 +125,66 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         itemBuilder: (context, index) {
           return Padding(
             padding: EdgeInsets.only(bottom: 10),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              child: Container(
-                color: AppColors.md_light_gray,
-                padding: EdgeInsets.all(20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.circle,
-                        color: _notifications[index].type == "NEW_MESSAGE"
-                            ? AppColors.md_secondary
-                            : _notifications[index].type == "NEW_COMMENT"
-                                ? AppColors.md_dark_blue
-                                : AppColors.mdAlert,
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(_notifications[index].title,
-                              style: AppStyles.bodyDefaultBlack),
-                          SizedBox(height: 5),
-                          Text(_notifications[index].content,
-                              style: AppStyles.bodyBoldMdDarkBlue),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    InkWell(
-                      onTap: () {
-                        _supprimerUneNotif(index);
-                      },
-                      splashColor: AppColors.md_dark_blue.withOpacity(0.2),
-                      child: Align(
-                        alignment: Alignment.topRight,
+            child: GestureDetector(
+              onTap: () => _notifications[index].target == null
+                  ? null
+                  : Modular.to.pushNamed(Routes.detailCommande,
+                      arguments: {"uuid": _notifications[index].target}),
+              child: Card(
+                clipBehavior: Clip.antiAlias,
+                elevation: _notifications[index].target == null ? 0 : 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Container(
+                  color: _notifications[index].target == null
+                      ? AppColors.white
+                      : AppColors.md_light_gray,
+                  padding: EdgeInsets.all(20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
                         child: Icon(
-                          Icons.close,
-                          size: 27,
+                          Icons.circle,
+                          color: _notifications[index].type == "NEW_MESSAGE"
+                              ? AppColors.md_secondary
+                              : _notifications[index].type == "NEW_COMMENT"
+                                  ? AppColors.md_dark_blue
+                                  : AppColors.mdAlert,
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(_notifications[index].title,
+                                style: AppStyles.bodyDefaultBlack),
+                            SizedBox(height: 5),
+                            Text(_notifications[index].content,
+                                style: AppStyles.bodyBoldMdDarkBlue),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      InkWell(
+                        onTap: () {
+                          _supprimerUneNotif(index);
+                        },
+                        splashColor: AppColors.md_dark_blue.withOpacity(0.2),
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Icon(
+                            Icons.close,
+                            size: 27,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

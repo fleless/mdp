@@ -617,19 +617,20 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
     DateTime _end = DateTime(_endDate.year, _endDate.month, _endDate.day,
         _endTime.hour, _endTime.minute);
     if (_start.isBefore(_end)) {
-      String _subcontractorId =
-          await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
+      String _subcontractorUuid =
+          await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
       AddAppointmentResponse response = await _rdvBloc.addAppointment(
           title,
           _commentaireController.text,
           bloc.interventionDetail.interventionDetail.id,
-          _subcontractorId,
+          _subcontractorUuid,
           DateFormat('yyyy-MM-dd HH:mm:ss').format(_start),
           DateFormat('yyyy-MM-dd HH:mm:ss').format(_end));
       if (response != null) {
         setState(() {
           _loading = false;
         });
+        Modular.to.pop();
         Modular.to.pop();
         Modular.to.pushReplacementNamed(Routes.detailCommande, arguments: {
           "uuid": bloc.interventionDetail.interventionDetail.uuid

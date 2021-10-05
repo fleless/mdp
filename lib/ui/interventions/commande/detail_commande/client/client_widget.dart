@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:map_launcher/map_launcher.dart';
@@ -84,6 +85,10 @@ class _ClientWidgetState extends State<ClientWidget> {
         .interventionDetail.interventionDetail.clients.commchannels
         .firstWhereOrNull(
             (element) => (element.preferred) && (element.type.name == "Email"));
+    dynamic phone = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhereOrNull(
+            (element) => (element.preferred) && (element.type.name == "Phone"));
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -109,25 +114,14 @@ class _ClientWidgetState extends State<ClientWidget> {
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 5),
             child: Text(
-                bloc.interventionDetail.interventionDetail.clients.commchannels
-                    .firstWhere((element) =>
-                        (element.preferred) && (element.type.name == "Phone"))
-                    .name,
+                phone == null ? "Numéro de téléphone non défini" : phone.name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
           ),
           Padding(
             padding: EdgeInsets.only(left: 30, bottom: 25),
-            child: Text(
-                email == null
-                    ? "email non défini"
-                    : bloc.interventionDetail.interventionDetail.clients
-                        .commchannels
-                        .firstWhereOrNull((element) =>
-                            (element.preferred) &&
-                            (element.type.name == "Email"))
-                        .name,
+            child: Text(email == null ? "email non défini" : email.name,
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
@@ -184,11 +178,21 @@ class _ClientWidgetState extends State<ClientWidget> {
                         " " +
                         bloc.interventionDetail.interventionDetail.clients
                             .lastname)
-                    : (bloc.interventionDetail.interventionDetail
-                            .invoicingAddress.addressFirstname +
-                        " " +
-                        bloc.interventionDetail.interventionDetail
-                            .invoicingAddress.addressLastname),
+                    : ((bloc.interventionDetail.interventionDetail
+                                .invoicingAddress.addressFirstname ==
+                            null)
+                        ? bloc.interventionDetail.interventionDetail.clients
+                            .firstname
+                        : bloc.interventionDetail.interventionDetail
+                                .invoicingAddress.addressFirstname +
+                            " " +
+                            ((bloc.interventionDetail.interventionDetail
+                                        .invoicingAddress.addressLastname ==
+                                    null)
+                                ? bloc.interventionDetail.interventionDetail
+                                    .clients.lastname
+                                : bloc.interventionDetail.interventionDetail
+                                    .invoicingAddress.addressLastname)),
                 style: AppStyles.body,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2),
@@ -512,11 +516,13 @@ class _ClientWidgetState extends State<ClientWidget> {
                   )),
             ),
             onPressed: () {
-              _callPhone(bloc
+              dynamic phone = bloc
                   .interventionDetail.interventionDetail.clients.commchannels
-                  .firstWhere((element) =>
-                      (element.preferred) && (element.type.name == "Phone"))
-                  .name);
+                  .firstWhereOrNull((element) =>
+                      (element.preferred) && (element.type.name == "Phone"));
+              phone == null
+                  ? Fluttertoast.showToast(msg: "Aucun numéro indiqué")
+                  : _callPhone(phone.name);
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
@@ -551,11 +557,13 @@ class _ClientWidgetState extends State<ClientWidget> {
               ),
             ),
             onPressed: () {
-              _sendSMS(bloc
+              dynamic phone = bloc
                   .interventionDetail.interventionDetail.clients.commchannels
-                  .firstWhere((element) =>
-                      (element.preferred) && (element.type.name == "Phone"))
-                  .name);
+                  .firstWhereOrNull((element) =>
+                      (element.preferred) && (element.type.name == "Phone"));
+              phone == null
+                  ? Fluttertoast.showToast(msg: "Aucun numéro indiqué")
+                  : _sendSMS(phone.name);
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,

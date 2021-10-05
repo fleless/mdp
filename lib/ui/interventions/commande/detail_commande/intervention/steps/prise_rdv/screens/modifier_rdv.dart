@@ -631,6 +631,7 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
           _loading = false;
         });
         Modular.to.pop();
+        Modular.to.pop();
         Modular.to.pushReplacementNamed(Routes.detailCommande, arguments: {
           "uuid": bloc.interventionDetail.interventionDetail.uuid
         });

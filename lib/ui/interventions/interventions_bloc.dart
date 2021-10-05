@@ -107,6 +107,7 @@ class InterventionsBloc extends Disposable {
       String idIntervention) async {
     interventionDetail =
         await _interventionRepository.getInterventionDetail(idIntervention);
+    if (interventionDetail == null) return null;
     if (interventionDetail.interventionDetail.quotes == null) {
       dernierDevis = null;
     } else {

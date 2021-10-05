@@ -62,6 +62,9 @@ class DocumentUploaderApiProvider {
           data: jsonEncode(params));
       return UploadDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return UploadDocumentResponse();
     } catch (e) {
       throw e;
@@ -82,6 +85,9 @@ class DocumentUploaderApiProvider {
           data: jsonEncode(params));
       return UploadDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return UploadDocumentResponse();
     } catch (e) {
       throw e;
@@ -97,6 +103,9 @@ class DocumentUploaderApiProvider {
           data: jsonEncode(params));
       return AddTypeDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddTypeDocumentResponse();
     } catch (e) {
       throw e;
@@ -112,6 +121,9 @@ class DocumentUploaderApiProvider {
           data: jsonEncode(request));
       return true;
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return false;
     } catch (e) {
       throw e;
@@ -132,6 +144,9 @@ class DocumentUploaderApiProvider {
           data: jsonEncode(params));
       return UploadDocumentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return UploadDocumentResponse();
     } catch (e) {
       throw e;

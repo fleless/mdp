@@ -50,6 +50,9 @@ class NotificationsApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetNotificationsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetNotificationsResponse();
     } catch (e) {
       throw e;
@@ -65,6 +68,9 @@ class NotificationsApiProvider {
           data: jsonEncode(ids));
       return DeleteNotificationsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return DeleteNotificationsResponse();
     } catch (e) {
       throw e;

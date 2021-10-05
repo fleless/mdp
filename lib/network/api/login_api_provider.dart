@@ -68,6 +68,9 @@ class LoginApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return ProfileResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return ProfileResponse();
     } catch (e) {
       throw e;
@@ -83,6 +86,9 @@ class LoginApiProvider {
           data: jsonEncode(params));
       return GetAccountResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetAccountResponse();
     } catch (e) {
       throw e;

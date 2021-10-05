@@ -16,8 +16,8 @@ class BottomNavbar extends StatefulWidget {
 }
 
 class _BottomNavbarState extends State<BottomNavbar> {
-  final double iconSize = 18;
-
+  final double iconSize = 20;
+  final double minWidthIcon = 65;
   void _navigateTo(String route, [Object args]) {
     if (ModalRoute.of(context).settings.name != route) {
       Modular.to.pushNamed(route, arguments: args);
@@ -107,7 +107,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   Widget _buildDashboardIcon(bool selected) => IconButton(
         icon: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 50.0),
+          constraints: BoxConstraints(minWidth: minWidthIcon),
           child: Icon(
             Icons.dashboard,
             color: AppColors.md_text_white,
@@ -119,7 +119,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   Widget _buildCommandeIcon(bool selected) => IconButton(
         icon: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 50.0),
+          constraints: BoxConstraints(minWidth: minWidthIcon),
           child: FaIcon(
             FontAwesomeIcons.hammer,
             color: AppColors.md_text_white,
@@ -131,7 +131,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   Widget _buildCalendarIcon(bool selected) => IconButton(
         icon: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 50.0),
+          constraints: BoxConstraints(minWidth: minWidthIcon),
           child: Icon(
             Icons.today,
             color: AppColors.md_text_white,
@@ -143,7 +143,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   Widget _buildNotificationsIcon(bool selected) => IconButton(
         icon: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 50.0),
+          constraints: BoxConstraints(minWidth: minWidthIcon),
           child: Icon(
             Icons.notifications,
             color: AppColors.md_text_white,

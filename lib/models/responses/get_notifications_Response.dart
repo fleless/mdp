@@ -36,16 +36,16 @@ class NotificationData {
   String id;
   String title;
   String content;
-  String code;
+  String target;
   String type;
 
-  NotificationData({this.id, this.title, this.content, this.code, this.type});
+  NotificationData({this.id, this.title, this.content, this.target, this.type});
 
   NotificationData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     title = json['title'];
     content = json['content'];
-    code = json['code'];
+    target = json['target_element_uuid'];
     type = json['type'];
   }
 
@@ -54,7 +54,7 @@ class NotificationData {
     data['id'] = this.id;
     data['title'] = this.title;
     data['content'] = this.content;
-    data['code'] = this.code;
+    data['target_element_uuid'] = this.target;
     data['type'] = this.type;
     return data;
   }

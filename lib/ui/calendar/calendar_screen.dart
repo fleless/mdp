@@ -47,10 +47,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
   }
 
   _getAppointments() async {
-    String _subcontractorId =
-        await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
+    String _subcontractorUuid =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
     _userAppointmentsResponse =
-        await bloc.getUserAppointments(_subcontractorId);
+        await bloc.getUserAppointments(_subcontractorUuid);
     _convertAppointmentsToMeetings();
   }
 
@@ -121,64 +121,62 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget _buildCalendarHeader() {
     return Container(
-      width: 200,
+      width: 190,
       padding: EdgeInsets.symmetric(
           horizontal: AppConstants.default_padding,
-          vertical: AppConstants.default_padding),
-      child: Center(
-        child: Card(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Colors.white70, width: 1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          color: AppColors.white,
-          child: Padding(
-            padding: EdgeInsets.all(3),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      mode = 1;
-                      _controller.view = CalendarView.month;
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        gradient: mode == 1 ? DarkGradient() : null,
-                        borderRadius: BorderRadius.all(Radius.circular(7))),
-                    child: FaIcon(
-                      FontAwesomeIcons.calendarAlt,
-                      size: 20,
-                      color: mode == 1 ? AppColors.white : AppColors.md_dark,
-                    ),
+          vertical: AppConstants.default_padding * 1),
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white70, width: 1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        color: AppColors.white,
+        child: Padding(
+          padding: EdgeInsets.all(3),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    mode = 1;
+                    _controller.view = CalendarView.month;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      gradient: mode == 1 ? DarkGradient() : null,
+                      borderRadius: BorderRadius.all(Radius.circular(7))),
+                  child: FaIcon(
+                    FontAwesomeIcons.calendarAlt,
+                    size: 20,
+                    color: mode == 1 ? AppColors.white : AppColors.md_dark,
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      mode = 2;
-                      _controller.view = CalendarView.day;
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 25, vertical: 8),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        gradient: mode == 2 ? DarkGradient() : null,
-                        borderRadius: BorderRadius.all(Radius.circular(7))),
-                    child: FaIcon(
-                      FontAwesomeIcons.calendarDay,
-                      size: 20,
-                      color: mode == 2 ? AppColors.white : AppColors.md_dark,
-                    ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    mode = 2;
+                    _controller.view = CalendarView.day;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 8),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      gradient: mode == 2 ? DarkGradient() : null,
+                      borderRadius: BorderRadius.all(Radius.circular(7))),
+                  child: FaIcon(
+                    FontAwesomeIcons.calendarDay,
+                    size: 20,
+                    color: mode == 2 ? AppColors.white : AppColors.md_dark,
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

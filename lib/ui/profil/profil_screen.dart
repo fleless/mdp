@@ -64,7 +64,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
             : Column(
                 children: [
                   Container(
-                    height: 220,
+                    height: 180,
                     decoration: BoxDecoration(
                       gradient: MdGradientLightt(),
                     ),
@@ -105,7 +105,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 2),
               Flexible(
                   child: Text(
                 (profile.subcontractor.user.firstName ?? "") +
@@ -115,7 +115,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               )),
-              SizedBox(height: 33),
+              SizedBox(height: 20),
               RichText(
                 textAlign: TextAlign.left,
                 maxLines: 10,
@@ -129,7 +129,7 @@ class _ProfilScreenState extends State<ProfilScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 10),
               RichText(
                 textAlign: TextAlign.left,
                 maxLines: 10,

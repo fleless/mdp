@@ -38,20 +38,22 @@ class _ModifierCoordonneesWidgetState extends State<ModifierCoordonneesWidget> {
         .interventionDetail.interventionDetail.clients.commchannels
         .firstWhereOrNull(
             (element) => (element.preferred) && (element.type.name == "Email"));
+    dynamic phone = bloc
+        .interventionDetail.interventionDetail.clients.commchannels
+        .firstWhereOrNull(
+            (element) => (element.preferred) && (element.type.name == "Phone"));
     _firstNameController.text =
         bloc.interventionDetail.interventionDetail.clients.firstname;
     _lastNameController.text =
         bloc.interventionDetail.interventionDetail.clients.lastname;
-    _phoneController.text = bloc
-        .interventionDetail.interventionDetail.clients.commchannels
-        .firstWhere(
-            (element) => (element.preferred) && (element.type.name == "Phone"))
-        .name;
-    email == null ? _emailController.text ="" : _emailController.text = bloc
-        .interventionDetail.interventionDetail.clients.commchannels
-        .firstWhere(
-            (element) => (element.preferred) && (element.type.name == "Email"))
-        .name;
+    _phoneController.text = phone == null ? "" : phone.name;
+    email == null
+        ? _emailController.text = ""
+        : _emailController.text = bloc
+            .interventionDetail.interventionDetail.clients.commchannels
+            .firstWhere((element) =>
+                (element.preferred) && (element.type.name == "Email"))
+            .name;
     setState(() {
       _singleValue =
           bloc.interventionDetail.interventionDetail.clients.civility;

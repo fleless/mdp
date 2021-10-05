@@ -11,6 +11,7 @@ import 'package:mdp/models/responses/get_types_documents_response.dart';
 import 'package:mdp/models/responses/intervention_detail_response.dart';
 import 'package:mdp/models/responses/result_message_response.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
+import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/utils/header_formatter.dart';
 import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -35,8 +36,8 @@ class InterventionApiProvider {
       Endpoints.CORE_URL + "order-state-change/";
   final String getListeTyesDocumentsEndPoint = Endpoints.CORE_URL +
       "list-order-document?sortField=id&sortOrder=DESC&filters=%7B%22enabled%22:1%7D";
-  final String getListeTypesCommandesEndPoint = Endpoints.CORE_URL +
-      "order-case/list-order-case?lazyEvent=%20{%20%22filters%22:%20{%20%22name%22:%20{%22value%22:%20%22Plomberie%22,%20%22matchMode%22:%20%22contains%22}}}";
+  final String getListeTypesCommandesEndPoint =
+      Endpoints.CORE_URL + "order-case/list-order-case";
   final String creationNouvelleCommandeEndPoint =
       Endpoints.CORE_URL + "order/create-additional-order";
 
@@ -52,8 +53,8 @@ class InterventionApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
+          requestHeader: false,
+          requestBody: false,
           responseBody: true,
           responseHeader: true,
           error: true,
@@ -76,6 +77,9 @@ class InterventionApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetInterventionsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetInterventionsResponse();
     } catch (e) {
       throw e;
@@ -91,6 +95,9 @@ class InterventionApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return ShowInterventionResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return ShowInterventionResponse();
     } catch (e) {
       throw e;
@@ -106,6 +113,9 @@ class InterventionApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return InterventionDetailResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return InterventionDetailResponse();
     } catch (e) {
       throw e;
@@ -128,6 +138,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return response.statusCode;
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return 500;
     } catch (e) {
       throw e;
@@ -149,6 +162,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return response.statusCode;
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return 500;
     } catch (e) {
       throw e;
@@ -177,6 +193,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return ResultMessageResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return ResultMessageResponse(result: "KO", message: "erreur");
     } catch (e) {
       throw e;
@@ -209,6 +228,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return AddAdressFacturationResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddAdressFacturationResponse(result: "KO", message: "erreur");
     } catch (e) {
       throw e;
@@ -243,6 +265,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return AddAdressFacturationResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddAdressFacturationResponse(result: "KO", message: "erreur");
     } catch (e) {
       throw e;
@@ -262,6 +287,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return ChangeOrderStateResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return ChangeOrderStateResponse(orderUpdated: false);
     } catch (e) {
       throw e;
@@ -275,6 +303,9 @@ class InterventionApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetTypesDocumentsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetTypesDocumentsResponse();
     } catch (e) {
       throw e;
@@ -288,6 +319,9 @@ class InterventionApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetTypesCommandesResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetTypesCommandesResponse();
     } catch (e) {
       throw e;
@@ -309,6 +343,9 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return CreationNouvelleCommandeResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return CreationNouvelleCommandeResponse(orderCreated: false);
     } catch (e) {
       throw e;

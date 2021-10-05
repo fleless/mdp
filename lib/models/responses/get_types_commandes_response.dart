@@ -39,7 +39,6 @@ class OrderCases {
   Domain type;
   Activity activity;
   bool enabled;
-  bool deleted;
   num minprice;
   num maxprice;
   num maxpriceapproximate;
@@ -60,7 +59,6 @@ class OrderCases {
       this.type,
       this.activity,
       this.enabled,
-      this.deleted,
       this.minprice,
       this.maxprice,
       this.maxpriceapproximate,
@@ -96,7 +94,6 @@ class OrderCases {
         ? new Activity.fromJson(json['activity'])
         : null;
     enabled = json['enabled'];
-    deleted = json['deleted'];
     minprice = json['minprice'];
     maxprice = json['maxprice'];
     maxpriceapproximate = json['maxpriceapproximate'];
@@ -131,7 +128,6 @@ class OrderCases {
       data['activity'] = this.activity.toJson();
     }
     data['enabled'] = this.enabled;
-    data['deleted'] = this.deleted;
     data['minprice'] = this.minprice;
     data['maxprice'] = this.maxprice;
     data['maxpriceapproximate'] = this.maxpriceapproximate;

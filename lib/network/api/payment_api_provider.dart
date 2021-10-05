@@ -50,6 +50,9 @@ class PaymentApiProvider {
           data: jsonEncode(params));
       return StartPaymentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return StartPaymentResponse();
     } catch (e) {
       throw e;
@@ -71,6 +74,9 @@ class PaymentApiProvider {
           data: jsonEncode(params));
       return SendSmsPaymentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return SendSmsPaymentResponse();
     } catch (e) {
       throw e;
@@ -92,6 +98,9 @@ class PaymentApiProvider {
           data: jsonEncode(params));
       return SendSmsPaymentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return SendSmsPaymentResponse();
     } catch (e) {
       throw e;
@@ -108,6 +117,9 @@ class PaymentApiProvider {
           data: jsonEncode(params));
       return FinishPaymentResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return FinishPaymentResponse();
     } catch (e) {
       throw e;

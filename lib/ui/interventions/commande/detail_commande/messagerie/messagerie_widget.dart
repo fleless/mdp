@@ -168,13 +168,15 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
             ),
           ),
           child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
             alignment: Alignment.center,
             width: double.infinity,
             height: 55,
             child: Text(
               "ENVOYER UN MESSAGE À MES DÉPANNEURS",
               style: AppStyles.smallTitleWhite,
-              maxLines: 1,
+              maxLines: 2,
+              textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
             ),
           ),

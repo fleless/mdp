@@ -64,6 +64,9 @@ class RedactionDevisApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetDesignationsNameResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetDesignationsNameResponse();
     } catch (e) {
       throw e;
@@ -77,6 +80,9 @@ class RedactionDevisApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetMaterialResponse();
     } catch (e) {
       throw e;
@@ -100,6 +106,9 @@ class RedactionDevisApiProvider {
           data: jsonEncode(params));
       return AddNewMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddNewMaterialResponse();
     } catch (e) {
       throw e;
@@ -113,6 +122,9 @@ class RedactionDevisApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetUnitsResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetUnitsResponse();
     } catch (e) {
       throw e;
@@ -126,6 +138,9 @@ class RedactionDevisApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetMaterialResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetMaterialResponse();
     } catch (e) {
       throw e;
@@ -141,6 +156,9 @@ class RedactionDevisApiProvider {
           data: jsonEncode(request));
       return AddDesignationResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddDesignationResponse();
     } catch (e) {
       throw e;
@@ -154,6 +172,9 @@ class RedactionDevisApiProvider {
           options: Options(responseType: ResponseType.json, headers: header));
       return GetDevisResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetDevisResponse();
     } catch (e) {
       throw e;
@@ -169,6 +190,9 @@ class RedactionDevisApiProvider {
           data: jsonEncode(request));
       return AddDesignationResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return AddDesignationResponse();
     } catch (e) {
       throw e;
@@ -192,6 +216,9 @@ class RedactionDevisApiProvider {
           data: jsonEncode(params));
       return UpdateQuoteResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return UpdateQuoteResponse();
     } catch (e) {
       throw e;
@@ -207,6 +234,9 @@ class RedactionDevisApiProvider {
           data: jsonEncode(params));
       return SendMailDevisResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return SendMailDevisResponse();
     } catch (e) {
       throw e;
@@ -227,6 +257,9 @@ class RedactionDevisApiProvider {
           data: jsonEncode(params));
       return GetNotifRefusResponse.fromJson(response.data);
     } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
       return GetNotifRefusResponse();
     } catch (e) {
       throw e;
