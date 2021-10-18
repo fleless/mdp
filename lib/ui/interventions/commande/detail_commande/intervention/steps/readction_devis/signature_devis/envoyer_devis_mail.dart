@@ -270,8 +270,8 @@ class _EnvoyerDevisMailScreenState extends State<EnvoyerDevisMailScreen> {
           bool verif = await _redactionDevisBloc.sendMailDevis(
               bloc.dernierDevis.quoteData.quote.id, _emailController.text);
           if (verif) {
-            showSuccessToast(context, "Le devis a été envoyé par mail");
             Modular.to.pop();
+            showSuccessToast(context, "Le devis a été envoyé par mail");
           } else {
             showErrorToast(
                 context, "Une erreur est survenue. Veuillez réessayer.");

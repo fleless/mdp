@@ -55,8 +55,8 @@ class InterventionApiProvider {
       _dio.interceptors.add(PrettyDioLogger(
           requestHeader: false,
           requestBody: false,
-          responseBody: true,
-          responseHeader: true,
+          responseBody: false,
+          responseHeader: false,
           error: true,
           compact: true,
           maxWidth: 90));
@@ -127,10 +127,10 @@ class InterventionApiProvider {
     Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
-        "order": reference,
+        //"order": reference,
         "string": commentaire,
-        "user": idUser,
-        "id": idIntervention,
+        //"user": idUser,
+        //"id": idIntervention,
         "uuid": uuidIntervention
       };
       Response response = await _dio.put(refuseEndPoint,
@@ -152,9 +152,9 @@ class InterventionApiProvider {
     Map<String, String> header = await headerFormatter.getHeader();
     try {
       var params = {
-        "order": reference,
-        "user": idUser,
-        "id": idIntervention,
+        //"order": reference,
+        //"user": idUser,
+        //"id": idIntervention,
         "uuid": uuidIntervention
       };
       Response response = await _dio.put(acceptEndPoint,
@@ -287,7 +287,7 @@ class InterventionApiProvider {
           data: jsonEncode(params));
       return ChangeOrderStateResponse.fromJson(response.data);
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response != null) if (e.response.statusCode == 401) {
         await headerFormatter.tokenExpired();
       }
       return ChangeOrderStateResponse(orderUpdated: false);

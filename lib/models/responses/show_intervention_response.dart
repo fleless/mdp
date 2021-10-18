@@ -1,3 +1,5 @@
+import 'intervention_detail_response.dart';
+
 class ShowInterventionResponse {
   Intervention intervention;
   List<Null> errors;
@@ -11,7 +13,7 @@ class ShowInterventionResponse {
     if (json['errors'] != null) {
       errors = new List<Null>();
       json['errors'].forEach((v) {
-       //errors.add(new Null.fromJson(v));
+        //errors.add(new Null.fromJson(v));
       });
     }
   }
@@ -50,23 +52,23 @@ class Intervention {
 
   Intervention(
       {this.id,
-        this.uuid,
-        this.code,
-        this.amountInitial,
-        this.amountFinal,
-        this.amountToBlock,
-        this.amountToPay,
-        this.franchiseSum,
-        this.coveredSum,
-        this.totalMinPrice,
-        this.totalMaxPrice,
-        this.preferredVisitDate,
-        this.partner,
-        this.interventionAddress,
-        this.description,
-        this.clientPhotos,
-        this.details,
-        this.indication});
+      this.uuid,
+      this.code,
+      this.amountInitial,
+      this.amountFinal,
+      this.amountToBlock,
+      this.amountToPay,
+      this.franchiseSum,
+      this.coveredSum,
+      this.totalMinPrice,
+      this.totalMaxPrice,
+      this.preferredVisitDate,
+      this.partner,
+      this.interventionAddress,
+      this.description,
+      this.clientPhotos,
+      this.details,
+      this.indication});
 
   Intervention.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -84,7 +86,7 @@ class Intervention {
         ? new PreferredVisitDate.fromJson(json['preferredVisitDate'])
         : null;
     partner =
-    json['partner'] != null ? new Partner.fromJson(json['partner']) : null;
+        json['partner'] != null ? new Partner.fromJson(json['partner']) : null;
     interventionAddress = json['interventionAddress'] != null
         ? new InterventionAddress.fromJson(json['interventionAddress'])
         : null;
@@ -172,27 +174,6 @@ class Partner {
   }
 }
 
-class InterventionAddress {
-  String streetName;
-  City city;
-
-  InterventionAddress({this.streetName, this.city});
-
-  InterventionAddress.fromJson(Map<String, dynamic> json) {
-    streetName = json['streetName'];
-    city = json['city'] != null ? new City.fromJson(json['city']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['streetName'] = this.streetName;
-    if (this.city != null) {
-      data['city'] = this.city.toJson();
-    }
-    return data;
-  }
-}
-
 class City {
   num id;
   String name;
@@ -204,12 +185,12 @@ class City {
 
   City(
       {this.id,
-        this.name,
-        this.inseeCode,
-        this.postcode,
-        this.latitude,
-        this.longitude,
-        this.department});
+      this.name,
+      this.inseeCode,
+      this.postcode,
+      this.latitude,
+      this.longitude,
+      this.department});
 
   City.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -251,7 +232,7 @@ class Department {
     name = json['name'];
     code = json['code'];
     region =
-    json['region'] != null ? new Region.fromJson(json['region']) : null;
+        json['region'] != null ? new Region.fromJson(json['region']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -279,7 +260,7 @@ class Region {
     name = json['name'];
     code = json['code'];
     country =
-    json['country'] != null ? new Country.fromJson(json['country']) : null;
+        json['country'] != null ? new Country.fromJson(json['country']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -353,19 +334,19 @@ class Ordercase {
 
   Ordercase(
       {this.name,
-        this.code,
-        this.description,
-        this.domain,
-        this.type,
-        this.minprice,
-        this.maxprice});
+      this.code,
+      this.description,
+      this.domain,
+      this.type,
+      this.minprice,
+      this.maxprice});
 
   Ordercase.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     code = json['code'];
     description = json['description'];
     domain =
-    json['domain'] != null ? new Domain.fromJson(json['domain']) : null;
+        json['domain'] != null ? new Domain.fromJson(json['domain']) : null;
     type = json['type'] != null ? new Domain.fromJson(json['type']) : null;
     minprice = json['minprice'];
     maxprice = json['maxprice'];

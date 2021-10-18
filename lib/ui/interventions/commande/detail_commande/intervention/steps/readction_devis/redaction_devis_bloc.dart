@@ -79,11 +79,9 @@ class RedactionDevisBloc extends Disposable {
   }
 
   Future<bool> sendMailDevis(num quoteId, String email) async {
-    SendMailDevisResponse resp =
-        await _repository.sendMailDevis(quoteId, email);
-    if (resp.sendEmailData == null) return false;
-    if (resp.sendEmailData.mailSent == null) return false;
-    if (resp.sendEmailData.mailSent) {
+    bool resp = await _repository.sendMailDevis(quoteId, email);
+    if (resp == null) return false;
+    if (resp) {
       return true;
     } else {
       return false;

@@ -47,10 +47,10 @@ class RedactionDevisApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: false,
-          requestBody: false,
-          responseBody: false,
-          responseHeader: false,
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: true,
           error: true,
           compact: true,
           maxWidth: 90));
@@ -225,21 +225,21 @@ class RedactionDevisApiProvider {
     }
   }
 
-  Future<SendMailDevisResponse> sendMailDevis(num quoteId, String email) async {
+  Future<bool> sendMailDevis(num quoteId, String email) async {
     Map<String, String> header = await headerFormatter.getHeader();
     var params = {"quote_id": quoteId, "email": email};
     try {
       Response response = await _dio.post(sendDevisMailEndPoint,
           options: Options(responseType: ResponseType.json, headers: header),
           data: jsonEncode(params));
-      return SendMailDevisResponse.fromJson(response.data);
+      return response.statusCode == 200 ? true : false;
     } on DioError catch (e) {
       if (e.response.statusCode == 401) {
         await headerFormatter.tokenExpired();
       }
-      return SendMailDevisResponse();
+      return false;
     } catch (e) {
-      throw e;
+      return false;
     }
   }
 

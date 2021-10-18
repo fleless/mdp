@@ -7,23 +7,34 @@ import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/requests/delete_notifications_request.dart';
 import 'package:mdp/models/responses/get_notifications_Response.dart';
+import 'package:mdp/models/responses/intervention_detail_response.dart'
+    as InterventionDetail;
+import 'package:mdp/network/repository/intervention_repository.dart';
+import 'package:mdp/ui/interventions/commande/nouvelle_commande/proposition_comande.dart';
+import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/ui/notifications/notifications_bloc.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class NotificationsScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen>
+    with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<NotificationData> _notifications = <NotificationData>[];
   final bloc = Modular.get<NotificationsBloc>();
+  final interventions_bloc = Modular.get<InterventionsBloc>();
   bool _loading = true;
+  final InterventionRepository _interventionRepository =
+      InterventionRepository();
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     _loadNotifications();
     super.initState();
   }
@@ -36,6 +47,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     setState(() {
       _loading = false;
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      setState(() {
+        _loadNotifications();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -126,18 +152,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           return Padding(
             padding: EdgeInsets.only(bottom: 10),
             child: GestureDetector(
-              onTap: () => _notifications[index].target == null
+              onTap: () => _notifications[index].targetElementUuid == null
                   ? null
-                  : Modular.to.pushNamed(Routes.detailCommande,
-                      arguments: {"uuid": _notifications[index].target}),
+                  : _clickPerformed(_notifications[index], index),
               child: Card(
                 clipBehavior: Clip.antiAlias,
-                elevation: _notifications[index].target == null ? 0 : 3,
+                elevation:
+                    _notifications[index].targetElementUuid == null ? 0 : 3,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Container(
-                  color: _notifications[index].target == null
+                  color: _notifications[index].targetElementUuid == null
                       ? AppColors.white
                       : AppColors.md_light_gray,
                   padding: EdgeInsets.all(20),
@@ -209,5 +235,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     });
     await bloc.deleteNotifications(lista);
     _loadNotifications();
+  }
+
+  _clickPerformed(NotificationData item, int index) async {
+    setState(() {
+      _loading = true;
+    });
+    item.type == "NEW_ORDER"
+        ? showCupertinoModalBottomSheet(
+            context: context,
+            expand: false,
+            enableDrag: true,
+            builder: (context) => PropositionCommandeWidget(
+                item.details.order.uuid,
+                item.targetElementUuid,
+                _notifications[index].id),
+          )
+        : Modular.to.pushNamed(Routes.detailCommande,
+            arguments: {"uuid": item.targetElementUuid});
+    setState(() {
+      _loading = false;
+    });
   }
 }

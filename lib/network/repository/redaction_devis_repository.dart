@@ -53,7 +53,7 @@ class RedactionDevisRepository {
     return _apiProvider.updateQuote(quoteId, tva, remise, franchise, accompte);
   }
 
-  Future<SendMailDevisResponse> sendMailDevis(num quoteId, String email) async {
+  Future<bool> sendMailDevis(num quoteId, String email) async {
     return _apiProvider.sendMailDevis(quoteId, email);
   }
 

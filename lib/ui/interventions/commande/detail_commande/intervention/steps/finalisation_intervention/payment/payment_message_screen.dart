@@ -49,7 +49,7 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Container(
-            color: AppColors.white,
+            color: AppColors.appBackground,
             height: double.infinity,
             child: _buildContent(),
           ),
@@ -73,7 +73,7 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
           child: Padding(
             padding: EdgeInsets.symmetric(
                 horizontal: AppConstants.default_padding,
-                vertical: AppConstants.default_padding * 2),
+                vertical: AppConstants.default_padding),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,11 +83,13 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
                   style: AppStyles.body,
                 ),
                 SizedBox(height: 15),
-                widget.status
-                    ? SvgPicture.asset(
-                        AppImages.succes,
-                      )
-                    : Image.asset(AppImages.message),
+                Expanded(
+                  child: widget.status
+                      ? SvgPicture.asset(
+                          AppImages.succes,
+                        )
+                      : Image.asset(AppImages.message),
+                ),
                 SizedBox(height: 15),
                 ElevatedButton(
                   child: Ink(
@@ -137,7 +139,7 @@ class _PaymentMessageScreenState extends State<PaymentMessageScreen> {
           left: AppConstants.default_padding,
           right: AppConstants.default_padding,
           bottom: AppConstants.default_padding,
-          top: AppConstants.default_padding * 2),
+          top: AppConstants.default_padding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

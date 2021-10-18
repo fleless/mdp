@@ -10,15 +10,24 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/requests/delete_notifications_request.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
 import 'package:mdp/ui/interventions/commande/nouvelle_commande/motif_refus.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
+import 'package:mdp/ui/notifications/notifications_bloc.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:map_launcher/map_launcher.dart';
 
 class PropositionCommandeWidget extends StatefulWidget {
+  String uuidIntervention;
+  String uuidCompetition;
+  String idNotification;
+
   @override
   State<StatefulWidget> createState() => _PropositionCommandeWidgetState();
+
+  PropositionCommandeWidget(
+      this.uuidIntervention, this.uuidCompetition, this.idNotification);
 }
 
 class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
@@ -27,6 +36,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
       ShowInterventionResponse();
   final bloc = Modular.get<InterventionsBloc>();
   bool _acceptLoading = false;
+  final notifBloc = Modular.get<NotificationsBloc>();
 
   @override
   Future<void> initState() {
@@ -39,7 +49,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
       loading = true;
     });
     _showInterventionResponse =
-        await bloc.showIntervention(Endpoints.interventions_uuid);
+        await bloc.showIntervention(widget.uuidIntervention);
     setState(() {
       loading = false;
     });
@@ -264,17 +274,14 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
           GestureDetector(
             onTap: () async {
               final availableMaps = await MapLauncher.installedMaps;
-              print(
-                  availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
               await availableMaps.first.showMarker(
                 coords: Coords(
-                    double.parse(_showInterventionResponse
-                        .intervention.interventionAddress.city.latitude),
-                    double.parse(_showInterventionResponse
-                        .intervention.interventionAddress.city.longitude)),
-                title: _showInterventionResponse
-                    .intervention.interventionAddress.city.name,
+                  _showInterventionResponse
+                      .intervention.interventionAddress.latitude,
+                  _showInterventionResponse
+                      .intervention.interventionAddress.longitude,
+                ),
+                title: "Adresse d'intervention",
               );
             },
             child: Container(
@@ -355,7 +362,11 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                 ),
                 color: AppColors.white,
               ),
-              child: Text(_getPreferredDate(),
+              child: Text(
+                  _showInterventionResponse.intervention.preferredVisitDate ==
+                          null
+                      ? "Non renseignée"
+                      : _getPreferredDate(),
                   style: AppStyles.textNormalBold,
                   textAlign: TextAlign.left,
                   maxLines: 5,
@@ -401,42 +412,52 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
           Text("Photos du client",
               style: AppStyles.subTitleBlack, overflow: TextOverflow.ellipsis),
           SizedBox(height: 10),
-          Container(
-            height: 250,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount:
-                    _showInterventionResponse.intervention.clientPhotos.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () => {
-                      Modular.to.pushNamed(Routes.photoView, arguments: {
-                        'image': _showInterventionResponse
-                            .intervention.clientPhotos[index],
-                        'path': ""
-                      })
-                    },
-                    child: Card(
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      elevation: 4,
-                      child: Container(
-                        width: 180,
-                        child: Hero(
-                          tag: AppConstants.IMAGE_VIEWER_TAG,
-                          child: Image.network(
-                              _showInterventionResponse
-                                  .intervention.clientPhotos[index],
-                              fit: BoxFit.fill),
-                        ),
-                      ),
+          _showInterventionResponse.intervention.clientPhotos.isEmpty
+              ? Padding(
+                  padding: EdgeInsets.all(AppConstants.default_padding * 2),
+                  child: Center(
+                    child: Text(
+                      "Aucune photo",
+                      style: AppStyles.bodyMdTextLight,
                     ),
-                  );
-                }),
-          )
+                  ),
+                )
+              : Container(
+                  height: 250,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _showInterventionResponse
+                          .intervention.clientPhotos.length,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () => {
+                            Modular.to.pushNamed(Routes.photoView, arguments: {
+                              'image': _showInterventionResponse
+                                  .intervention.clientPhotos[index],
+                              'path': ""
+                            })
+                          },
+                          child: Card(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 4,
+                            child: Container(
+                              width: 180,
+                              child: Hero(
+                                tag: AppConstants.IMAGE_VIEWER_TAG,
+                                child: Image.network(
+                                    _showInterventionResponse
+                                        .intervention.clientPhotos[index],
+                                    fit: BoxFit.fill),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                )
         ]),
       ),
     );
@@ -490,18 +511,17 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
     });
     Intervention _intervention = _showInterventionResponse.intervention;
     int response = await bloc.acceptIntervention(
-        _intervention.code, _intervention.id, _intervention.uuid, null);
+        _intervention.code, _intervention.id, widget.uuidCompetition, null);
     if (response == 200) {
+      await _supprimerUneNotif();
       Modular.to.popAndPushNamed(Routes.detailCommande,
-          arguments: {"uuid": bloc.interventionDetail.interventionDetail.uuid});
+          arguments: {"uuid": _showInterventionResponse.intervention.uuid});
     } else {
       Fluttertoast.showToast(
         msg: "Compétition introuvable",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
-      Modular.to.popAndPushNamed(Routes.detailCommande,
-          arguments: {"uuid": bloc.interventionDetail.interventionDetail.uuid});
     }
     setState(() {
       _acceptLoading = false;
@@ -543,7 +563,8 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: MotifRefusWidget(_showInterventionResponse),
+                    child: MotifRefusWidget(_showInterventionResponse,
+                        widget.uuidCompetition, widget.idNotification),
                   );
                 });
               });
@@ -674,5 +695,11 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
     day += " - ";
     day += (DateFormat('HH:mm').format(dateTime)).replaceAll(":", "h");
     return day;
+  }
+
+  _supprimerUneNotif() async {
+    List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
+    lista.add(DeleteNotificationsRequest(id: num.parse(widget.idNotification)));
+    await notifBloc.deleteNotifications(lista);
   }
 }

@@ -313,9 +313,6 @@ class _ClientWidgetState extends State<ClientWidget> {
             child: GestureDetector(
               onTap: () async {
                 final availableMaps = await MapLauncher.installedMaps;
-                print(
-                    availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
                 await availableMaps.first.showMarker(
                   coords: Coords(
                       bloc.interventionDetail.interventionDetail
@@ -421,35 +418,40 @@ class _ClientWidgetState extends State<ClientWidget> {
                     child: FaIcon(FontAwesomeIcons.longArrowAltRight,
                         size: 16, color: AppColors.default_black),
                   ),
-                  TextSpan(
-                      text: "    " +
-                          userLocation
-                              .distanceBetweenTwoLocalisations(
-                                  bloc
-                                      .interventionDetail
-                                      .interventionDetail
-                                      .subcontractors
-                                      .first
-                                      .company
-                                      .addresses
-                                      .first
-                                      .latitude,
-                                  bloc
-                                      .interventionDetail
-                                      .interventionDetail
-                                      .subcontractors
-                                      .first
-                                      .company
-                                      .addresses
-                                      .first
-                                      .longitude,
-                                  bloc.interventionDetail.interventionDetail
-                                      .interventionAddress.latitude,
-                                  bloc.interventionDetail.interventionDetail
-                                      .interventionAddress.longitude)
-                              .toStringAsFixed(1) +
-                          "km de xx SARL",
-                      style: AppStyles.textNormal),
+                  if ((bloc.interventionDetail.interventionDetail
+                              .subcontractors !=
+                          null) &&
+                      (bloc.interventionDetail.interventionDetail.subcontractors
+                          .isNotEmpty))
+                    TextSpan(
+                        text: "    " +
+                            userLocation
+                                .distanceBetweenTwoLocalisations(
+                                    bloc
+                                        .interventionDetail
+                                        .interventionDetail
+                                        .subcontractors
+                                        .first
+                                        .company
+                                        .addresses
+                                        .first
+                                        .latitude,
+                                    bloc
+                                        .interventionDetail
+                                        .interventionDetail
+                                        .subcontractors
+                                        .first
+                                        .company
+                                        .addresses
+                                        .first
+                                        .longitude,
+                                    bloc.interventionDetail.interventionDetail
+                                        .interventionAddress.latitude,
+                                    bloc.interventionDetail.interventionDetail
+                                        .interventionAddress.longitude)
+                                .toStringAsFixed(1) +
+                            "km de xx SARL",
+                        style: AppStyles.textNormal),
                 ],
               ),
             ),

@@ -227,7 +227,18 @@ class _InterventionWidgetState extends State<InterventionWidget> {
                   TextSpan(text: "Partenaire : ", style: AppStyles.textNormal),
                   TextSpan(
                       text: bloc.interventionDetail.interventionDetail
-                          .subcontractors.first.company.name,
+                                  .subcontractors ==
+                              null
+                          ? "Non renseigné"
+                          : bloc.interventionDetail.interventionDetail
+                                  .subcontractors.isEmpty
+                              ? "Non renseigné"
+                              : bloc.interventionDetail.interventionDetail
+                                          .subcontractors.first.company ==
+                                      null
+                                  ? ""
+                                  : bloc.interventionDetail.interventionDetail
+                                      .subcontractors.first.company.name,
                       style: AppStyles.textNormalBold),
                 ],
               ),

@@ -706,7 +706,9 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                   ),
                 )
               : Text(
-                  "ENREGISTRER ET CONTINUER PLUS TARD",
+                  bloc.dernierDevis == null
+                      ? "ANNULER"
+                      : "ENREGISTRER ET CONTINUER PLUS TARD",
                   style: AppStyles.buttonTextDarkBlue,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -752,6 +754,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
               textAlign: TextAlign.center,
               style: AppStyles.textNormal,
               textAlignVertical: TextAlignVertical.center,
+              enabled: bloc.dernierDevis == null ? false : true,
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
               ],
@@ -820,6 +823,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         textAlign: TextAlign.center,
         style: AppStyles.textNormal,
         textAlignVertical: TextAlignVertical.center,
+        enabled: bloc.dernierDevis == null ? false : true,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
         ],
@@ -871,6 +875,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         controller: _franchiseController,
         textAlign: TextAlign.center,
         style: AppStyles.textNormal,
+        enabled: bloc.dernierDevis == null ? false : true,
         textAlignVertical: TextAlignVertical.center,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
@@ -903,9 +908,10 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
           labelStyle: AppStyles.textNormal,
         ),
         validator: (value) {
-          if (value.isEmpty) {
-            return "";
-          } else if (value.endsWith(".")) {
+          /*if (value.isEmpty) {
+            _franchiseController.text = "0";
+          }*/
+          if (value.endsWith(".")) {
             return "";
           } else
             return null;
@@ -923,6 +929,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         controller: _accompteController,
         textAlign: TextAlign.center,
         style: AppStyles.textNormal,
+        enabled: bloc.dernierDevis == null ? false : true,
         textAlignVertical: TextAlignVertical.center,
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
@@ -971,7 +978,9 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         bloc.dernierDevis.quoteData.quote.id,
         double.parse(_tvaController.text),
         double.parse(_remiseController.text),
-        double.parse(_franchiseController.text),
+        _franchiseController.text == ""
+            ? 0.0
+            : double.parse(_franchiseController.text),
         double.parse(_accompteController.text));
     if ((quote.quoteData == null) || (quote.quoteData.quote == null)) {
       Fluttertoast.showToast(msg: "Erreur lors de la mise à jour");

@@ -6,6 +6,9 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/profile_response.dart';
+import 'package:mdp/ui/profil/profile_bloc.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/bottom_navbar_widget.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 
@@ -16,13 +19,30 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final bloc = Modular.get<ProfileBloc>();
+  final sharedPref = Modular.get<SharedPref>();
+  bool _loading = false;
+  ProfileResponse profile;
 
   // Pour savoir si on affiche le mois actuel ou précédent du CA
   bool affichageMoisActuel = true;
 
   @override
   Future<void> initState() {
+    _loadData();
     super.initState();
+  }
+
+  _loadData() async {
+    setState(() {
+      _loading = true;
+    });
+    String _subcontractorUuid =
+        await sharedPref.read(AppConstants.SUBCONTRACTOR_UUID_KEY);
+    profile = await bloc.getProfile(_subcontractorUuid);
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -38,11 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppColors.white,
       //drawer: DrawerWidget(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            child: _buildContent(),
-          ),
-        ),
+        child: _loading
+            ? Center(
+                child: CircularProgressIndicator(color: AppColors.md_dark_blue),
+              )
+            : SingleChildScrollView(
+                child: Container(
+                  child: _buildContent(),
+                ),
+              ),
       ),
       //LoadingIndicator(loading: _bloc.loading),
       //NetworkErrorMessages(error: _bloc.error),
@@ -61,7 +85,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           child: _buildTitle(),
         ),
-        _buildBody(),
+        Container(
+          foregroundDecoration: BoxDecoration(
+            color: AppColors.hint.withOpacity(0.3),
+            image: new DecorationImage(
+              image: AssetImage(AppImages.bientot),
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          child: _buildBody(),
+        ),
       ],
     );
   }
@@ -92,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 2),
                     Flexible(
                         child: Text(
-                      "Isabelle",
+                      profile == null
+                          ? ""
+                          : profile.subcontractor.user.firstName,
                       style: AppStyles.headerWhite,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

@@ -5,13 +5,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/requests/delete_notifications_request.dart';
 import 'package:mdp/models/responses/show_intervention_response.dart';
+import 'package:mdp/ui/notifications/notifications_bloc.dart';
 import 'package:mdp/utils/shared_preferences.dart';
 import 'package:mdp/widgets/gradients/md_gradient.dart';
 
@@ -19,8 +22,11 @@ import '../../interventions_bloc.dart';
 
 class MotifRefusWidget extends StatefulWidget {
   ShowInterventionResponse _intervention;
+  String uuidCompetition;
+  String idNotification;
 
-  MotifRefusWidget(this._intervention);
+  MotifRefusWidget(
+      this._intervention, this.uuidCompetition, this.idNotification);
 
   @override
   State<StatefulWidget> createState() => _MotifRefusWidgetState();
@@ -29,6 +35,7 @@ class MotifRefusWidget extends StatefulWidget {
 class _MotifRefusWidgetState extends State<MotifRefusWidget> {
   final bloc = Modular.get<InterventionsBloc>();
   final sharedPref = Modular.get<SharedPref>();
+  final notifBloc = Modular.get<NotificationsBloc>();
   bool loading = false;
   String _refusText = " ";
 
@@ -152,33 +159,44 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
     String _subcontractorId =
         await sharedPref.read(AppConstants.SUBCONTRACTOR_ID_KEY);
     int response = await bloc.refuseIntervention(_intervention.code, _refusText,
-        _intervention.id, _intervention.uuid, _subcontractorId);
+        _intervention.id, widget.uuidCompetition, _subcontractorId);
+    if (response == 200) {
+      await _supprimerUneNotif();
+      Modular.to.pushNamedAndRemoveUntil(
+          Routes.notifications, ModalRoute.withName(Routes.home));
+      /*Modular.to.pop();
+      Modular.to.pop();*/
+      Timer timer =
+          Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
+        Modular.to.pop();
+      });
+      showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Dialog(
+                backgroundColor: AppColors.md_light_gray,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: _popUpMotifRefus(),
+              );
+            });
+          }).then((value) {
+        // dispose the timer in case something else has triggered the dismiss.
+        timer?.cancel();
+        timer = null;
+      });
+    } else {
+      Fluttertoast.showToast(
+        msg: "Compétition introuvable",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    }
     setState(() {
       loading = false;
-    });
-    Modular.to.pop();
-    Modular.to.pop();
-    Modular.to.pushNamed(Routes.home);
-    Timer timer = Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
-      Modular.to.pop();
-    });
-    showDialog(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Dialog(
-              backgroundColor: AppColors.md_light_gray,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: _popUpMotifRefus(),
-            );
-          });
-        }).then((value) {
-      // dispose the timer in case something else has triggered the dismiss.
-      timer?.cancel();
-      timer = null;
     });
   }
 
@@ -231,5 +249,11 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
         ],
       ),
     );
+  }
+
+  _supprimerUneNotif() async {
+    List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
+    lista.add(DeleteNotificationsRequest(id: num.parse(widget.idNotification)));
+    await notifBloc.deleteNotifications(lista);
   }
 }
