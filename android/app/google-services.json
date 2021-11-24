@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "811899647678",
+    "firebase_url": "https://md-prestataire-3.firebaseio.com",
+    "project_id": "md-prestataire-3",
+    "storage_bucket": "md-prestataire-3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811899647678:android:cccd56a8116965be9cd0ef",
+        "android_client_info": {
+          "package_name": "fr.mesdepanneurs.mdp3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "811899647678-v8c70mlcqpoljafg0lk22semmmptljs0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMzU4xUhI9ftDDD0w_cuX8HDe1uH3rO1c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811899647678-v8c70mlcqpoljafg0lk22semmmptljs0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -45,6 +45,7 @@ class _AddUpdateMainDeplacementDialogState
     } else {
       _qteController.text = widget.workLoadModel.quantity.toString();
       _priceController.text = widget.workLoadModel.price_ht.toString();
+      _commentController.text = widget.workLoadModel.comment;
     }
   }
 

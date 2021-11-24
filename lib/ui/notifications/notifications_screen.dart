@@ -241,16 +241,22 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     setState(() {
       _loading = true;
     });
+    //Pour éviter les données erronées du backend un controle sur la disponibilité de l'uuid a été ajouté
     item.type == "NEW_ORDER"
-        ? showCupertinoModalBottomSheet(
-            context: context,
-            expand: false,
-            enableDrag: true,
-            builder: (context) => PropositionCommandeWidget(
-                item.details.order.uuid,
-                item.targetElementUuid,
-                _notifications[index].id),
-          )
+        ? (item.details.order != null) && (item.details.order.uuid != null)
+            ? showCupertinoModalBottomSheet(
+                context: context,
+                expand: false,
+                enableDrag: true,
+                builder: (context) => PropositionCommandeWidget(
+                    item.details.order.uuid,
+                    item.targetElementUuid,
+                    _notifications[index].id),
+              )
+            : ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                    'Veuillez contacter le service MDP. Des informations nécessaires manquantes'),
+              ))
         : Modular.to.pushNamed(Routes.detailCommande,
             arguments: {"uuid": item.targetElementUuid});
     setState(() {

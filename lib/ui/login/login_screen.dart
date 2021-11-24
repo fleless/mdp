@@ -38,8 +38,8 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
   }
 
   _loadDatas() async {
-    String username = await sharedPref.read(AppConstants.USERNAME_KEY);
-    String password = await sharedPref.read(AppConstants.PASSWORD_KEY);
+    var username = await sharedPref.read(AppConstants.USERNAME_KEY);
+    var password = await sharedPref.read(AppConstants.PASSWORD_KEY);
     if ((username != null) && (password != null)) {
       _userNameController.text = username;
       _passwordController.text = password;
@@ -115,6 +115,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
       obscureText: false,
       cursorColor: AppColors.default_black,
       keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
         filled: true,
         fillColor: AppColors.md_light_gray,
@@ -148,6 +149,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
       obscureText: true,
       cursorColor: AppColors.default_black,
       keyboardType: TextInputType.text,
+      textInputAction: TextInputAction.next,
       decoration: const InputDecoration(
         filled: true,
         fillColor: AppColors.md_light_gray,
@@ -236,6 +238,8 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
     if ((response.token != null) && (response.token != "")) {
       GetAccountResponse resp = await bloc.getAccount(_userNameController.text);
       if (resp != null) {
+        bloc.registerDevice(resp.profile.subcontractor.uuid.toString(),
+            "deviceToken", 323, "personData");
         sharedPref.save(AppConstants.SUBCONTRACTOR_UUID_KEY,
             resp.profile.subcontractor.uuid.toString());
         sharedPref.save(AppConstants.SUBCONTRACTOR_ID_KEY,

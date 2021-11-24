@@ -25,8 +25,8 @@ class PaymentApiProvider {
     if (_dio == null) {
       BaseOptions options = new BaseOptions(
           receiveDataWhenStatusError: true,
-          connectTimeout: 10 * 1000, // 5 seconds
-          receiveTimeout: 10 * 1000 // 5 seconds
+          connectTimeout: 15 * 1000, // 15 seconds
+          receiveTimeout: 15 * 1000 // 15 seconds
           );
 
       _dio = new Dio(options);
@@ -35,8 +35,8 @@ class PaymentApiProvider {
           requestBody: false,
           responseBody: false,
           responseHeader: false,
-          error: true,
-          compact: true,
+          error: false,
+          compact: false,
           maxWidth: 90));
     }
   }

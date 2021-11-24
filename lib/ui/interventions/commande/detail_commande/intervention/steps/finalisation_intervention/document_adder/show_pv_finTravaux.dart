@@ -399,6 +399,9 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
         value: _checkBoxFirst,
         onChanged: (newValue) {
           setState(() {
+            if (newValue) {
+              _checkBoxSecond = false;
+            }
             _checkBoxFirst = newValue;
           });
         },
@@ -421,6 +424,9 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
         value: _checkBoxSecond,
         onChanged: (newValue) {
           setState(() {
+            if (newValue) {
+              _checkBoxFirst = false;
+            }
             _checkBoxSecond = newValue;
           });
         },
@@ -614,9 +620,8 @@ class _ShowPvFinTravauxWidgetState extends State<ShowPvFinTravauxWidget> {
   }
 
   bool _validButton() {
-    return ((_checkBoxFirst) &&
+    return (((_checkBoxFirst) || (_checkBoxSecond)) &&
         (_controllerArtisan.isNotEmpty) &&
-        (_checkBoxSecond) &&
         (_controllerClient.isNotEmpty));
   }
 

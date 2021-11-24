@@ -758,7 +758,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
               inputFormatters: <TextInputFormatter>[
                 FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
               ],
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (value) {
                 if (_formKey.currentState.validate()) {
                   _updateQuote();
@@ -827,7 +827,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
         ],
-        keyboardType: TextInputType.number,
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
         onChanged: (value) {
           if (_formKey.currentState.validate()) {
             _updateQuote();
@@ -880,7 +880,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
         ],
-        keyboardType: TextInputType.number,
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
         onChanged: (value) {
           if (_formKey.currentState.validate()) {
             _updateQuote();
@@ -934,7 +934,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
         ],
-        keyboardType: TextInputType.number,
+        keyboardType: TextInputType.numberWithOptions(decimal: true),
         onChanged: (value) {
           if (_formKey.currentState.validate()) {
             _updateQuote();

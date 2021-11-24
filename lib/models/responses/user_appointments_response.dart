@@ -38,6 +38,7 @@ class ListVisitData {
   String endDate;
   String type;
   String title;
+  String comment;
   Client client;
   Order order;
 
@@ -47,6 +48,7 @@ class ListVisitData {
       this.endDate,
       this.type,
       this.title,
+      this.comment,
       this.client,
       this.order});
 
@@ -54,8 +56,9 @@ class ListVisitData {
     id = json['id'];
     startDate = json['start_date'];
     endDate = json['end_date'];
-    title = json['title'];
+    title = json['title'] == "" ? "" : json['title'];
     type = json['type'];
+    comment = json['comment'] != null ? json['comment'] : "";
     client =
         json['client'] != null ? new Client.fromJson(json['client']) : null;
     order = json['order'] != null ? new Order.fromJson(json['order']) : null;
@@ -67,6 +70,7 @@ class ListVisitData {
     data['start_date'] = this.startDate;
     data['end_date'] = this.endDate;
     data['title'] = this.title;
+    data['comment'] = this.comment;
     data['type'] = this.type;
     if (this.client != null) {
       data['client'] = this.client.toJson();

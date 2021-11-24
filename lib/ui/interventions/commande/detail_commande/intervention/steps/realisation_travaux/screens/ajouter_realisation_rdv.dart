@@ -254,9 +254,16 @@ class _AjouterRealisationRDVScreenState
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
           child: Text(
-              bloc.interventionDetail.interventionDetail.clients.commchannels
-                  .firstWhere((element) =>
-                      (element.preferred) && (element.type.name == "Phone"))
+              (bloc.interventionDetail.interventionDetail.clients.commchannels
+                  .firstWhereOrNull((element) =>
+              (element.preferred) &&
+                  (element.type.name == "Phone")) ==
+                  null)
+                  ? "Numéro de téléphone on défini"
+                  : bloc.interventionDetail.interventionDetail.clients
+                  .commchannels
+                  .firstWhereOrNull((element) =>
+              (element.preferred) && (element.type.name == "Phone"))
                   .name,
               style: AppStyles.bodyBold,
               overflow: TextOverflow.ellipsis),

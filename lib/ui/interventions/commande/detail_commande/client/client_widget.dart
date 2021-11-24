@@ -423,35 +423,38 @@ class _ClientWidgetState extends State<ClientWidget> {
                           null) &&
                       (bloc.interventionDetail.interventionDetail.subcontractors
                           .isNotEmpty))
-                    TextSpan(
-                        text: "    " +
-                            userLocation
-                                .distanceBetweenTwoLocalisations(
-                                    bloc
-                                        .interventionDetail
-                                        .interventionDetail
-                                        .subcontractors
-                                        .first
-                                        .company
-                                        .addresses
-                                        .first
-                                        .latitude,
-                                    bloc
-                                        .interventionDetail
-                                        .interventionDetail
-                                        .subcontractors
-                                        .first
-                                        .company
-                                        .addresses
-                                        .first
-                                        .longitude,
-                                    bloc.interventionDetail.interventionDetail
-                                        .interventionAddress.latitude,
-                                    bloc.interventionDetail.interventionDetail
-                                        .interventionAddress.longitude)
-                                .toStringAsFixed(1) +
-                            "km de xx SARL",
-                        style: AppStyles.textNormal),
+                    if (bloc.interventionDetail.interventionDetail.subcontractors
+                            .first.company !=
+                        null)
+                      TextSpan(
+                          text: "    " +
+                              userLocation
+                                  .distanceBetweenTwoLocalisations(
+                                      bloc
+                                          .interventionDetail
+                                          .interventionDetail
+                                          .subcontractors
+                                          .first
+                                          .company
+                                          .addresses
+                                          .first
+                                          .latitude,
+                                      bloc
+                                          .interventionDetail
+                                          .interventionDetail
+                                          .subcontractors
+                                          .first
+                                          .company
+                                          .addresses
+                                          .first
+                                          .longitude,
+                                      bloc.interventionDetail.interventionDetail
+                                          .interventionAddress.latitude,
+                                      bloc.interventionDetail.interventionDetail
+                                          .interventionAddress.longitude)
+                                  .toStringAsFixed(1) +
+                              "km de xx SARL",
+                          style: AppStyles.textNormal),
                 ],
               ),
             ),

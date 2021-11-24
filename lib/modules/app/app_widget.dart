@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
@@ -26,10 +28,33 @@ class _AppWidgetState extends State<AppWidget> {
   }
 
   _initFlutterDownloaderPackage() async {
-    WidgetsFlutterBinding.ensureInitialized();
     await FlutterDownloader.initialize(
         debug: true // optional: set false to disable printing logs to console
         );
+    //when app is terminated or closed gives you the message on which user taps
+    FirebaseMessaging.instance.getInitialMessage().then((message) {
+      if (message != null) {
+        Modular.to.pushNamed(Routes.notifications);
+      }
+    });
+
+    //Only work on Foreground listener
+    FirebaseMessaging.onMessage.listen((event) {
+      print("une notif reçue");
+      if (event.notification != null) {
+        print("l'evenement est" + event.notification.body);
+        print("l'evenement est" + event.notification.title);
+      }
+    });
+
+    //when app is in background but opened and user taps on the notification
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      Modular.to.pushNamed(Routes.notifications);
+      print("loulou");
+      if (event.data != null) {
+        print(event.data["route"]);
+      }
+    });
   }
 
   @override

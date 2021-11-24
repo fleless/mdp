@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 1.1.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -30,7 +30,7 @@ dependencies:
   flutter_modular: ^2.0.0+1
 
   # Adds support for google fonts
-  google_fonts: ^1.1.0
+  google_fonts: ^2.1.0
 
   # Package to handle dynamic String & Json interpolation.
   interpolation: ^1.0.1
@@ -46,10 +46,15 @@ dependencies:
   font_awesome_flutter: ^8.10.0
 
   # http package for connection.
-  http: ^0.12.2
+  http: ^0.13.0
+
+  # firebase packages.
+  firebase_core: ^1.8.0
+  firebase_messaging: ^10.0.9
+  firebase_analytics: ^8.3.4
 
   # Powerful Http client for Dart
-  dio: ^3.0.10
+  dio: ^4.0.1
   pretty_dio_logger: ^1.1.1
 
   syncfusion_flutter_calendar: ^19.1.56
@@ -75,7 +80,7 @@ dependencies:
   modal_bottom_sheet: ^2.0.0
 
   # photo view library.
-  photo_view: ^0.11.1
+  photo_view: ^0.13.0
 
   # map launcher library.
   map_launcher: ^2.0.0
@@ -144,6 +149,9 @@ dependencies:
 
   # package for adding launcher icon both android and ios.
   flutter_launcher_icons: ^0.9.2
+
+  # package for getting package info as version.
+  package_info_plus: ^1.3.0
 
 dev_dependencies:
   flutter_test:

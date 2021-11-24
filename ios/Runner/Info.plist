@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -46,6 +48,8 @@
 	<string>REASON_TO_USE_CALENDAR</string>
 	<key>NSCameraUsageDescription</key>
 	<string>MDP require your camera for  work status changes validation and payment verification.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Autoriser la connexion au réseau local pour le test réel de la machine</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Provide location usage</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

@@ -518,7 +518,7 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
           arguments: {"uuid": _showInterventionResponse.intervention.uuid});
     } else {
       Fluttertoast.showToast(
-        msg: "Compétition introuvable",
+        msg: "La commande n'est plus disponible",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );

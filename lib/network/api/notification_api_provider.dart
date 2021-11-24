@@ -24,18 +24,18 @@ class NotificationsApiProvider {
     if (_dio == null) {
       BaseOptions options = new BaseOptions(
           receiveDataWhenStatusError: true,
-          connectTimeout: 3 * 1000, // 5 seconds
-          receiveTimeout: 3 * 1000 // 5 seconds
+          connectTimeout: 15 * 1000, // 15 seconds
+          receiveTimeout: 15 * 1000 // 15 seconds
           );
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: true,
-          error: true,
-          compact: true,
+          requestHeader: false,
+          requestBody: false,
+          responseBody: false,
+          responseHeader: false,
+          error: false,
+          compact: false,
           maxWidth: 90));
     }
   }

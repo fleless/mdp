@@ -164,8 +164,6 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
       await _supprimerUneNotif();
       Modular.to.pushNamedAndRemoveUntil(
           Routes.notifications, ModalRoute.withName(Routes.home));
-      /*Modular.to.pop();
-      Modular.to.pop();*/
       Timer timer =
           Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
         Modular.to.pop();
@@ -190,7 +188,7 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
       });
     } else {
       Fluttertoast.showToast(
-        msg: "Compétition introuvable",
+        msg: "La commande n'est plus disponible",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );

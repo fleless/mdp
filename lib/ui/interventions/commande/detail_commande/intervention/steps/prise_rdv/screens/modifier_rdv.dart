@@ -65,6 +65,8 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
       _endDate = _end;
       _startTime = TimeOfDay(hour: _start.hour, minute: _start.minute);
       _endTime = TimeOfDay(hour: _end.hour, minute: _end.minute);
+      if (widget.rdv.comment != null)
+        _commentaireController.text = widget.rdv.comment;
     });
   }
 
@@ -256,10 +258,17 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
           child: Text(
-              bloc.interventionDetail.interventionDetail.clients.commchannels
-                  .firstWhere((element) =>
-                      (element.preferred) && (element.type.name == "Phone"))
-                  .name,
+              (bloc.interventionDetail.interventionDetail.clients.commchannels
+                          .firstWhereOrNull((element) =>
+                              (element.preferred) &&
+                              (element.type.name == "Phone")) ==
+                      null)
+                  ? "Numéro de téléphone on défini"
+                  : bloc.interventionDetail.interventionDetail.clients
+                      .commchannels
+                      .firstWhereOrNull((element) =>
+                          (element.preferred) && (element.type.name == "Phone"))
+                      .name,
               style: AppStyles.bodyBold,
               overflow: TextOverflow.ellipsis),
         ),

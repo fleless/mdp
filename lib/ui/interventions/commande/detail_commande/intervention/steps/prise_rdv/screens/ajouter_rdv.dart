@@ -9,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
-import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/add_appointment_response.dart';
@@ -253,10 +252,17 @@ class _AjouterRDVScreenState extends State<AjouterRDVScreen> {
             border: Border.all(color: AppColors.placeHolder, width: 1),
           ),
           child: Text(
-              bloc.interventionDetail.interventionDetail.clients.commchannels
-                  .firstWhere((element) =>
-                      (element.preferred) && (element.type.name == "Phone"))
-                  .name,
+              (bloc.interventionDetail.interventionDetail.clients.commchannels
+                          .firstWhereOrNull((element) =>
+                              (element.preferred) &&
+                              (element.type.name == "Phone")) ==
+                      null)
+                  ? "Numéro de téléphone on défini"
+                  : bloc.interventionDetail.interventionDetail.clients
+                      .commchannels
+                      .firstWhereOrNull((element) =>
+                          (element.preferred) && (element.type.name == "Phone"))
+                      .name,
               style: AppStyles.bodyBold,
               overflow: TextOverflow.ellipsis),
         ),

@@ -61,6 +61,7 @@ class Subcontractor {
 
 class User {
   int id;
+  num personId;
   String uuid;
   String firstName;
   String lastName;
@@ -69,6 +70,7 @@ class User {
 
   User(
       {this.id,
+      this.personId,
       this.uuid,
       this.firstName,
       this.lastName,
@@ -77,6 +79,7 @@ class User {
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    personId = json['personId'];
     uuid = json['uuid'];
     firstName = json['firstName'];
     lastName = json['lastName'];
@@ -87,6 +90,7 @@ class User {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['personId'] = this.personId;
     data['uuid'] = this.uuid;
     data['firstName'] = this.firstName;
     data['lastName'] = this.lastName;

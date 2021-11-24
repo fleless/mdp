@@ -99,7 +99,11 @@ class _MessagerieWidgetState extends State<MessagerieWidget> {
             children: [
               Expanded(
                 child: Text(
-                  message.user,
+                  message.user == null
+                      ? "Non défini"
+                      : message.user.trim() == ""
+                          ? "Non défini"
+                          : message.user,
                   style: AppStyles.header2DarkBlue,
                 ),
               ),
