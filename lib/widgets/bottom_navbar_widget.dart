@@ -27,7 +27,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      color: Colors.transparent,
+      color: Colors.white,
       child: Container(
         height: 75,
         padding: const EdgeInsets.only(bottom: 10),
@@ -35,6 +35,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
           color: AppColors.md_dark_blue,
           boxShadow: [
             BoxShadow(
+              color: AppColors.md_dark_blue,
               blurRadius: 15.0,
               offset: Offset(0, 10),
             )

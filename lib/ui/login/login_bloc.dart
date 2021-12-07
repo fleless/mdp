@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/models/responses/get_account_response.dart';
@@ -34,10 +35,16 @@ class LoginBloc extends Disposable {
 
   Future<bool> registerDevice(
       String uuid, String deviceToken, num personId, String personData) async {
+    String fbToken = "";
     ProfileResponse resp = await profileBloc.getProfile(uuid);
-    String token = await FirebaseMessaging.instance.getToken();
+    if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      fbToken = await FirebaseMessaging.instance.getAPNSToken();
+    } else {
+      fbToken = await FirebaseMessaging.instance.getToken();
+    }
     return _deviceRepository.registerDevice(
-        token,
+        fbToken,
         resp.subcontractor.user.personId,
         resp.subcontractor.user.firstName +
             " " +

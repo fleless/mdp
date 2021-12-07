@@ -756,10 +756,17 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
               textAlignVertical: TextAlignVertical.center,
               enabled: bloc.dernierDevis == null ? false : true,
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
+                FilteringTextInputFormatter.allow(
+                    RegExp(r'(^\d+[\.\,]?\d?\d?)')),
               ],
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               onChanged: (value) {
+                setState(() {
+                  _tvaController.text =
+                      _tvaController.text.replaceAll(',', '.');
+                  _tvaController.selection = TextSelection.fromPosition(
+                      TextPosition(offset: _tvaController.text.length));
+                });
                 if (_formKey.currentState.validate()) {
                   _updateQuote();
                 }
@@ -825,10 +832,16 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         textAlignVertical: TextAlignVertical.center,
         enabled: bloc.dernierDevis == null ? false : true,
         inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
+          FilteringTextInputFormatter.allow(RegExp(r'(^\d+[\.\,]?\d?\d?)')),
         ],
         keyboardType: TextInputType.numberWithOptions(decimal: true),
         onChanged: (value) {
+          setState(() {
+            _remiseController.text =
+                _remiseController.text.replaceAll(',', '.');
+            _remiseController.selection = TextSelection.fromPosition(
+                TextPosition(offset: _remiseController.text.length));
+          });
           if (_formKey.currentState.validate()) {
             _updateQuote();
           }
@@ -878,10 +891,16 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         enabled: bloc.dernierDevis == null ? false : true,
         textAlignVertical: TextAlignVertical.center,
         inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
+          FilteringTextInputFormatter.allow(RegExp(r'(^\d+[\.\,]?\d?\d?)')),
         ],
         keyboardType: TextInputType.numberWithOptions(decimal: true),
         onChanged: (value) {
+          setState(() {
+            _franchiseController.text =
+                _franchiseController.text.replaceAll(',', '.');
+            _franchiseController.selection = TextSelection.fromPosition(
+                TextPosition(offset: _franchiseController.text.length));
+          });
           if (_formKey.currentState.validate()) {
             _updateQuote();
           }
@@ -932,10 +951,16 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
         enabled: bloc.dernierDevis == null ? false : true,
         textAlignVertical: TextAlignVertical.center,
         inputFormatters: <TextInputFormatter>[
-          FilteringTextInputFormatter.allow(RegExp(r'(^\d+\.?\d?\d?)')),
+          FilteringTextInputFormatter.allow(RegExp(r'(^\d+[\.\,]?\d?\d?)')),
         ],
         keyboardType: TextInputType.numberWithOptions(decimal: true),
         onChanged: (value) {
+          setState(() {
+            _accompteController.text =
+                _accompteController.text.replaceAll(',', '.');
+            _accompteController.selection = TextSelection.fromPosition(
+                TextPosition(offset: _accompteController.text.length));
+          });
           if (_formKey.currentState.validate()) {
             _updateQuote();
           }

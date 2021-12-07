@@ -1,24 +1,17 @@
-import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
-import 'package:mdp/constants/app_images.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/payment/send_sms_payment_response.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/client/client_widget.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_widget.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/finalisation_intervention/finalisation_intervention_bloc.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/messagerie/messagerie_widget.dart';
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
-import 'package:mdp/ui/interventions/interventions_screen.dart';
 import 'package:mdp/utils/flushbar_utils.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
+import 'package:collection/collection.dart';
 
 class PaymentPrincipalOptionsScreen extends StatefulWidget {
   @override
@@ -285,10 +278,17 @@ class _PaymentPrincipalOptionsScreenState
     });
     SendSmsPaymentResponse resp =
         await _finalisationInterventionbloc.sendSmsPayment(
-            bloc.interventionDetail.interventionDetail.clients.commchannels
-                .firstWhere((element) =>
-                    (element.preferred) && (element.type.name == "Phone"))
-                .name,
+            (bloc.interventionDetail.interventionDetail.clients.commchannels
+                        .firstWhereOrNull((element) =>
+                            (element.preferred) &&
+                            (element.type.name == "Phone")) ==
+                    null)
+                ? "Numéro de téléphone on défini"
+                : bloc
+                    .interventionDetail.interventionDetail.clients.commchannels
+                    .firstWhereOrNull((element) =>
+                        (element.preferred) && (element.type.name == "Phone"))
+                    .name,
             bloc.interventionDetail.interventionDetail.code,
             bloc.interventionDetail.interventionDetail.clients.firstname);
     setState(() {
@@ -307,7 +307,7 @@ class _PaymentPrincipalOptionsScreenState
         "otherOptions": false
       });
     } else {
-      showErrorToast(context, "Une erreur est survenue");
+      showErrorToast(context, "Numéro de téléphone non défini");
     }
   }
 }

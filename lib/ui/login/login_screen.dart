@@ -51,37 +51,42 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.appBackground,
       //drawer: DrawerWidget(),
-      body: SafeArea(
-        child: Container(
-          alignment: Alignment.center,
-          decoration: BoxDecoration(gradient: MdGradientLight()),
-          height: double.infinity,
-          child: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: AppConstants.default_padding),
-            child: Center(
-              child: Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.all(
-                      Radius.circular(AppConstants.default_Radius)),
-                ),
-                height: MediaQuery.of(context).size.height * 0.6,
-                width: double.infinity,
-                child: SingleChildScrollView(
-                  child: _buildContent(),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: SafeArea(
+          child: Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(gradient: MdGradientLight()),
+            height: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.default_padding),
+              child: Center(
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(AppConstants.default_Radius)),
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    child: _buildContent(),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ), //LoadingIndicator(loading: _bloc.loading),
-      //NetworkErrorMessages(error: _bloc.error),
+        ), //LoadingIndicator(loading: _bloc.loading),
+        //NetworkErrorMessages(error: _bloc.error),
+      ),
     );
   }
 

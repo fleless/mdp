@@ -354,14 +354,14 @@ class _SignatureClientScreenState extends State<SignatureClientScreen> {
     return ElevatedButton(
       child: Ink(
         decoration: BoxDecoration(
-          color: (((!_checkBoxFirst)) || (_controller.isEmpty))
+          color: (((!_checkBoxFifth)) || (_controller.isEmpty))
               ? AppColors.inactive
               : AppColors.md_dark_blue,
           borderRadius: BorderRadius.all(
             Radius.circular(12),
           ),
           border: Border.all(
-              color: (((!_checkBoxFirst)) || (_controller.isEmpty))
+              color: (((!_checkBoxFifth)) || (_controller.isEmpty))
                   ? AppColors.inactive
                   : AppColors.md_dark_blue),
         ),
@@ -371,7 +371,7 @@ class _SignatureClientScreenState extends State<SignatureClientScreen> {
           height: 55,
           child: Text(
             "SIGNER",
-            style: (((!_checkBoxFirst)) || (_controller.isEmpty))
+            style: (((!_checkBoxFifth)) || (_controller.isEmpty))
                 ? AppStyles.buttonInactiveText
                 : AppStyles.buttonTextWhite,
             maxLines: 1,
@@ -380,7 +380,7 @@ class _SignatureClientScreenState extends State<SignatureClientScreen> {
         ),
       ),
       onPressed: () async {
-        if ((_controller.isNotEmpty) && (_checkBoxFirst)) {
+        if ((_controller.isNotEmpty) && (_checkBoxFifth)) {
           setState(() {
             _loadingSignature = true;
           });

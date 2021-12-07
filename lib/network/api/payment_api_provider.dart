@@ -31,12 +31,12 @@ class PaymentApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: false,
-          requestBody: false,
-          responseBody: false,
-          responseHeader: false,
-          error: false,
-          compact: false,
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: true,
+          error: true,
+          compact: true,
           maxWidth: 90));
     }
   }

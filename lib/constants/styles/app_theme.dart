@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../app_colors.dart';
@@ -14,7 +15,17 @@ class AppTheme {
   static ThemeData themeData = ThemeData(
     primaryColor: AppColors.appBackground,
     backgroundColor: AppColors.appBackground,
-    scaffoldBackgroundColor: AppColors.appBackground,
+    scaffoldBackgroundColor: AppColors.white,
+    appBarTheme: AppBarTheme(
+      systemOverlayStyle: SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.black,
+        systemNavigationBarDividerColor: Colors.black,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarColor: Colors.black,
+        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    ),
     visualDensity: VisualDensity.adaptivePlatformDensity,
     textTheme: GoogleFonts.titilliumWebTextTheme(AppTextTheme.textTheme),
     bottomAppBarTheme: AppBottomNavBarTheme.bottomAppBarTheme,

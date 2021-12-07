@@ -22,8 +22,15 @@ class _AppWidgetState extends State<AppWidget> {
   void initState() {
     super.initState();
     initPlatformState();
-    SystemChrome.setSystemUIOverlayStyle(
-        const SystemUiOverlayStyle(statusBarColor: Colors.black));
+    Future.delayed(Duration(milliseconds: 1)).then(
+        (value) => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.black,
+              systemNavigationBarDividerColor: Colors.black,
+              systemNavigationBarIconBrightness: Brightness.dark,
+              statusBarColor: Colors.black,
+              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.dark,
+            )));
     _initFlutterDownloaderPackage();
   }
 
