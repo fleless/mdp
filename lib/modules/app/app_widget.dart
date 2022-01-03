@@ -57,6 +57,7 @@ class _AppWidgetState extends State<AppWidget> {
       }
     });
 
+
     ///Only work on Foreground listener
     FirebaseMessaging.onMessage.listen((event) {
       if (event.notification != null) {
