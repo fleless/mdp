@@ -18,9 +18,9 @@ class DocumentUploaderApiProvider {
   final String ajoutTypeDocumentEndPoint =
       Endpoints.CORE_URL + "add-order-document-type";
   final String generateeDocumentEndPoint =
-      "https://order.mesdepanneurs.wtf/api/v1/order/generate-document";
+      "https://api-order.mesdepanneurs.wtf/api/v1/order/generate-document";
   final String uploadPaymentDocumentEndPoint =
-      "https://order.mesdepanneurs.wtf/api/v1/upload-payment-document";
+      "https://api-order.mesdepanneurs.wtf/api/v1/upload-payment-document";
   final sharedPref = Modular.get<SharedPref>();
   final headerFormatter = Modular.get<HeaderFormatter>();
 

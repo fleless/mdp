@@ -8,7 +8,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DeviceApiProvider {
   final String registerDeviceEndPoint =
-      "https://communication.mesdepanneurs.wtf/api/push/register-device";
+      "https://api-communication.mesdepanneurs.wtf/api/push/register-device";
   final sharedPref = Modular.get<SharedPref>();
   final headerFormatter = Modular.get<HeaderFormatter>();
   Dio _dio;

@@ -16,7 +16,7 @@ class Endpoints {
   //URL DE déploiement
   // static const String CORE_URL = "https://api-order.mesdepanneurs.fr/api/v1/";
   static const String PAYMENT_URL =
-      "https://order.mesdepanneurs.wtf/api/v1/payment/";
+      "https://api-order.mesdepanneurs.wtf/api/v1/payment/";
   static const String URL = "https://api-order.mesdepanneurs.wtf/api/";
   static const String URL_PERSON =
       "https://api-person.mesdepanneurs.wtf/api/v1";

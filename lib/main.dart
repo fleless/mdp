@@ -15,7 +15,4 @@ void main() async {
 }
 
 //Recieve message when app is in background
-Future<void> backgroundHandler(RemoteMessage message) async {
-  print(message.data.toString());
-  print(message.notification.title);
-}
+Future<void> backgroundHandler(RemoteMessage message) async {}

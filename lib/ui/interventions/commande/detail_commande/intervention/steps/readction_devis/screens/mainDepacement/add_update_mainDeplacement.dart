@@ -239,6 +239,11 @@ class _AddUpdateMainDeplacementDialogState
                 setState(() {
                   _showPriceError = false;
                 });
+                if (double.parse(value) > widget.liste.maximumPrice) {
+                  setState(() {
+                    _showPriceError = true;
+                  });
+                }
               },
               obscureText: false,
               cursorColor: AppColors.default_black,
@@ -274,11 +279,6 @@ class _AddUpdateMainDeplacementDialogState
                 } else if (double.parse(value) == null) {
                   return '';
                 } else if (!(double.parse(value) > 0.0)) {
-                  return '';
-                } else if (double.parse(value) > widget.liste.maximumPrice) {
-                  setState(() {
-                    _showPriceError = true;
-                  });
                   return '';
                 } else {
                   return null;

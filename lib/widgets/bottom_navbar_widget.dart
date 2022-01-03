@@ -18,9 +18,11 @@ class BottomNavbar extends StatefulWidget {
 class _BottomNavbarState extends State<BottomNavbar> {
   final double iconSize = 20;
   final double minWidthIcon = 65;
+
   void _navigateTo(String route, [Object args]) {
     if (ModalRoute.of(context).settings.name != route) {
-      Modular.to.pushNamed(route, arguments: args);
+      Modular.to.pushNamed(route,
+          arguments: {"uuidIntervention": null, "uuidCompetition": null});
     }
   }
 

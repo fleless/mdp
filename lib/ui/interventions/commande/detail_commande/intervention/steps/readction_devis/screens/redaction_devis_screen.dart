@@ -466,10 +466,10 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                             text: "Montant HT :  ",
                             style: AppStyles.bodyDefaultBlack),
                         TextSpan(
-                            text: bloc.dernierDevis != null
+                            text: (bloc.dernierDevis != null
                                 ? bloc.dernierDevis.quoteData.quote.totalHt
                                     .toString()
-                                : "0" + "€",
+                                : "0") + "€",
                             style: AppStyles.bodyBold),
                       ],
                     ),

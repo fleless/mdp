@@ -18,8 +18,13 @@ import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class NotificationsScreen extends StatefulWidget {
+  String uuidIntervention;
+  String uuidCompetition;
+
   @override
   State<StatefulWidget> createState() => _NotificationsScreenState();
+
+  NotificationsScreen(this.uuidIntervention, this.uuidCompetition);
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen>
@@ -37,6 +42,26 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     WidgetsBinding.instance.addObserver(this);
     _loadNotifications();
     super.initState();
+  }
+
+  /// this is used when we come from push notifications   and we want to show
+  /// command proposition
+  /// we check that state is built fully
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if ((widget.uuidIntervention != null) &&
+          (widget.uuidCompetition != null)) {
+        showCupertinoModalBottomSheet(
+          context: context,
+          expand: false,
+          enableDrag: true,
+          builder: (context) => PropositionCommandeWidget(
+              widget.uuidIntervention, widget.uuidCompetition, null),
+        );
+      }
+    });
   }
 
   _loadNotifications() async {

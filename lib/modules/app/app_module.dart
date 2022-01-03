@@ -42,6 +42,7 @@ import 'package:mdp/ui/splash/splash_screen.dart';
 import 'package:mdp/utils/header_formatter.dart';
 import 'package:mdp/utils/image_compresser.dart';
 import 'package:mdp/utils/shared_preferences.dart';
+import 'package:mdp/utils/timezone.dart';
 import 'package:mdp/utils/user_location.dart';
 import 'package:mdp/widgets/photo_view_screen.dart';
 import 'app_widget.dart';
@@ -65,6 +66,7 @@ class AppModule extends MainModule {
         Bind((_) => FinalisationInterventionBloc()),
         Bind((_) => SharedPref()),
         Bind((_) => HeaderFormatter()),
+        Bind((_) => TimeZoneUtils()),
       ];
 
   // Provide all the routes for your module
@@ -106,7 +108,8 @@ class AppModule extends MainModule {
                 child: (_, args) => RedactionDevisScreen()),
             ModularRouter(Routes.profil, child: (_, args) => ProfilScreen()),
             ModularRouter(Routes.notifications,
-                child: (_, args) => NotificationsScreen()),
+                child: (_, args) => NotificationsScreen(
+                    args.data['uuidIntervention'], args.data['uuidCompetition'])),
             ModularRouter(Routes.creationDesignation,
                 child: (_, args) => CreationDesignationScreen(
                     args.data['designationToUpdate'], args.data['isAdd'])),
@@ -125,8 +128,8 @@ class AppModule extends MainModule {
             ModularRouter(Routes.documentTypeSelector,
                 child: (_, args) => DocumentTypeSelectorScreen()),
             ModularRouter(Routes.paymentMessage,
-                child: (_, args) => PaymentMessageScreen(
-                    args.data['status'], args.data['message'], args.data['otherOptions'])),
+                child: (_, args) => PaymentMessageScreen(args.data['status'],
+                    args.data['message'], args.data['otherOptions'])),
             ModularRouter(Routes.paymentPrincipalOptionsScreen,
                 child: (_, args) => PaymentPrincipalOptionsScreen()),
             ModularRouter(Routes.paymentEmailScreen,

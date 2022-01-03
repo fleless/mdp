@@ -18,7 +18,7 @@ class PaymentApiProvider {
   final String sendSmsPaymentEndPoint =
       "https://api-communication.mesdepanneurs.wtf/api/payment/sms/payment-link";
   final String sendEmailPaymentEndPoint =
-      "https://communication.mesdepanneurs.wtf/api/payment/email/payment-link";
+      "https://api-communication.mesdepanneurs.wtf/api/payment/email/payment-link";
   final String finishPaymentEndPoint = Endpoints.PAYMENT_URL + "finish-payment";
 
   PaymentApiProvider() {

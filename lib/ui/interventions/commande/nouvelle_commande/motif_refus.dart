@@ -163,7 +163,8 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
     if (response == 200) {
       await _supprimerUneNotif();
       Modular.to.pushNamedAndRemoveUntil(
-          Routes.notifications, ModalRoute.withName(Routes.home));
+          Routes.notifications, ModalRoute.withName(Routes.home),
+          arguments: {"uuidIntervention": null, "uuidCompetition": null});
       Timer timer =
           Timer(Duration(milliseconds: AppConstants.TIMER_DIALOG), () {
         Modular.to.pop();
@@ -232,7 +233,10 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
               ),
             ),
             onPressed: () {
-              Modular.to.pop();
+              Modular.to.popAndPushNamed(Routes.notifications, arguments: {
+                "uuidIntervention": null,
+                "uuidCompetition": null
+              });
             },
             style: ElevatedButton.styleFrom(
                 elevation: 5,
@@ -250,8 +254,13 @@ class _MotifRefusWidgetState extends State<MotifRefusWidget> {
   }
 
   _supprimerUneNotif() async {
-    List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
-    lista.add(DeleteNotificationsRequest(id: num.parse(widget.idNotification)));
-    await notifBloc.deleteNotifications(lista);
+    /// we avoid calling this function when we come from push notifs
+    /// cause idNotification is null
+    if (widget.idNotification != null) {
+      List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
+      lista.add(
+          DeleteNotificationsRequest(id: num.parse(widget.idNotification)));
+      await notifBloc.deleteNotifications(lista);
+    }
   }
 }

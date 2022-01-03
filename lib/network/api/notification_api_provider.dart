@@ -14,9 +14,9 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class NotificationsApiProvider {
   final headerFormatter = Modular.get<HeaderFormatter>();
   final String getNotificationsEndPoint =
-      "https://order.mesdepanneurs.wtf/api/v1/notifications/subcontractor/";
+      Endpoints.CORE_URL + "notifications/subcontractor/";
   final String deleteNotificationsEndPoint =
-      "https://order.mesdepanneurs.wtf/api/v1/notification/delete";
+      Endpoints.CORE_URL + "notification/delete";
   final sharedPref = Modular.get<SharedPref>();
   Dio _dio;
 
@@ -30,12 +30,12 @@ class NotificationsApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: false,
-          requestBody: false,
-          responseBody: false,
-          responseHeader: false,
-          error: false,
-          compact: false,
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: true,
+          error: true,
+          compact: true,
           maxWidth: 90));
     }
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_theme.dart';
@@ -21,7 +23,6 @@ class _AppWidgetState extends State<AppWidget> {
   @override
   void initState() {
     super.initState();
-    initPlatformState();
     Future.delayed(Duration(milliseconds: 1)).then(
         (value) => SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
               systemNavigationBarColor: Colors.black,
@@ -31,37 +32,69 @@ class _AppWidgetState extends State<AppWidget> {
               statusBarBrightness: Brightness.light,
               statusBarIconBrightness: Brightness.dark,
             )));
+    /// handling push notifications functions
+    initialize(context);
     _initFlutterDownloaderPackage();
   }
 
   _initFlutterDownloaderPackage() async {
     await FlutterDownloader.initialize(
-        debug: true // optional: set false to disable printing logs to console
+        debug: false // optional: set false to disable printing logs to console
         );
-    //when app is terminated or closed gives you the message on which user taps
+
+    ///when app is terminated or closed gives you the message on which user taps
     FirebaseMessaging.instance.getInitialMessage().then((message) {
       if (message != null) {
-        Modular.to.pushNamed(Routes.notifications);
+        if (message.data != null) {
+          if ((message.data['order'] != null) &&
+              (message.data['competition'] != null)) {
+            Modular.to.pushNamed(Routes.notifications, arguments: {
+              "uuidIntervention": message.data['order'],
+              "uuidCompetition": message.data['competition']
+            });
+          }
+        }
       }
     });
 
-    //Only work on Foreground listener
+    ///Only work on Foreground listener
     FirebaseMessaging.onMessage.listen((event) {
-      print("une notif reçue");
       if (event.notification != null) {
-        print("l'evenement est" + event.notification.body);
-        print("l'evenement est" + event.notification.title);
+        if ((event.data['order'] != null) &&
+            (event.data['competition'] != null)) {
+          Fluttertoast.showToast(
+              msg: 'Vous avez reçu une nouvelle proposition de commande');
+        }
       }
     });
 
-    //when app is in background but opened and user taps on the notification
+    ///when app is in background but opened and user taps on the notification
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      Modular.to.pushNamed(Routes.notifications);
-      print("loulou");
       if (event.data != null) {
-        print(event.data["route"]);
+        if ((event.data['order'] != null) &&
+            (event.data['competition'] != null)) {
+          Modular.to.pushNamed(Routes.notifications, arguments: {
+            "uuidIntervention": event.data['order'],
+            "uuidCompetition": event.data['competition']
+          });
+        }
       }
     });
+  }
+
+  Future initialize(context) async {
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    if (Platform.isIOS) {
+      firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+    }
   }
 
   @override
@@ -82,7 +115,6 @@ class _AppWidgetState extends State<AppWidget> {
     );
   }
 
-  Future<void> initPlatformState() async {}
 
   @override
   void dispose() {

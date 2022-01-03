@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:device_calendar/device_calendar.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/app_images.dart';
-import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/add_appointment_response.dart';
@@ -19,6 +19,8 @@ import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps
 import 'package:mdp/ui/interventions/interventions_bloc.dart';
 import 'package:mdp/utils/date_formatter.dart';
 import 'package:collection/collection.dart';
+import 'package:mdp/utils/timezone.dart';
+import 'package:timezone/timezone.dart';
 
 class ModifierRdvScreen extends StatefulWidget {
   ListVisitData rdv = ListVisitData();
@@ -34,6 +36,7 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
   TextEditingController _commentaireController = TextEditingController();
   final bloc = Modular.get<InterventionsBloc>();
   final _rdvBloc = Modular.get<PriseRdvBloc>();
+  final _timeZoneUtils = Modular.get<TimeZoneUtils>();
   DateTime _startDate;
   DateTime _endDate;
   TimeOfDay _startTime;
@@ -698,16 +701,26 @@ class _ModifierRdvScreenState extends State<ModifierRdvScreen> {
     setState(() {
       _error = false;
     });
-    _selectedCalendar = _calendars[0];
+    _selectedCalendar =
+        _calendars.firstWhereOrNull((element) => (!element.isReadOnly));
+    if (_selectedCalendar == null) {
+      Fluttertoast.showToast(
+          msg: "Aucun calendrier disponble",
+          textColor: AppColors.white,
+          backgroundColor: AppColors.mdAlert);
+      return;
+    }
     FocusScope.of(context).requestFocus(new FocusNode());
     DateTime _start = DateTime(_startDate.year, _startDate.month,
         _startDate.day, _startTime.hour, _startTime.minute);
     DateTime _end = DateTime(_endDate.year, _endDate.month, _endDate.day,
         _endTime.hour, _endTime.minute);
+
     if (_start.isBefore(_end)) {
+      final _location = await _timeZoneUtils.setCurentLocation();
       final event = new Event(_selectedCalendar.id);
-      event.start = _start;
-      event.end = _end;
+      event.start = TZDateTime.from(_start, _location);
+      event.end = TZDateTime.from(_end, _location);
       event.title = widget.rdv.title;
       event.description = bloc.interventionDetail.interventionDetail.code +
           " pour le client " +

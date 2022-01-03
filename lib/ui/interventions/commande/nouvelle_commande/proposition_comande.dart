@@ -19,6 +19,8 @@ import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:map_launcher/map_launcher.dart';
 
 class PropositionCommandeWidget extends StatefulWidget {
+  /// we can get data when we come to this page
+  /// from push notifications
   String uuidIntervention;
   String uuidCompetition;
   String idNotification;
@@ -553,21 +555,21 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
           ),
         ),
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return StatefulBuilder(
-                    builder: (BuildContext context, StateSetter setState) {
-                  return Dialog(
-                    backgroundColor: AppColors.md_light_gray,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    child: MotifRefusWidget(_showInterventionResponse,
-                        widget.uuidCompetition, widget.idNotification),
-                  );
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        return Dialog(
+                          backgroundColor: AppColors.md_light_gray,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: MotifRefusWidget(_showInterventionResponse,
+                              widget.uuidCompetition, widget.idNotification),
+                        );
+                      });
                 });
-              });
         },
         style: ElevatedButton.styleFrom(
             elevation: 5,
@@ -698,8 +700,13 @@ class _PropositionCommandeWidgetState extends State<PropositionCommandeWidget> {
   }
 
   _supprimerUneNotif() async {
-    List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
-    lista.add(DeleteNotificationsRequest(id: num.parse(widget.idNotification)));
-    await notifBloc.deleteNotifications(lista);
+    /// avoid deleting when we come from push notifications
+    /// idNotification is null
+    if (widget.idNotification != null) {
+      List<DeleteNotificationsRequest> lista = <DeleteNotificationsRequest>[];
+      lista.add(
+          DeleteNotificationsRequest(id: num.parse(widget.idNotification)));
+      await notifBloc.deleteNotifications(lista);
+    }
   }
 }
