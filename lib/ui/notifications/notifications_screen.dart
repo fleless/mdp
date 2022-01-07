@@ -125,23 +125,24 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                               style: AppStyles.bodyMdTextLight,
                             )),
             ),
-            if (_notifications.length > 0)
-              Center(
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.all(10.0),
-                    primary: AppColors.md_dark_blue,
-                    textStyle: const TextStyle(fontSize: 20),
+            if (_notifications != null)
+              if (_notifications.length > 0)
+                Center(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(10.0),
+                      primary: AppColors.md_dark_blue,
+                      textStyle: const TextStyle(fontSize: 20),
+                    ),
+                    child: const Text('Tout effacer',
+                        style: AppStyles.underlinedTertiaryButtonText,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2),
+                    onPressed: () {
+                      _supprimerToutesLesNotifs();
+                    },
                   ),
-                  child: const Text('Tout effacer',
-                      style: AppStyles.underlinedTertiaryButtonText,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2),
-                  onPressed: () {
-                    _supprimerToutesLesNotifs();
-                  },
                 ),
-              ),
             SizedBox(height: 7),
           ],
         ),

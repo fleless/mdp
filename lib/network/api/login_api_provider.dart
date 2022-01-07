@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/get_account_response.dart';
 import 'package:mdp/models/responses/login_response.dart';
@@ -10,6 +9,7 @@ import 'package:mdp/models/responses/profile_response.dart';
 import 'package:mdp/utils/header_formatter.dart';
 import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:flutter/foundation.dart';
 
 class LoginApiProvider {
   final String getTokenEndPoint = Endpoints.AUTH_URL + "token";
@@ -30,12 +30,12 @@ class LoginApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: false,
-          requestBody: false,
-          responseBody: false,
-          responseHeader: false,
-          error: false,
-          compact: false,
+          requestHeader: kDebugMode ? true : false,
+          requestBody: kDebugMode ? true : false,
+          responseBody: kDebugMode ? true : false,
+          responseHeader: kDebugMode ? true : false,
+          error: kDebugMode ? true : false,
+          compact: kDebugMode ? true : false,
           maxWidth: 90));
     }
   }

@@ -13,6 +13,7 @@ import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_theme.dart';
 import 'package:mdp/utils/app_localization.dart';
+import 'package:mdp/utils/shared_preferences.dart';
 
 class AppWidget extends StatefulWidget {
   @override
@@ -20,6 +21,8 @@ class AppWidget extends StatefulWidget {
 }
 
 class _AppWidgetState extends State<AppWidget> {
+  final sharedPref = Modular.get<SharedPref>();
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +35,7 @@ class _AppWidgetState extends State<AppWidget> {
               statusBarBrightness: Brightness.light,
               statusBarIconBrightness: Brightness.dark,
             )));
+
     /// handling push notifications functions
     initialize(context);
     _initFlutterDownloaderPackage();
@@ -43,20 +47,22 @@ class _AppWidgetState extends State<AppWidget> {
         );
 
     ///when app is terminated or closed gives you the message on which user taps
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
+    FirebaseMessaging.instance.getInitialMessage().then((message) async {
       if (message != null) {
         if (message.data != null) {
           if ((message.data['order'] != null) &&
               (message.data['competition'] != null)) {
-            Modular.to.pushNamed(Routes.notifications, arguments: {
-              "uuidIntervention": message.data['order'],
-              "uuidCompetition": message.data['competition']
-            });
+            await Future.delayed(Duration(seconds: 5));
+            if (sharedPref.read(AppConstants.TOKEN_KEY) != null) {
+              Modular.to.pushNamed(Routes.notifications, arguments: {
+                "uuidIntervention": message.data['order'],
+                "uuidCompetition": message.data['competition']
+              });
+            }
           }
         }
       }
     });
-
 
     ///Only work on Foreground listener
     FirebaseMessaging.onMessage.listen((event) {
@@ -115,7 +121,6 @@ class _AppWidgetState extends State<AppWidget> {
       initialRoute: Routes.splash,
     );
   }
-
 
   @override
   void dispose() {

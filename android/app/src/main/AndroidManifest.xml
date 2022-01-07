@@ -12,7 +12,7 @@
 
     <application
         android:icon="@mipmap/launcher_icon"
-        android:label="mdp"
+        android:label="MD Professionnel 3"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
@@ -47,6 +47,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/app_logo_transparent" />
+
         <provider
             android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
             android:authorities="${applicationId}.flutter_downloader.provider"

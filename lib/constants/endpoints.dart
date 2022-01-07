@@ -5,7 +5,7 @@ class Endpoints {
 
   // Add the urls and parameters of the endpoints used by the application below
   // URL recette
-  static const String AUTH_URL = "https://auth.mesdepanneurs.wtf/api/";
+  static const String AUTH_URL = "https://api-auth.mesdepanneurs.wtf/api/";
 
   //URL DE déploiement
   //  static const String AUTH_URL = "https://md-auth.mesdepanneurs.fr/api/";

@@ -676,10 +676,11 @@ class _CreationDesignationScreenState extends State<CreationDesignationScreen> {
                   SizedBox(width: 20),
                   Text(
                       i.quantity +
-                          bloc.liste_materials
-                              .where((element) => element.id == i.workchange_id)
-                              .toList()[0]
-                              .unitName,
+                          ((bloc.liste_materials.where((element) => element.id == i.workchange_id)
+        .toList().isEmpty ) ? "" :
+                      bloc.liste_materials
+                          .where((element) => element.id == i.workchange_id)
+                          .toList()[0].unitName),
                       style: AppStyles.textNormal,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 5),

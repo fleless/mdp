@@ -36,6 +36,7 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
 
   bool _saveButtonLoading = false;
   bool _signButtonLoading = false;
+  bool _quoteUpdateLoading = false;
 
   @override
   void initState() {
@@ -467,9 +468,10 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                             style: AppStyles.bodyDefaultBlack),
                         TextSpan(
                             text: (bloc.dernierDevis != null
-                                ? bloc.dernierDevis.quoteData.quote.totalHt
-                                    .toString()
-                                : "0") + "€",
+                                    ? bloc.dernierDevis.quoteData.quote.totalHt
+                                        .toString()
+                                    : "0") +
+                                "€",
                             style: AppStyles.bodyBold),
                       ],
                     ),
@@ -584,41 +586,48 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
                         : AppColors.mdAlert),
               ),
               width: double.infinity,
+              height: 60,
               padding: EdgeInsets.all(20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.euro_outlined,
-                    color: AppColors.white,
-                    size: 20,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Montant TTC : " +
-                        (bloc.dernierDevis == null
-                            ? "0"
-                            : bloc.dernierDevis.quoteData.quote.totalTtc
-                                .toStringAsFixed(2)) +
-                        "€",
-                    style: AppStyles.header1WhiteBold,
-                  ),
-                  SizedBox(width: 10),
-                  bloc.dernierDevis == null
-                      ? SizedBox.shrink()
-                      : (bloc.dernierDevis.quoteData.quote.totalTtc >
-                              bloc.interventionDetail.interventionDetail
-                                  .totalMaxPrice)
-                          ? Center(
-                              child: Icon(
-                                Icons.info,
-                                color: AppColors.white,
-                                size: 20,
-                              ),
-                            )
-                          : SizedBox.shrink(),
-                ],
-              ),
+              child: _quoteUpdateLoading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.white,
+                      ),
+                    )
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.euro_outlined,
+                          color: AppColors.white,
+                          size: 20,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "Montant TTC : " +
+                              (bloc.dernierDevis == null
+                                  ? "0"
+                                  : bloc.dernierDevis.quoteData.quote.totalTtc
+                                      .toStringAsFixed(2)) +
+                              "€",
+                          style: AppStyles.header1WhiteBold,
+                        ),
+                        SizedBox(width: 10),
+                        bloc.dernierDevis == null
+                            ? SizedBox.shrink()
+                            : (bloc.dernierDevis.quoteData.quote.totalTtc >
+                                    bloc.interventionDetail.interventionDetail
+                                        .totalMaxPrice)
+                                ? Center(
+                                    child: Icon(
+                                      Icons.info,
+                                      color: AppColors.white,
+                                      size: 20,
+                                    ),
+                                  )
+                                : SizedBox.shrink(),
+                      ],
+                    ),
             ),
           ],
         ),
@@ -999,6 +1008,9 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
   }
 
   _updateQuote() async {
+    setState(() {
+      _quoteUpdateLoading = true;
+    });
     UpdateQuoteResponse quote = await _redactionBloc.updateQuote(
         bloc.dernierDevis.quoteData.quote.id,
         double.parse(_tvaController.text),
@@ -1013,6 +1025,9 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
     } else {
       GetDevisResponse resp = await bloc
           .getDevisDetails(bloc.dernierDevis.quoteData.quote.id.toString());
+      setState(() {
+        _quoteUpdateLoading = false;
+      });
       return true;
     }
   }

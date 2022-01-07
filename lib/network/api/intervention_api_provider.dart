@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/models/responses/add_adresse_facturation_response.dart';
@@ -53,12 +54,12 @@ class InterventionApiProvider {
 
       _dio = new Dio(options);
       _dio.interceptors.add(PrettyDioLogger(
-          requestHeader: false,
-          requestBody: false,
-          responseBody: false,
-          responseHeader: false,
-          error: false,
-          compact: false,
+          requestHeader: kDebugMode ? true : false,
+          requestBody: kDebugMode ? true : false,
+          responseBody: kDebugMode ? true : false,
+          responseHeader: kDebugMode ? true : false,
+          error: kDebugMode ? true : false,
+          compact: kDebugMode ? true : false,
           maxWidth: 90));
     }
   }

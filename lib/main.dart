@@ -15,4 +15,6 @@ void main() async {
 }
 
 //Recieve message when app is in background
-Future<void> backgroundHandler(RemoteMessage message) async {}
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print("background from main");
+}

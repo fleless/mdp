@@ -12,6 +12,9 @@ class HeaderFormatter {
 
   Future<Map<String, String>> getHeader() async {
     String token = await sharedPref.read(AppConstants.TOKEN_KEY);
+    if (token == null) {
+      token = "";
+    }
     return {
       'Content-type': 'application/json',
       'Accept': 'application/json',

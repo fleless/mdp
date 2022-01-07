@@ -33,9 +33,10 @@ class _ModifierAdresseFacturationWidgetState
 
   @override
   void initState() {
+    /// Check if there is no invoicing adress we show intervention adress data at that place
     bloc.interventionDetail.interventionDetail.invoicingAddress != null
         ? _initValues()
-        : null;
+        : _initValuesWithInterventionAdress();
     super.initState();
   }
 
@@ -61,6 +62,30 @@ class _ModifierAdresseFacturationWidgetState
     _communityController.text =
         bloc.interventionDetail.interventionDetail.invoicingAddress.city.name ??
             "";
+    List<AdressResponse> resp = await bloc.getCommunity(_zipController.text);
+    setState(() {
+      listeCommunites.addAll(resp);
+    });
+  }
+
+  _initValuesWithInterventionAdress() async {
+    _firstNameController.text =
+        bloc.interventionDetail.interventionDetail.clients.firstname ?? "";
+    _lastNameController.text =
+        bloc.interventionDetail.interventionDetail.clients.lastname ?? "";
+    _adressController.text = (bloc.interventionDetail.interventionDetail
+            .interventionAddress.streetName ??
+        "");
+    _streetNumberController.text = bloc.interventionDetail.interventionDetail
+            .interventionAddress.streetNumber ??
+        "";
+    _complementAdresseController.text = "";
+    _zipController.text = bloc.interventionDetail.interventionDetail
+            .interventionAddress.city.postcode ??
+        "";
+    _communityController.text = bloc.interventionDetail.interventionDetail
+            .interventionAddress.city.name ??
+        "";
     List<AdressResponse> resp = await bloc.getCommunity(_zipController.text);
     setState(() {
       listeCommunites.addAll(resp);
