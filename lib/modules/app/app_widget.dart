@@ -66,11 +66,15 @@ class _AppWidgetState extends State<AppWidget> {
 
     ///Only work on Foreground listener
     FirebaseMessaging.onMessage.listen((event) {
+      print("come on");
       if (event.notification != null) {
+        print("come on " + event.notification.body);
+        print("come on " + event.notification.title);
+        print("come on " + event.data['order']);
         if ((event.data['order'] != null) &&
             (event.data['competition'] != null)) {
           Fluttertoast.showToast(
-              msg: 'Vous avez reçu une nouvelle proposition de commande');
+              msg: 'Vous avez reçu une nouvelle proposition de commande '  );
         }
       }
     });

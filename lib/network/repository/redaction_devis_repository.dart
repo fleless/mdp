@@ -5,9 +5,9 @@ import 'package:mdp/models/responses/get_designations_name.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_materials_response.dart';
 import 'package:mdp/models/responses/get_notif_refus_response.dart';
-import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
+import 'package:mdp/models/signing_conditions_model.dart';
 import 'package:mdp/network/api/redaction_Devis_api_provider.dart';
 
 class RedactionDevisRepository {
@@ -59,5 +59,11 @@ class RedactionDevisRepository {
 
   Future<GetNotifRefusResponse> notifierRefus(num quoteId) async {
     return _apiProvider.notifierRefus(quoteId);
+  }
+
+  Future<UpdateQuoteResponse> updateSignatureConditionsQuote(
+      num quoteId, List<SigningConditionsModel> signingConditions) async {
+    return _apiProvider.updateSignatureConditionsQuote(
+        quoteId, signingConditions);
   }
 }

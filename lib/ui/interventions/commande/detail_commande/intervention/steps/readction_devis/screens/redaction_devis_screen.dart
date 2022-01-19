@@ -588,46 +588,40 @@ class _RedactionDevisScreenState extends State<RedactionDevisScreen> {
               width: double.infinity,
               height: 60,
               padding: EdgeInsets.all(20),
-              child: _quoteUpdateLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.white,
-                      ),
-                    )
-                  : Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.euro_outlined,
-                          color: AppColors.white,
-                          size: 20,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "Montant TTC : " +
-                              (bloc.dernierDevis == null
-                                  ? "0"
-                                  : bloc.dernierDevis.quoteData.quote.totalTtc
-                                      .toStringAsFixed(2)) +
-                              "€",
-                          style: AppStyles.header1WhiteBold,
-                        ),
-                        SizedBox(width: 10),
-                        bloc.dernierDevis == null
-                            ? SizedBox.shrink()
-                            : (bloc.dernierDevis.quoteData.quote.totalTtc >
-                                    bloc.interventionDetail.interventionDetail
-                                        .totalMaxPrice)
-                                ? Center(
-                                    child: Icon(
-                                      Icons.info,
-                                      color: AppColors.white,
-                                      size: 20,
-                                    ),
-                                  )
-                                : SizedBox.shrink(),
-                      ],
-                    ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.euro_outlined,
+                    color: AppColors.white,
+                    size: 20,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    "Montant TTC : " +
+                        (bloc.dernierDevis == null
+                            ? "0"
+                            : bloc.dernierDevis.quoteData.quote.totalTtc
+                                .toStringAsFixed(2)) +
+                        "€",
+                    style: AppStyles.header1WhiteBold,
+                  ),
+                  SizedBox(width: 10),
+                  bloc.dernierDevis == null
+                      ? SizedBox.shrink()
+                      : (bloc.dernierDevis.quoteData.quote.totalTtc >
+                              bloc.interventionDetail.interventionDetail
+                                  .totalMaxPrice)
+                          ? Center(
+                              child: Icon(
+                                Icons.info,
+                                color: AppColors.white,
+                                size: 20,
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                ],
+              ),
             ),
           ],
         ),

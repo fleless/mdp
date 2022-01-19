@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -10,12 +13,12 @@ import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/models/responses/get_notif_refus_response.dart';
-import 'package:mdp/ui/interventions/commande/detail_commande/intervention/intervention_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/prise_rdv/prise_rdv_bloc.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
 import 'package:mdp/utils/document_uploader.dart';
 import 'package:mdp/utils/life_cycle_watcher.dart';
 import 'package:mdp/widgets/gradients/md_gradient_green.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -276,16 +279,16 @@ class _RedactionDevisWidgetState
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           (bloc.dernierDevis == null)
-                  ? SizedBox.shrink()
-                  : bloc.dernierDevis.quoteData.quote.id == null
               ? SizedBox.shrink()
-              : (bloc.dernierDevis.quoteData.documents
-                      .where((element) =>
-                          element.documentType == "signature_artisan")
-                      .toList()
-                      .isNotEmpty)
-                  ? _buildPDF()
-                  : SizedBox.shrink(),
+              : bloc.dernierDevis.quoteData.quote.id == null
+                  ? SizedBox.shrink()
+                  : (bloc.dernierDevis.quoteData.documents
+                          .where((element) =>
+                              element.documentType == "signature_artisan")
+                          .toList()
+                          .isNotEmpty)
+                      ? _buildPDF()
+                      : SizedBox.shrink(),
           SizedBox(height: 10),
           if ((bloc.dernierDevis != null) && (listePhotos.length != 0))
             _buildPhotos(),
@@ -364,19 +367,41 @@ class _RedactionDevisWidgetState
               url = doc.url;
             }
             if (status.isGranted) {
-              final id = await FlutterDownloader.enqueue(
+              openFile(
                   url: url,
-                  savedDir: externalDir.path,
                   fileName: "Devis n°" +
-                      bloc.dernierDevis.quoteData.quote.id.toString(),
-                  showNotification: true,
-                  openFileFromNotification: true);
-              await Future.delayed(const Duration(seconds: 3), () {
-                FlutterDownloader.open(taskId: id);
-              });
+                      bloc.dernierDevis.quoteData.quote.id.toString() +
+                      ".pdf");
             } else {
               print("permission denied");
             }
+            /*final status = await Permission.storage.request();
+            final externalDir = await getTemporaryDirectory();
+            Documents doc = bloc.dernierDevis.quoteData.documents
+                .firstWhereOrNull(
+                    (element) => element.documentType == "quote_pdf");
+            String url;
+            if (doc != null) {
+              url = "http://www.africau.edu/images/default/sample.pdf";
+            } else {
+              url = doc.url;
+            }
+            if (status.isGranted) {
+              final id = await FlutterDownloader.enqueue(
+                url: url,
+                savedDir: externalDir.path,
+                fileName: "Devis n°" +
+                    bloc.dernierDevis.quoteData.quote.id.toString(),
+                showNotification: true,
+                openFileFromNotification: true,
+                saveInPublicStorage: true,
+              ).then((value) => FlutterDownloader.open(taskId: value));
+              /*await Future.delayed(const Duration(seconds: 3), () {
+                FlutterDownloader.open(taskId: id);
+              });*/
+            } else {
+              print("permission denied");
+            }*/
           },
           child: Container(
             padding: EdgeInsets.all(15),
@@ -403,6 +428,31 @@ class _RedactionDevisWidgetState
         ),
       ),
     );
+  }
+
+  Future openFile({String url, String fileName}) async {
+    final file = await downloadFile(url, fileName);
+    if (file == null) return;
+    print("Path: ${file.path}");
+    OpenFile.open(file.path);
+  }
+
+  ///Download File into private folder not visible to user
+  Future<File> downloadFile(String url, String name) async {
+    final appStorage = await getApplicationDocumentsDirectory();
+    final file = File('${appStorage.path}/$name');
+    final response = await Dio().get(
+      url,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: false,
+        receiveTimeout: 0,
+      ),
+    );
+    final raf = file.openSync(mode: FileMode.write);
+    raf.writeFromSync(response.data);
+    await raf.close();
+    return file;
   }
 
   Widget _buildPhotos() {

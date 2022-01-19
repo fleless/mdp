@@ -162,6 +162,12 @@ class _AddUpdateMainDeplacementDialogState
                 setState(() {
                   _showQuantityError = false;
                 });
+                if (double.parse(value) > widget.liste.maximumQuantity) {
+                  setState(() {
+                    _showQuantityError = true;
+                  });
+                  return '';
+                }
               },
               obscureText: false,
               cursorColor: AppColors.default_black,
@@ -195,11 +201,6 @@ class _AddUpdateMainDeplacementDialogState
                 } else if (double.parse(value) == null) {
                   return '';
                 } else if (!(double.parse(value) > 0.0)) {
-                  return '';
-                } else if (double.parse(value) > widget.liste.maximumQuantity) {
-                  setState(() {
-                    _showQuantityError = true;
-                  });
                   return '';
                 } else {
                   return null;

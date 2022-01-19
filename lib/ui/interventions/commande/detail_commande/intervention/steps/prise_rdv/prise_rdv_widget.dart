@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
-import 'package:mdp/constants/endpoints.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/user_appointments_response.dart';
@@ -28,10 +26,9 @@ class _PriseRdvWidgetState extends State<PriseRdvWidget> {
   @override
   void initState() {
     super.initState();
-      bloc.changesNotifier.listen((value) {
-        if (mounted)
-          setState(() {});
-      });
+    bloc.changesNotifier.listen((value) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override

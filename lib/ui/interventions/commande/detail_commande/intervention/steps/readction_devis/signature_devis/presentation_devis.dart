@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -12,6 +14,7 @@ import 'package:mdp/constants/styles/app_styles.dart';
 import 'package:mdp/models/responses/get_devis_response.dart';
 import 'package:mdp/utils/document_uploader.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:collection/collection.dart';
@@ -217,6 +220,29 @@ class _PresentationDevisScreenState extends State<PresentationDevisScreen> {
                     } else {
                       url = doc.url;
                     }
+                    if (status.isGranted) {
+                      openFile(
+                          url: url,
+                          fileName: "Devis n°" +
+                              bloc.dernierDevis.quoteData.quote.id.toString() +
+                              ".pdf");
+                      setState(() {
+                        _loadedDocument = true;
+                      });
+                    } else {
+                      print("permission denied");
+                    }
+                    /*final status = await Permission.storage.request();
+                    final externalDir = await getTemporaryDirectory();
+                    Documents doc = bloc.dernierDevis.quoteData.documents
+                        .firstWhereOrNull(
+                            (element) => element.documentType == "quote_pdf");
+                    String url;
+                    if (doc == null) {
+                      url = "http://www.africau.edu/images/default/sample.pdf";
+                    } else {
+                      url = doc.url;
+                    }
                     setState(() {
                       _loadedDocument = true;
                     });
@@ -236,7 +262,7 @@ class _PresentationDevisScreenState extends State<PresentationDevisScreen> {
                       });
                     } else {
                       print("permission denied");
-                    }
+                    }*/
                   },
                   child: Container(
                     padding: EdgeInsets.all(15),
@@ -410,5 +436,30 @@ class _PresentationDevisScreenState extends State<PresentationDevisScreen> {
           padding: EdgeInsets.zero,
           textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
     );
+  }
+
+  Future openFile({String url, String fileName}) async {
+    final file = await downloadFile(url, fileName);
+    if (file == null) return;
+    print("Path: ${file.path}");
+    OpenFile.open(file.path);
+  }
+
+  ///Download File into private folder not visible to user
+  Future<File> downloadFile(String url, String name) async {
+    final appStorage = await getApplicationDocumentsDirectory();
+    final file = File('${appStorage.path}/$name');
+    final response = await Dio().get(
+      url,
+      options: Options(
+        responseType: ResponseType.bytes,
+        followRedirects: false,
+        receiveTimeout: 0,
+      ),
+    );
+    final raf = file.openSync(mode: FileMode.write);
+    raf.writeFromSync(response.data);
+    await raf.close();
+    return file;
   }
 }

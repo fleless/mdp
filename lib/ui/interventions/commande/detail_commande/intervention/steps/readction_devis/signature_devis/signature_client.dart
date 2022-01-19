@@ -10,7 +10,9 @@ import 'package:mdp/constants/app_colors.dart';
 import 'package:mdp/constants/app_constants.dart';
 import 'package:mdp/constants/routes.dart';
 import 'package:mdp/constants/styles/app_styles.dart';
+import 'package:mdp/models/responses/updateQuoteResponse.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
+import 'package:mdp/models/signing_conditions_model.dart';
 import 'package:mdp/ui/interventions/commande/detail_commande/intervention/steps/readction_devis/redaction_devis_bloc.dart';
 import 'package:mdp/widgets/gradients/md_gradient_light.dart';
 import 'package:signature/signature.dart';
@@ -385,21 +387,58 @@ class _SignatureClientScreenState extends State<SignatureClientScreen> {
             _loadingSignature = true;
           });
           final Uint8List data = await _controller.toPngBytes();
-          final imageEncoded = base64.encode(data); // returns base64 string
-          UploadDocumentResponse resp =
-              await _RedactionDevisBloc.uploadClientSignature(
-                  bloc.dernierDevis.quoteData.quote.id.toString(),
-                  imageEncoded);
-          if (resp.documentUploaded) {
-            await bloc.getDevisDetails(
-                bloc.dernierDevis.quoteData.quote.id.toString());
-            Modular.to.pop();
-            Modular.to.pop();
-            bloc.changesNotifier.add(true);
+          final imageEncoded = base64.encode(data);
+
+          /// We form the list of signing conditions
+          List<SigningConditionsModel> signingConditions =
+              <SigningConditionsModel>[];
+          SigningConditionsModel condition_one = SigningConditionsModel(
+              name: "situation_urgent_in_nature",
+              value: _checkBoxFirst ? 1 : 0);
+          SigningConditionsModel condition_two = SigningConditionsModel(
+              name: "take_advantage_of_extra_work",
+              value: _checkBoxSecond ? 1 : 0);
+          SigningConditionsModel condition_three = SigningConditionsModel(
+              name: "certified_plase_as_habitation",
+              value: _checkBoxThird ? 1 : 0);
+          SigningConditionsModel condition_four = SigningConditionsModel(
+              name: "will_to_keep_old_material",
+              value: _checkBoxFourth ? 1 : 0);
+          SigningConditionsModel condition_five = SigningConditionsModel(
+              name: "estimate_provided_before_work_start",
+              value: _checkBoxFifth ? 1 : 0);
+          signingConditions.add(condition_one);
+          signingConditions.add(condition_two);
+          signingConditions.add(condition_three);
+          signingConditions.add(condition_four);
+          signingConditions.add(condition_five);
+          UpdateQuoteResponse response =
+              await _RedactionDevisBloc.updateSignatureConditionsQuote(
+                  bloc.dernierDevis.quoteData.quote.id, signingConditions);
+          if (response.quoteData != null) {
+            if (response.quoteData.quote != null) {
+              UploadDocumentResponse resp =
+                  await _RedactionDevisBloc.uploadClientSignature(
+                      bloc.dernierDevis.quoteData.quote.id.toString(),
+                      imageEncoded);
+              if (resp.documentUploaded) {
+                await bloc.getDevisDetails(
+                    bloc.dernierDevis.quoteData.quote.id.toString());
+                Modular.to.pop();
+                Modular.to.pop();
+                bloc.changesNotifier.add(true);
+              } else {
+                Fluttertoast.showToast(
+                    msg: "erreur lors de la signature. Veuillez réessayer.");
+              }
+            } else {
+              Fluttertoast.showToast(
+                  msg: "erreur lors de la signature. Veuillez réessayer.");
+            }
           } else {
             Fluttertoast.showToast(
                 msg: "erreur lors de la signature. Veuillez réessayer.");
-          }
+          } // returns base64 string
           setState(() {
             _loadingSignature = false;
           });

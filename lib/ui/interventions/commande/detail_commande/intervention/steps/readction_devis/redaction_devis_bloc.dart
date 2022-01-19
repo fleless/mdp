@@ -11,6 +11,7 @@ import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
 import 'package:mdp/models/responses/upload_document_response.dart';
 import 'package:mdp/models/responses/user_appointments_response.dart';
+import 'package:mdp/models/signing_conditions_model.dart';
 import 'package:mdp/models/workload_model.dart';
 import 'package:mdp/network/repository/document_uploader_repository.dart';
 import 'package:mdp/network/repository/rdv_repository.dart';
@@ -57,6 +58,13 @@ class RedactionDevisBloc extends Disposable {
       num quoteId, num tva, num remise, num franchise, num accompte) async {
     UpdateQuoteResponse resp = await _repository.updateQuote(
         quoteId, tva, remise, franchise, accompte);
+    return resp;
+  }
+
+  Future<UpdateQuoteResponse> updateSignatureConditionsQuote(
+      num quoteId, List<SigningConditionsModel> signingConditions) async {
+    UpdateQuoteResponse resp = await _repository.updateSignatureConditionsQuote(
+        quoteId, signingConditions);
     return resp;
   }
 

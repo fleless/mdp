@@ -7,5 +7,4 @@ class HomeBloc extends Disposable {
   dispose() {
     controller.close();
   }
-
 }

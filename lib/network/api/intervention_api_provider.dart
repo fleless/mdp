@@ -282,6 +282,7 @@ class InterventionApiProvider {
       var params = {
         "order": order,
         "orderState": orderState,
+        "orderOperation": "confirm"
       };
       Response response = await _dio.put(changeOrderStateEndPoint + orderUuid,
           options: Options(responseType: ResponseType.json, headers: header),

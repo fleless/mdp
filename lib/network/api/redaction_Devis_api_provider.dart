@@ -14,6 +14,7 @@ import 'package:mdp/models/responses/get_notif_refus_response.dart';
 import 'package:mdp/models/responses/send_mail_devis_response.dart';
 import 'package:mdp/models/responses/units_response.dart';
 import 'package:mdp/models/responses/updateQuoteResponse.dart';
+import 'package:mdp/models/signing_conditions_model.dart';
 import 'package:mdp/utils/header_formatter.dart';
 import 'package:mdp/utils/shared_preferences.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -262,6 +263,28 @@ class RedactionDevisApiProvider {
         await headerFormatter.tokenExpired();
       }
       return GetNotifRefusResponse();
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<UpdateQuoteResponse> updateSignatureConditionsQuote(
+      num quoteId, List<SigningConditionsModel> signingConditions) async {
+    Map<String, String> header = await headerFormatter.getHeader();
+    var params = {
+      "quote": quoteId,
+      "signing_conditions": signingConditions.map((e) => e.toJson()).toList(),
+    };
+    try {
+      Response response = await _dio.put(updateQuoteEndPoint,
+          options: Options(responseType: ResponseType.json, headers: header),
+          data: jsonEncode(params));
+      return UpdateQuoteResponse.fromJson(response.data);
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        await headerFormatter.tokenExpired();
+      }
+      return UpdateQuoteResponse();
     } catch (e) {
       throw e;
     }
